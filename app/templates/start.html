@@ -1,0 +1,72 @@
+{% extends "base.html" %}
+{% block title %}Start a session — ViMove{% endblock %}
+
+{% block content %}
+<section class="section">
+  <div class="container">
+    <div class="form-shell">
+      <div class="section-head" style="margin-bottom:32px">
+        <span class="eyebrow" data-i18n="start.eyebrow">Set up your session</span>
+        <h1 style="font-size:clamp(2rem,4vw,2.6rem)" data-i18n="start.title">Let's tailor your program</h1>
+        <p data-i18n="start.sub">A few quick details help ViMove choose the right exercises for you. It takes less than a minute.</p>
+      </div>
+
+      <form method="POST" action="/start" class="card" style="padding:clamp(24px,4vw,38px)">
+        <div class="form-grid">
+
+          <div class="field">
+            <label for="age" data-i18n="start.age">Age</label>
+            <p class="help" data-i18n="start.ageHelp">Helps us calibrate exercise intensity and targets.</p>
+            <input class="input" type="number" id="age" name="age" inputmode="numeric"
+                   min="40" max="120" placeholder="e.g. 68" required
+                   value="{{ last.age if last and last.age else '' }}" />
+          </div>
+
+          <div class="field">
+            <span class="field-label" id="genderLabel" data-i18n="start.gender">Gender</span>
+            <div class="choice-row" role="radiogroup" aria-labelledby="genderLabel">
+              <label class="choice">
+                <input type="radio" name="gender" value="male" required {% if last and last.gender=='male' %}checked{% endif %} />
+                <span data-i18n="start.male">Male</span>
+              </label>
+              <label class="choice">
+                <input type="radio" name="gender" value="female" {% if last and last.gender=='female' %}checked{% endif %} />
+                <span data-i18n="start.female">Female</span>
+              </label>
+              <label class="choice">
+                <input type="radio" name="gender" value="other" {% if last and last.gender=='other' %}checked{% endif %} />
+                <span data-i18n="start.other">Other</span>
+              </label>
+            </div>
+          </div>
+
+          <div class="field">
+            <label for="disease" data-i18n="start.condition">Condition</label>
+            <p class="help" data-i18n="start.condHelp">Each condition has its own evidence-based program. More are coming soon.</p>
+            <select class="select" id="disease" name="disease" required>
+              {% for slug, c in conditions.items() %}
+              <option value="{{ slug }}" data-en="{{ c.name }}" data-tr="{{ c.name_tr or c.name }}" {% if (last and last.disease==slug) or (not last and loop.first) %}selected{% endif %}>{{ c.name }}</option>
+              {% endfor %}
+              <option value="neck" disabled data-i18n="start.neckOption">Neck &amp; lower back — coming soon</option>
+            </select>
+          </div>
+
+          <div class="form-note">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+            <span data-i18n="start.privacy">Your camera is used only on this device for live tracking. No video is recorded, stored, or uploaded.</span>
+          </div>
+
+          <button type="submit" class="btn btn--primary btn--lg btn--block">
+            <svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+            <span data-i18n="start.submit">Continue to exercises</span>
+          </button>
+        </div>
+      </form>
+
+      <p class="muted text-center" style="margin-top:20px;font-size:.95rem" data-i18n="start.ack">
+        By continuing you acknowledge that ViMove is not a medical device and does not replace professional care.
+      </p>
+    </div>
+  </div>
+</section>
+{% endblock %}

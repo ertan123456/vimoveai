@@ -1,0 +1,19 @@
+{% extends "base.html" %}
+{% block title %}Progress — ViMove{% endblock %}
+
+{% block content %}
+<section class="section">
+  <div class="container">
+    <div class="section-head" style="margin-bottom:32px">
+      <span class="eyebrow" data-i18n="progress.eyebrow">Your progress</span>
+      <h1 data-i18n="progress.title">Track your improvement</h1>
+      <p data-i18n="progress.sub">Every completed session is saved privately on this device. Watch your scores, symmetry and reps trend over time.</p>
+    </div>
+    <div id="progressRoot"></div>
+  </div>
+</section>
+{% endblock %}
+
+{% block scripts %}
+<script src="/static/progress.js?v=1"></script>
+{% endblock %}

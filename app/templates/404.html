@@ -1,0 +1,20 @@
+{% extends "base.html" %}
+{% block title %}Page not found — ViMove{% endblock %}
+
+{% block content %}
+<section class="msg-page">
+  <div class="container">
+    <div class="card msg-card">
+      <div class="msg-icon brand">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+      </div>
+      <h1 style="font-size:clamp(1.7rem,4vw,2.4rem)">We can't find that page</h1>
+      <p class="lead">The page you're looking for may have moved or no longer exists.</p>
+      <div class="actions">
+        <a href="/" class="btn btn--primary">Go home</a>
+        <a href="/start" class="btn btn--secondary">Start a session</a>
+      </div>
+    </div>
+  </div>
+</section>
+{% endblock %}

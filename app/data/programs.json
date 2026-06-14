@@ -1,0 +1,141 @@
+{
+  "_comment": "ViMove evidence-based program knowledge base. Exercises are limited to movements the in-browser AI can reliably detect (hand open/close, arm raise, leg abduction, mouth, eye blink, sit-to-stand). Rep targets are evidence-informed STARTING points to be individualized with a clinician — not a prescription. Gender is collected for records only; current evidence does not support different exercise SELECTION by gender for these conditions, so it does not change the program.",
+
+  "age_scaling": {
+    "comment": "Targets are individualized: older / more deconditioned users start with fewer reps and progress gradually (ACSM individualized-progression principle).",
+    "tiers": [
+      { "max_age": 59,  "label": "Standard", "rep_factor": 1.0 },
+      { "max_age": 74,  "label": "Moderate", "rep_factor": 0.8 },
+      { "max_age": 200, "label": "Gentle",   "rep_factor": 0.6 }
+    ],
+    "min_reps": 3
+  },
+
+  "conditions": {
+    "parkinson": {
+      "name": "Parkinson's disease",
+      "name_tr": "Parkinson hastalığı",
+      "summary": "A movement disorder where exercise is a core, evidence-based part of management — improving mobility, balance and quality of life.",
+      "summary_tr": "Egzersizin, tedavinin temel ve kanıta dayalı bir parçası olduğu bir hareket bozukluğu — hareketliliği, dengeyi ve yaşam kalitesini artırır.",
+      "principles": "Large-amplitude movements (LSVT BIG approach) to counter bradykinesia/hypokinesia, plus strength, balance and facial mobility (for hypomimia).",
+      "sources": [
+        { "label": "Parkinson's Foundation & ACSM — Parkinson's Disease Exercise Recommendations", "url": "https://www.parkinson.org/about-us/news/updated-exercise-recommendations" },
+        { "label": "Parkinson's Foundation — Exercise Guidelines (FITT-VP, 2022)", "url": "https://www.parkinson.org/sites/default/files/documents/exercise_guidelines_2022.pdf" },
+        { "label": "LSVT-BIG amplitude therapy — proprioceptive recalibration (BMC Neurology, 2020)", "url": "https://bmcneurol.biomedcentral.com/articles/10.1186/s12883-020-01858-2" }
+      ],
+      "order": ["hand", "arm", "mouth", "eye", "leg", "sitstand"],
+      "exercises": [
+        { "id": "hand", "name": "Hand Open - Close", "kind": "hand", "sides": ["left", "right"], "base_reps": 10, "domain": "Hand dexterity",
+          "rationale": "Large-amplitude finger extension and full fist closure counter bradykinesia (slowness) and help maintain fine-motor control." },
+        { "id": "arm", "name": "Arm Raise", "kind": "arm", "sides": ["right", "left"], "base_reps": 8, "domain": "Upper limb",
+          "rationale": "Big-amplitude shoulder flexion follows the LSVT BIG principle of moving bigger to recalibrate undersized movements." },
+        { "id": "mouth", "name": "Mouth Open - Close", "kind": "mouth", "sides": [null], "base_reps": 5, "domain": "Facial mobility",
+          "rationale": "Orofacial movement targets hypomimia (reduced facial expression) and engages the speech/swallowing musculature." },
+        { "id": "eye", "name": "Eye Blink", "kind": "blink", "sides": ["right", "left"], "base_reps": 5, "domain": "Facial mobility",
+          "rationale": "Deliberate blinking activates the orbicularis oculi and addresses the reduced spontaneous blink rate common in Parkinson's." },
+        { "id": "leg", "name": "Leg Extension", "kind": "leg", "sides": ["right", "left"], "base_reps": 8, "domain": "Lower limb",
+          "rationale": "Large-amplitude hip abduction trains lower-limb control and lateral stability for balance." },
+        { "id": "sitstand", "name": "Sit Down, Stand Up", "kind": "sitstand", "sides": [null], "base_reps": 10, "domain": "Functional strength",
+          "rationale": "Sit-to-stand builds lower-limb extensor strength and transfer ability (ACSM strength dose ~10-15 reps)." }
+      ]
+    },
+
+    "stroke": {
+      "name": "Post-stroke rehabilitation",
+      "name_tr": "İnme sonrası rehabilitasyon",
+      "summary": "After a stroke, high-repetition, task-specific practice drives motor recovery through neuroplasticity. Doing both sides supports symmetry.",
+      "summary_tr": "İnmeden sonra, yüksek tekrarlı ve göreve özgü pratik, nöroplastisite yoluyla motor iyileşmeyi sağlar. İki tarafı da çalışmak simetriyi destekler.",
+      "principles": "Repetitive, task-specific training (high repetitions) for the upper limb (grasp/release, reach), lower-limb sit-to-stand and hip control, and facial neuromuscular re-education for facial weakness.",
+      "sources": [
+        { "label": "AHA/ASA — Adult Stroke Rehabilitation and Recovery Guideline", "url": "https://www.guidelinecentral.com/guideline/7080/" },
+        { "label": "Upper-limb motor recovery — UK & European rehabilitation guidelines overview (2023)", "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC11276617/" },
+        { "label": "Sit-to-stand training with visual feedback in stroke — RCT (2021)", "url": "https://www.ncbi.nlm.nih.gov/pmc/articles/PMC8625418/" },
+        { "label": "Facial neuromuscular re-education — systematic review (Clinical Rehabilitation, 2022)", "url": "https://journals.sagepub.com/doi/10.1177/02692155221110727" }
+      ],
+      "order": ["hand", "arm", "sitstand", "leg", "mouth", "eye"],
+      "exercises": [
+        { "id": "hand", "name": "Hand Open - Close", "kind": "hand", "sides": ["left", "right"], "base_reps": 12, "domain": "Upper limb (task-specific)",
+          "rationale": "Repetitive grasp-and-release is core task-specific upper-limb practice; high repetition counts drive motor recovery. Train both sides for symmetry." },
+        { "id": "arm", "name": "Arm Raise", "kind": "arm", "sides": ["right", "left"], "base_reps": 10, "domain": "Upper limb (reach)",
+          "rationale": "Shoulder flexion / reaching is a functional task-specific movement; repeated practice improves upper-limb control." },
+        { "id": "sitstand", "name": "Sit Down, Stand Up", "kind": "sitstand", "sides": [null], "base_reps": 12, "domain": "Functional strength",
+          "rationale": "Strong evidence: sit-to-stand training improves lower-limb strength, balance and gait, and trains symmetric weight-bearing." },
+        { "id": "leg", "name": "Leg Extension", "kind": "leg", "sides": ["right", "left"], "base_reps": 10, "domain": "Lower limb (hip control)",
+          "rationale": "Hip-abductor strengthening supports trunk/pelvis control in the frontal plane, important for balance during standing and gait." },
+        { "id": "mouth", "name": "Mouth Open - Close", "kind": "mouth", "sides": [null], "base_reps": 6, "domain": "Facial re-education",
+          "rationale": "Mirror-guided, slow mouth movements are part of facial neuromuscular re-education for post-stroke facial weakness." },
+        { "id": "eye", "name": "Eye Blink", "kind": "blink", "sides": ["right", "left"], "base_reps": 6, "domain": "Facial re-education",
+          "rationale": "Gentle eye-closure retraining helps restore blink and facial symmetry; keep movements slow and unforced." }
+      ]
+    },
+
+    "arthritis": {
+      "name": "Osteoarthritis & joint mobility",
+      "name_tr": "Osteoartrit & eklem hareketliliği",
+      "summary": "For osteoarthritis, gentle exercise is core treatment — it eases stiffness, maintains range of motion, and strengthens the muscles that protect the joints.",
+      "summary_tr": "Osteoartritte nazik egzersiz temel tedavidir — tutukluğu azaltır, hareket açıklığını korur ve eklemleri koruyan kasları güçlendirir.",
+      "principles": "Range-of-motion / flexibility plus low-load strengthening of affected joints, kept within a comfortable, pain-free range (OARSI / ACR core recommendations).",
+      "sources": [
+        { "label": "OARSI — Osteoarthritis management guidelines", "url": "https://oarsi.org/education/oarsi-guidelines" },
+        { "label": "2019 ACR / Arthritis Foundation OA guideline (hand, hip, knee)", "url": "https://www.rheumatologyadvisor.com/features/2019-acr-arthritis-foundation-guidelines-for-hand-hip-and-knee-osteoarthritis-management/" },
+        { "label": "OA guidelines across six societies — comparison", "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC9377706/" }
+      ],
+      "order": ["hand", "arm", "leg", "sitstand"],
+      "exercises": [
+        { "id": "hand", "name": "Hand Open - Close", "kind": "hand", "sides": ["left", "right"], "base_reps": 10, "domain": "Hand & finger mobility",
+          "rationale": "Range-of-motion finger movement is first-line exercise for hand osteoarthritis — it eases stiffness and preserves grip and dexterity." },
+        { "id": "arm", "name": "Arm Raise", "kind": "arm", "sides": ["right", "left"], "base_reps": 8, "domain": "Shoulder mobility",
+          "rationale": "Gentle shoulder range-of-motion keeps the joint mobile and reduces stiffness; move only as far as is comfortable." },
+        { "id": "leg", "name": "Leg Extension", "kind": "leg", "sides": ["right", "left"], "base_reps": 8, "domain": "Hip mobility & strength",
+          "rationale": "Hip abduction maintains hip range of motion and strengthens the abductors that support the hip and knee joints." },
+        { "id": "sitstand", "name": "Sit Down, Stand Up", "kind": "sitstand", "sides": [null], "base_reps": 8, "domain": "Knee strength",
+          "rationale": "Sit-to-stand strengthens the quadriceps — a core recommendation for knee osteoarthritis — kept gentle and within a pain-free range." }
+      ]
+    },
+
+    "balance": {
+      "name": "Balance & fall prevention",
+      "name_tr": "Denge & düşme önleme",
+      "summary": "Building leg strength is a proven way to reduce falls in older adults. This program follows the strengthening core of the Otago Exercise Programme.",
+      "summary_tr": "Bacak gücünü artırmak, yaşlılarda düşmeleri azaltmanın kanıtlanmış bir yoludur. Bu program, Otago Egzersiz Programı'nın güçlendirme çekirdeğini izler.",
+      "principles": "Lower-limb strengthening (quadriceps via sit-to-stand, hip abductors) plus controlled reaching — the strength component of Otago, which lowers falls by ~35%. Standing-balance holds should be added under professional supervision.",
+      "sources": [
+        { "label": "Otago Exercise Programme — manual (ACC New Zealand)", "url": "https://www.livestronger.org.nz/assets/Uploads/acc1162-otago-exercise-manual.pdf" },
+        { "label": "Otago programme for fall prevention — systematic review", "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC9631473/" },
+        { "label": "WHO Guidelines on Physical Activity & Sedentary Behaviour (falls)", "url": "https://www.who.int/europe/publications/i/item/9789240014886" }
+      ],
+      "order": ["sitstand", "leg", "arm"],
+      "exercises": [
+        { "id": "sitstand", "name": "Sit Down, Stand Up", "kind": "sitstand", "sides": [null], "base_reps": 10, "domain": "Leg strength (Otago)",
+          "rationale": "Sit-to-stand builds quadriceps strength — a key Otago component shown to lower fall risk and ease everyday transfers." },
+        { "id": "leg", "name": "Leg Extension", "kind": "leg", "sides": ["right", "left"], "base_reps": 10, "domain": "Hip-abductor strength (Otago)",
+          "rationale": "Standing hip abduction strengthens the hip abductors that stabilize the pelvis during standing and walking." },
+        { "id": "arm", "name": "Arm Raise", "kind": "arm", "sides": ["right", "left"], "base_reps": 8, "domain": "Reach & posture",
+          "rationale": "Controlled reaching trains the shoulder and posture muscles used to recover balance and stay upright." }
+      ]
+    },
+
+    "general": {
+      "name": "General senior fitness",
+      "name_tr": "Genel yaşlı kondisyonu",
+      "summary": "A balanced, full-body maintenance routine in line with WHO physical-activity guidance for adults aged 65+ — to keep strength, mobility and independence.",
+      "summary_tr": "65 yaş üstü için DSÖ fiziksel aktivite kılavuzuna uygun, dengeli ve tüm vücudu çalıştıran bir bakım rutini — güç, hareketlilik ve bağımsızlığı korumak için.",
+      "principles": "Multicomponent activity: muscle strengthening of all major groups plus functional movement, as recommended by the WHO for older adults to maintain function and prevent falls.",
+      "sources": [
+        { "label": "WHO Guidelines on Physical Activity and Sedentary Behaviour (at a glance)", "url": "https://www.who.int/europe/publications/i/item/9789240014886" },
+        { "label": "WHO 2020 physical activity guidelines (full text)", "url": "https://www.ncbi.nlm.nih.gov/pmc/articles/PMC7719906/" }
+      ],
+      "order": ["arm", "hand", "leg", "sitstand"],
+      "exercises": [
+        { "id": "arm", "name": "Arm Raise", "kind": "arm", "sides": ["right", "left"], "base_reps": 8, "domain": "Upper body",
+          "rationale": "Shoulder strengthening maintains upper-body function for everyday tasks like reaching and carrying." },
+        { "id": "hand", "name": "Hand Open - Close", "kind": "hand", "sides": ["left", "right"], "base_reps": 10, "domain": "Hand dexterity",
+          "rationale": "Opening and closing the hands maintains grip and fine-motor control for daily independence." },
+        { "id": "leg", "name": "Leg Extension", "kind": "leg", "sides": ["right", "left"], "base_reps": 8, "domain": "Lower body",
+          "rationale": "Hip abduction strengthens the lower-limb and pelvis-stabilizing muscles used in walking." },
+        { "id": "sitstand", "name": "Sit Down, Stand Up", "kind": "sitstand", "sides": [null], "base_reps": 10, "domain": "Functional strength",
+          "rationale": "Sit-to-stand maintains the leg strength needed for everyday transfers and helps prevent falls (WHO multicomponent recommendation)." }
+      ]
+    }
+  }
+}

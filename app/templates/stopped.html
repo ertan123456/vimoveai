@@ -1,0 +1,20 @@
+{% extends "base.html" %}
+{% block title %}Session ended — ViMove{% endblock %}
+
+{% block content %}
+<section class="msg-page">
+  <div class="container">
+    <div class="card msg-card">
+      <div class="msg-icon brand">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><path d="M22 4L12 14.01l-3-3"/></svg>
+      </div>
+      <h1 style="font-size:clamp(1.7rem,4vw,2.4rem)">{{ msg or "Session ended" }}</h1>
+      <p class="lead">Great work. Come back any time to keep up with your program.</p>
+      <div class="actions">
+        <a href="/start" class="btn btn--primary">Start again</a>
+        <a href="/" class="btn btn--secondary">Go home</a>
+      </div>
+    </div>
+  </div>
+</section>
+{% endblock %}

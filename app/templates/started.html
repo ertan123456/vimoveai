@@ -1,0 +1,20 @@
+{% extends "base.html" %}
+{% block title %}Session started — ViMove{% endblock %}
+
+{% block content %}
+<section class="msg-page">
+  <div class="container">
+    <div class="card msg-card">
+      <div class="msg-icon brand">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+      </div>
+      <h1 style="font-size:clamp(1.7rem,4vw,2.4rem)">{{ note or "Your session is ready" }}</h1>
+      <p class="lead">Follow the exercises on screen — ViMove tracks your movements and counts every rep.</p>
+      <div class="actions">
+        <a href="/session" class="btn btn--primary">Open session</a>
+        <a href="/" class="btn btn--secondary">Go home</a>
+      </div>
+    </div>
+  </div>
+</section>
+{% endblock %}

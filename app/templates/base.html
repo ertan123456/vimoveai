@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="en">
+{# ------- reusable brand mark ------- #}
+{% macro brand_mark() %}
+<svg class="brand-mark" viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+  <rect width="40" height="40" rx="11" fill="url(#vmGrad)"/>
+  <path d="M8 21h5.4l2.5-7.6a1.05 1.05 0 0 1 2 .08l3.5 12.9 2.2-5.9a1.05 1.05 0 0 1 .98-.68H32"
+        stroke="#fff" stroke-width="2.7" stroke-linecap="round" stroke-linejoin="round"/>
+  <defs>
+    <linearGradient id="vmGrad" x1="0" y1="0" x2="40" y2="40" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#14b8a6"/><stop offset="1" stop-color="#0f766e"/>
+    </linearGradient>
+  </defs>
+</svg>
+{% endmacro %}
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>{% block title %}ViMove — AI-guided movement therapy{% endblock %}</title>
+  <meta name="description" content="{% block description %}ViMove turns any webcam into a guided physiotherapy companion. AI motion tracking builds and follows personalized exercise programs for people living with Parkinson's and other conditions.{% endblock %}" />
+  <meta name="theme-color" content="#0d9488" />
+
+  <link rel="icon" href="/static/favicon.svg" type="image/svg+xml" />
+
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Lexend:wght@500;600;700&display=swap" rel="stylesheet" />
+
+  <link rel="stylesheet" href="/static/styles.css?v=9" />
+
+  <script src="/static/i18n.js?v=1" defer></script>
+
+  <!-- Analytics -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-4SV7FE09C2"></script>
+
+  {% block head %}{% endblock %}
+</head>
+<body{% block body_attrs %}{% endblock %}>
+  <a href="#main" class="sr-only">Skip to content</a>
+
+  <header class="site-header" id="siteHeader">
+    <div class="container nav">
+      <a href="/" class="brand" aria-label="ViMove home">
+        {{ brand_mark() }}
+        <span>Vi<b>Move</b></span>
+      </a>
+
+      <nav aria-label="Primary">
+        <ul class="nav-links" id="navLinks">
+          <li><a href="/"           {% if active=='home' %}aria-current="page"{% endif %} data-i18n="nav.home">Home</a></li>
+          <li><a href="/#how"       data-i18n="nav.how">How it works</a></li>
+          <li><a href="/exercises"  {% if active=='exercises' %}aria-current="page"{% endif %} data-i18n="nav.exercises">Exercises</a></li>
+          <li><a href="/progress"   {% if active=='progress' %}aria-current="page"{% endif %} data-i18n="nav.progress">Progress</a></li>
+          <li><a href="/about"      {% if active=='about' %}aria-current="page"{% endif %} data-i18n="nav.about">About</a></li>
+        </ul>
+      </nav>
+
+      <div class="nav-cta">
+        <button id="langToggle" class="lang-toggle" type="button" aria-label="Türkçeye geç">TR</button>
+        <a href="/start" class="btn btn--primary btn--desktop">
+          <svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+          <span data-i18n="nav.start">Start a session</span>
+        </a>
+        <button class="nav-toggle" id="navToggle" aria-label="Open menu" aria-expanded="false" aria-controls="navLinks">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <main id="main">
+    {% block content %}{% endblock %}
+  </main>
+
+  <footer class="site-footer">
+    <div class="container">
+      <div class="footer-grid">
+        <div class="footer-brand">
+          <a href="/" class="brand">{{ brand_mark() }}<span>Vi<b>Move</b></span></a>
+          <p data-i18n="footer.tagline">AI-guided movement therapy that turns any webcam into a personal physiotherapy companion — accessible from home, at no cost.</p>
+        </div>
+        <div class="footer-col">
+          <h4 data-i18n="footer.product">Product</h4>
+          <ul>
+            <li><a href="/" data-i18n="nav.home">Home</a></li>
+            <li><a href="/#how" data-i18n="nav.how">How it works</a></li>
+            <li><a href="/exercises" data-i18n="nav.exercises">Exercises</a></li>
+            <li><a href="/start" data-i18n="nav.start">Start a session</a></li>
+          </ul>
+        </div>
+        <div class="footer-col">
+          <h4 data-i18n="footer.project">Project</h4>
+          <ul>
+            <li><a href="/about" data-i18n="footer.aboutLink">About ViMove</a></li>
+            <li><a href="mailto:erdemertan08@gmail.com">erdemertan08@gmail.com</a></li>
+            <li><a href="mailto:oguzcetinkaya1903@gmail.com">oguzcetinkaya1903@gmail.com</a></li>
+          </ul>
+        </div>
+      </div>
+
+      <p class="footer-disclaimer" data-i18n-html="footer.disclaimer">
+        <strong>Medical disclaimer.</strong> ViMove is an assistive movement-tracking tool and a student research project — it is not a medical device and does not provide diagnosis, treatment, or professional medical advice. Always consult a qualified healthcare professional before beginning any exercise program.
+      </p>
+
+      <div class="footer-bottom">
+        <span>© {{ year }} ViMove · <span data-i18n="footer.built">Built by two high-school students.</span></span>
+        <span data-i18n="footer.made">Made with care for accessible healthcare.</span>
+      </div>
+    </div>
+  </footer>
+
+  <script src="/static/app.js?v=5" defer></script>
+  {% block scripts %}{% endblock %}
+</body>
+</html>

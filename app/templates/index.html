@@ -1,0 +1,172 @@
+{% extends "base.html" %}
+{% block title %}ViMove — AI-guided movement therapy at home{% endblock %}
+
+{% block content %}
+
+<!-- ============================ HERO ============================ -->
+<section class="hero">
+  <div class="container">
+    <div class="hero-copy">
+      <span class="eyebrow">
+        <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2v4M12 18v4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M2 12h4M18 12h4M4.93 19.07l2.83-2.83M16.24 7.76l2.83-2.83"/></svg>
+        <span data-i18n="home.eyebrow">AI-powered physiotherapy</span>
+      </span>
+      <h1 data-i18n-html="home.title">Movement therapy that <span class="grad">guides every rep</span></h1>
+      <p class="hero-lead" data-i18n="home.lead">
+        ViMove turns any webcam into a personal physiotherapy companion. It builds a
+        tailored exercise program, watches your movements with AI, and counts every
+        repetition — so older adults can keep up with therapy from the comfort of home.
+      </p>
+
+      <div class="hero-actions">
+        <a href="/start" class="btn btn--primary btn--lg">
+          <svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+          <span data-i18n="home.ctaStart">Start a free session</span>
+        </a>
+        <a href="#how" class="btn btn--secondary btn--lg" data-i18n="home.ctaHow">See how it works</a>
+      </div>
+
+      <div class="hero-meta">
+        <span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 13l4 4L19 7"/></svg> <span data-i18n="home.meta1">No download — runs in your browser</span></span>
+        <span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 1v22M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg> <span data-i18n="home.meta2">Free to use</span></span>
+        <span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg> <span data-i18n="home.meta3">Private — video never leaves your device</span></span>
+      </div>
+    </div>
+
+    <!-- mock session preview -->
+    <div class="hero-visual" aria-hidden="true">
+      <div class="hero-screen">
+        <div class="scan">
+          <svg viewBox="0 0 24 24" width="64" height="64" fill="none" stroke="#ffffff" stroke-opacity=".85" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="5.5" r="2.4"/><path d="M5 21l3-8 4-2 4 2 3 8M12 11v4"/></svg>
+        </div>
+        <div class="hero-progress"><i></i></div>
+        <div class="rep"><span>Right hand · open / close</span><span>7 / 10</span></div>
+      </div>
+      <p style="margin:18px 0 0;opacity:.9" data-i18n="home.visualCap">Live skeleton tracking keeps form on point and counts reps automatically.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ============================ HOW IT WORKS ============================ -->
+<section class="section section--alt" id="how">
+  <div class="container">
+    <div class="section-head">
+      <span class="eyebrow" data-i18n="home.howEyebrow">How it works</span>
+      <h2 data-i18n="home.howTitle">Therapy in three simple steps</h2>
+      <p data-i18n="home.howSub">No clinic visit, no special equipment, no technical know-how. If you can open a web page, you can use ViMove.</p>
+    </div>
+
+    <div class="steps">
+      <div class="step">
+        <div class="step-num">1</div>
+        <h3 data-i18n="home.s1t">Tell us about you</h3>
+        <p data-i18n="home.s1p">Enter your age, gender, and condition. ViMove assembles an exercise program suited to your needs.</p>
+      </div>
+      <div class="step">
+        <div class="step-num">2</div>
+        <h3 data-i18n="home.s2t">Turn on your camera</h3>
+        <p data-i18n="home.s2p">Allow camera access in your browser. Everything is processed locally — your video is never uploaded.</p>
+      </div>
+      <div class="step">
+        <div class="step-num">3</div>
+        <h3 data-i18n="home.s3t">Move — we count</h3>
+        <p data-i18n="home.s3p">Follow each exercise on screen. AI tracks your motion, counts your reps, and moves you to the next one.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============================ FEATURES ============================ -->
+<section class="section">
+  <div class="container">
+    <div class="section-head">
+      <span class="eyebrow" data-i18n="home.featEyebrow">Why ViMove</span>
+      <h2 data-i18n="home.featTitle">Built for real people, real homes</h2>
+      <p data-i18n="home.featSub">Clinical-grade motion tracking made approachable enough for daily use by older adults and their caregivers.</p>
+    </div>
+
+    <div class="features">
+      <article class="card feature">
+        <div class="feature-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M12 2v3M12 19v3M2 12h3M19 12h3M5 5l2 2M17 17l2 2M19 5l-2 2M7 17l-2 2"/></svg></div>
+        <h3 data-i18n="home.f1t">AI motion tracking</h3>
+        <p data-i18n="home.f1p">Real-time hand, face, and full-body pose detection recognizes each movement and validates your form.</p>
+      </article>
+      <article class="card feature">
+        <div class="feature-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19V5M4 19h16M8 19v-6M12 19V9M16 19v-9M20 19V7"/></svg></div>
+        <h3 data-i18n="home.f2t">Personalized programs</h3>
+        <p data-i18n="home.f2p">Exercises are selected and dosed for your condition, then tracked rep by rep through the whole set.</p>
+      </article>
+      <article class="card feature">
+        <div class="feature-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg></div>
+        <h3 data-i18n="home.f3t">Live feedback</h3>
+        <p data-i18n="home.f3p">An on-screen progress bar and live counter show exactly how you're doing as you move.</p>
+      </article>
+      <article class="card feature">
+        <div class="feature-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg></div>
+        <h3 data-i18n="home.f4t">Private by design</h3>
+        <p data-i18n="home.f4p">All analysis runs in your browser. Your camera feed stays on your device and is never sent to a server.</p>
+      </article>
+      <article class="card feature">
+        <div class="feature-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="4" width="20" height="14" rx="2"/><path d="M8 20h8M12 18v2"/></svg></div>
+        <h3 data-i18n="home.f5t">Any device</h3>
+        <p data-i18n="home.f5p">Works on laptops, tablets, and phones with a camera. No app store, no installation, no setup.</p>
+      </article>
+      <article class="card feature">
+        <div class="feature-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 1 0-7.78 7.78L12 21.23l8.84-8.84a5.5 5.5 0 0 0 0-7.78z"/></svg></div>
+        <h3 data-i18n="home.f6t">Made for accessibility</h3>
+        <p data-i18n="home.f6p">Large type, high contrast, and big touch targets — designed first for older adults and those with tremor.</p>
+      </article>
+    </div>
+  </div>
+</section>
+
+<!-- ============================ CONDITIONS ============================ -->
+<section class="section section--alt">
+  <div class="container">
+    <div class="section-head">
+      <span class="eyebrow" data-i18n="home.condEyebrow">Conditions</span>
+      <h2 data-i18n="home.condTitle">Supported conditions</h2>
+      <p data-i18n="home.condSub">ViMove now offers evidence-based programs for a growing list of conditions, each grounded in published clinical guidance.</p>
+    </div>
+
+    <div class="conditions">
+      {% for slug, c in conditions.items() %}
+      <article class="card condition">
+        <div class="condition-top">
+          <div class="condition-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg></div>
+          <h3 data-en="{{ c.name }}" data-tr="{{ c.name_tr or c.name }}">{{ c.name }}</h3>
+        </div>
+        <span class="badge badge--ok"><span class="dot"></span> <span data-i18n="home.availableNow">Available now</span></span>
+        <p style="margin-top:14px" data-en="{{ c.summary }}" data-tr="{{ c.summary_tr or c.summary }}">{{ c.summary }}</p>
+        <a href="/start" class="btn btn--primary" data-i18n="home.startProgram">Start this program</a>
+      </article>
+      {% endfor %}
+
+      <article class="card condition is-soon">
+        <div class="condition-top">
+          <div class="condition-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M8 2v4M16 2v4M3 10h18M5 6h14a2 2 0 0 1 2 2v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2z"/></svg></div>
+          <h3 data-i18n="home.neckTitle">Neck &amp; lower back</h3>
+        </div>
+        <span class="badge badge--soon"><span class="dot"></span> <span data-i18n="home.comingSoon">Coming soon</span></span>
+        <p style="margin-top:14px" data-i18n="home.neckDesc">Posture and mobility exercises to relieve everyday neck and lower-back stiffness.</p>
+        <a href="/exercises" class="btn btn--secondary" data-i18n="home.learnMore">Learn more</a>
+      </article>
+    </div>
+  </div>
+</section>
+
+<!-- ============================ CTA BAND ============================ -->
+<section class="section section--tight">
+  <div class="container">
+    <div class="card card--raised" style="text-align:center;padding:clamp(36px,6vw,64px);background:linear-gradient(160deg,var(--brand-600),var(--brand-800));border:0;color:#fff;">
+      <h2 style="color:#fff" data-i18n="home.ctaTitle">Ready to move with ViMove?</h2>
+      <p class="lead" style="color:rgba(255,255,255,.9);max-width:560px;margin-inline:auto" data-i18n="home.ctaSub">Set up your first session in under a minute. All you need is a camera and a little space to move.</p>
+      <div style="display:flex;gap:14px;justify-content:center;flex-wrap:wrap;margin-top:24px">
+        <a href="/start" class="btn btn--lg" style="background:#fff;color:var(--brand-700)" data-i18n="home.ctaStart">Start a free session</a>
+        <a href="/about" class="btn btn--lg btn--ghost" style="color:#fff;border:1px solid rgba(255,255,255,.4)" data-i18n="home.ctaTeam">Meet the team</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+{% endblock %}
