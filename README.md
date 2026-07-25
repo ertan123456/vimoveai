@@ -41,7 +41,7 @@ Exercise choices and starting rep targets are evidence-informed starting points,
 
 ---
 
-## Tech stack
+# Tech stack
 
 - **Backend:** Python, FastAPI, Jinja2 templates
 - **Frontend:** vanilla JavaScript, HTML, CSS (no build step)
