@@ -306,7 +306,7 @@ export class RepDetector {
     this.base = base;
     this.cooldownMs = opts.cooldownMs ?? 350;
     this.smoothing = opts.smoothing ?? 3;      // small mean, the One Euro does the real work
-    this.maxPersist = opts.maxPersist ?? 4;
+    this.maxPersist = base.maxPersist ?? opts.maxPersist ?? 4;
     this.reset();
   }
 
@@ -319,6 +319,8 @@ export class RepDetector {
     this.peakBuf = [];
     this.lastPeak = 0;
     this.calib = [];
+    this.zeroBuf = [];
+    this.zero = 0;
     this.range = [];
     this.baseline = null;
     this.lastThresholds = null;
@@ -347,7 +349,25 @@ export class RepDetector {
 
     this.buf.push(value);
     if (this.buf.length > this.smoothing) this.buf.shift();
-    const v = this.buf.reduce((a, b) => a + b, 0) / this.buf.length;
+    let v = this.buf.reduce((a, b) => a + b, 0) / this.buf.length;
+
+    // zero mode: nobody sits perfectly straight, and no camera is perfectly
+    // level. For a SIGNED postural metric (trunk lean, head tilt) the resting
+    // value is therefore not 0 but some personal offset — and if that offset
+    // is bigger than the engage threshold, the counter fires while the user is
+    // sitting still. So we subtract a rolling estimate of their own neutral
+    // posture and apply the thresholds to the CHANGE from it.
+    if (this.base.zero) {
+      this.zeroBuf.push(v);
+      if (this.zeroBuf.length > 240) this.zeroBuf.shift();     // ~8 s at 30 fps
+      // No waiting: the exercise starts with the user at rest, so the first
+      // samples are already a usable neutral. The percentile then refines it.
+      const srt = [...this.zeroBuf].sort((a, b) => a - b);
+      const q = this.base.dir > 0 ? 0.3 : 0.7;                 // rest is the quiet end
+      this.zero = srt[Math.floor(srt.length * q)];
+      v -= this.zero;
+      if (measured != null && !Number.isNaN(measured)) measured -= this.zero;
+    }
 
     // relative mode: learn this user's resting value, and keep learning it.
     // A one-shot calibration would (a) waste the first repetition and (b) go
@@ -623,6 +643,12 @@ export class LowResPipeline {
     this.frameW = w; this.frameH = h;
     // 640x480 and below is where landmark quality starts to suffer.
     this.lowRes = (w > 0 && Math.min(w, h) <= 480);
+  }
+
+  /** Map raw detector output back to full-frame coordinates (for drawing). */
+  toFrame(landmarks) {
+    if (!landmarks || !this.roi.active) return landmarks;
+    return landmarks.map(p => (p ? this.lastMap(p) : p));
   }
 
   /** Landmark jitter currently measured on this camera (0 = perfectly stable). */

@@ -100,13 +100,18 @@ const THRESH = {
   arm:       { engage: 0.28, release: 0.05, dir: +1, noiseGain: 5 },   // (shoulderY - wristY) / torso
   fingertap: { engage: 0.45, release: 0.75, dir: -1, noiseGain: 8 },   // thumb-index gap / palm (tapped = small)
   neckturn:  { engage: 0.18, release: 0.08, dir: +1, noiseGain: 4 },   // |nose - shoulder mid| / shoulder width
-  march:     { engage: 160,  release: 169,  dir: -1, noiseGain: 300 }, // min hip-flexion angle (degrees)
+  // Marching is FAST: the knee is only up for a handful of frames, so the
+  // counter must believe a crossing immediately (maxPersist 1) or it misses reps.
+  march:     { engage: 158,  release: 168,  dir: -1, noiseGain: 300, maxPersist: 1 }, // min hip-flexion angle (degrees)
   kneeext:   { engage: 150,  release: 115,  dir: +1, noiseGain: 300 }, // knee angle (straightened = large)
   elbow:     { engage: 75,   release: 150,  dir: -1, noiseGain: 300 }, // elbow angle (curled up = small)
 
   // ---- new in v20 -----------------------------------------------------
-  trunkbend: { engage: 0.14, release: 0.05, dir: +1, noiseGain: 4 },   // signed trunk lean / torso
-  necktilt:  { engage: 11,   release: 4,    dir: +1, noiseGain: 250 }, // ear-line vs shoulder-line, degrees
+  // zero: true => measured as a CHANGE from the user's own neutral posture.
+  // Nobody sits perfectly straight and no camera is level; without this the
+  // counter ticks over while the user is sitting still.
+  trunkbend: { engage: 0.19, release: 0.07, dir: +1, noiseGain: 4, zero: true },   // signed trunk lean / torso
+  necktilt:  { engage: 14,   release: 5,    dir: +1, noiseGain: 250, zero: true }, // ear-line vs shoulder-line, degrees
   // A frontal camera sees a chin tuck and a shrug as a SMALL change, so these
   // bands are narrow on purpose; the LRV pipeline widens them by exactly the
   // measured camera noise instead of us guessing a safety margin.
@@ -157,7 +162,7 @@ const LOC = {
       hand: "Hand Open / Close", arm: "Forward Arm Raise", armabduct: "Side Arm Raise",
       leg: "Side Leg Raise", mouth: "Mouth Open / Close", blink: "Eye Blink",
       sitstand: "Sit to Stand", fingertap: "Thumb-to-Index Tap", neckturn: "Head Turn",
-      necktilt: "Head Tilt to Shoulder", neckflex: "Chin Tuck", shrug: "Shoulder Shrug",
+      necktilt: "Head Tilt to Shoulder", neckflex: "Neck Flexion (chin to chest)", shrug: "Shoulder Shrug",
       march: "Marching in Place", kneeext: "Seated Knee Extension", elbow: "Elbow Curl",
       trunkbend: "Side Bend"
     },
@@ -177,7 +182,7 @@ const LOC = {
       fingertap: "Touch your thumb and index finger together, then open them wide.",
       neckturn: "Turn your head to the side, then back to the centre.",
       necktilt: "Tip your ear gently toward your shoulder, then come back upright.",
-      neckflex: "Draw your chin gently back and down, then release.",
+      neckflex: "Sit tall. Slowly lower your head forward and bring your chin toward your chest - only as far as is comfortable, never forced. Hold for a second, then lift your head back up.",
       shrug: "Lift both shoulders toward your ears, hold a moment, then let them drop.",
       march: "March in place — lift one knee, then the other.",
       kneeext: "While seated, straighten your knee out in front, then bend it back.",
@@ -213,7 +218,7 @@ const LOC = {
       hand: "El Açma–Kapama", arm: "Kolu Öne Kaldırma", armabduct: "Kolu Yana Kaldırma",
       leg: "Bacağı Yana Açma", mouth: "Ağız Açma–Kapama", blink: "Göz Kırpma",
       sitstand: "Otur–Kalk", fingertap: "Parmak Ucu Dokunuşu", neckturn: "Başı Yana Çevirme",
-      necktilt: "Başı Omza Yaklaştırma", neckflex: "Çeneyi İçeri Çekme", shrug: "Omuz Silkme",
+      necktilt: "Başı Omza Yaklaştırma", neckflex: "Başı Öne Eğme", shrug: "Omuz Silkme",
       march: "Yerinde Yürüyüş", kneeext: "Oturarak Diz Açma", elbow: "Dirsek Bükme",
       trunkbend: "Gövdeyi Yana Eğme"
     },
@@ -234,7 +239,7 @@ const LOC = {
       fingertap: "Baş parmağınla işaret parmağını birbirine değdir, sonra iyice aç.",
       neckturn: "Başını yana çevir, sonra ortaya getir.",
       necktilt: "Kulağını nazikçe omzuna yaklaştır, sonra dikleş.",
-      neckflex: "Çeneni hafifçe içeri ve aşağı çek, sonra bırak.",
+      neckflex: "Dik otur, omuzların gevşek olsun. Başını yavaşça öne eğ ve çeneni göğsüne yaklaştır — sadece rahat ettiğin kadar, asla zorlama. Bir saniye öyle kal, sonra başını yavaşça geri kaldır.",
       shrug: "İki omzunu kulaklarına doğru kaldır, bir an tut, sonra bırak.",
       march: "Yerinde yürü — bir dizini kaldır, sonra diğerini.",
       kneeext: "Otururken dizini öne doğru düzelt, sonra geri bük.",
@@ -1077,7 +1082,7 @@ function tick() {
       }
       const lm = pipeline.stabilize(raw, now);          // smooth rail (measuring)
       const fast = pipeline.fast || lm;                 // low-lag rail (counting)
-      if (lm) drawDots(lm, "#22d3ee");
+      if (raw || lm) drawDots(pipeline.toFrame(raw) || lm, "#22d3ee");
       if (lm && fast) {
         if (ex.kind === "fingertap") {
           const v = fingerTapRatio(fast), m = fingerTapRatio(lm);
@@ -1097,7 +1102,7 @@ function tick() {
       const fast = pipeline.fast || f;
       results.face = f;
       if (f && fast) {
-        drawDots(f.filter((_, i) => i % 6 === 0), "#f9a8d4", 1.5);
+        drawDots((pipeline.toFrame(raw) || f).filter((_, i) => i % 6 === 0), "#f9a8d4", 1.5);
         if (ex.kind === "mouth") {
           const m = mouthRatio(f);
           amp = m;
@@ -1115,7 +1120,7 @@ function tick() {
       const fast = pipeline.fast || p;
       results.pose = p;
       if (p && fast) {
-        drawDots(p, "#86efac");
+        drawDots(pipeline.toFrame(r?.landmarks?.[0]) || p, "#86efac");
         const side = ex.side;
         // value = fast rail (decides the rep), measured = smooth rail (sizes it)
         const both = fn => [fn(fast, side), fn(p, side)];

@@ -1,7 +1,7 @@
 {% extends "base.html" %}
 {% block title %}Live session — ViMove AI{% endblock %}
 {% block body_attrs %} class="session-page"{% endblock %}
-{% block head %}<link rel="stylesheet" href="/static/exercise-demo.css?v=3" />{% endblock %}
+{% block head %}<link rel="stylesheet" href="/static/exercise-demo.css?v=4" />{% endblock %}
 
 {% block content %}
 <section class="session">
@@ -184,5 +184,5 @@
 
 {% block scripts %}
 {% if program %}<script type="application/json" id="program-data">{{ program | tojson }}</script>{% endif %}
-<script type="module" src="/static/game/game.js?v=20"></script>
+<script type="module" src="/static/game/game.js?v=21"></script>
 {% endblock %}

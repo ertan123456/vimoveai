@@ -86,7 +86,8 @@
    ------------------------------------------------------------------- */
 *, *::before, *::after { box-sizing: border-box; }
 
-html { scroll-behavior: smooth; -webkit-text-size-adjust: 100%; }
+html {
+  overflow-x: clip; scroll-behavior: smooth; -webkit-text-size-adjust: 100%; }
 
 body {
   margin: 0;
@@ -312,6 +313,13 @@ p  { margin: 0 0 1rem; }
 .nav-links a[aria-current="page"] { color: var(--brand-700); background: var(--brand-50); }
 
 .nav-cta { display: flex; align-items: center; gap: 12px; }
+@media (max-width: 1400px) {
+  .nav-links a { padding: 8px 10px; font-size: .95rem; }
+  .nav { gap: 10px; }
+  .nav-cta { gap: 8px; }
+}
+
+
 .lang-toggle {
   display: inline-flex; align-items: center; justify-content: center;
   min-width: 46px; height: 46px; padding: 0 12px;
@@ -395,7 +403,11 @@ p  { margin: 0 0 1rem; }
 }
 .nav-toggle svg { width: 24px; height: 24px; }
 
-@media (max-width: 900px) {
+/* The desktop nav (brand + 6 links + account chip + language + CTA) needs about
+   1150 px of content, and more once a signed-in user's name is in the chip.
+   Below 1240 px we switch to the hamburger instead of letting the header push
+   the whole page sideways. */
+@media (max-width: 1240px) {
   .nav-toggle { display: inline-flex; }
   .nav-links {
     position: absolute;

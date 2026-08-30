@@ -41,7 +41,7 @@ async function vimovePanel(sb, sess) {
     { kind: "neckturn", side: null, ad: t("Head Turn", "Başı Yana Çevirme"), hedef: 10 },
     { kind: "necktilt", side: "right", ad: t("Head Tilt Right", "Başı Sağ Omza Yaklaştırma"), hedef: 8 },
     { kind: "necktilt", side: "left", ad: t("Head Tilt Left", "Başı Sol Omza Yaklaştırma"), hedef: 8 },
-    { kind: "neckflex", side: null, ad: t("Chin Tuck", "Çeneyi İçeri Çekme"), hedef: 10 },
+    { kind: "neckflex", side: null, ad: t("Neck Flexion (chin to chest)", "Başı Öne Eğme"), hedef: 10 },
     // trunk
     { kind: "trunkbend", side: "right", ad: t("Side Bend Right", "Gövdeyi Sağa Eğme"), hedef: 8 },
     { kind: "trunkbend", side: "left", ad: t("Side Bend Left", "Gövdeyi Sola Eğme"), hedef: 8 },

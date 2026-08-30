@@ -161,7 +161,7 @@
 
 /* CHIN TUCK: the head draws straight back and slightly down */
 .demo-card[data-demo-kind="neckflex"] .df-neck { animation: dTuck 2.6s var(--ease-in-out) infinite; }
-@keyframes dTuck { 0%,100% { transform: translateY(0) scale(1); } 50% { transform: translateY(7px) scale(.96); } }
+@keyframes dTuck { 0%,100% { transform: translateY(0) rotate(0deg); } 50% { transform: translateY(11px) rotate(8deg); } }
 
 /* SHOULDER SHRUG: shoulders (and the arms hanging from them) lift */
 .demo-card[data-demo-kind="shrug"] .df-torso { animation: dShrug 2.4s var(--ease-in-out) infinite; }
