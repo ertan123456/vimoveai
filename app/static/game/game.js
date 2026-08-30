@@ -21,7 +21,10 @@ import {
   FaceLandmarker,
   PoseLandmarker
 } from "https://cdn.jsdelivr.net/npm/@mediapipe/tasks-vision@0.10.8";
-import { LowResPipeline, RepDetector } from "./lowres.js";
+// NOTE: the ?v= is not decoration. Without it the browser keeps a cached
+// lowres.js while game.js is refreshed by its own ?v=, the two versions
+// disagree, and every frame throws. BUMP THIS whenever lowres.js changes.
+import { LowResPipeline, RepDetector } from "./lowres.js?v=3";
 
 // ---------------- DOM ----------------
 const video = document.getElementById("video");
@@ -121,19 +124,31 @@ const THRESH = {
 };
 
 // Build the active plan from the server-generated program (falls back to default).
+let planSource = "server";     // "server" | "prescription" | "fallback"
+let planProblem = "";
+
 function loadPlan() {
+  const el = document.getElementById("program-data");
+  if (!el || !el.textContent.trim()) {
+    planSource = "fallback";
+    planProblem = "program verisi sayfada yok";
+    return DEFAULT_PLAN;
+  }
   try {
-    const el = document.getElementById("program-data");
-    if (el && el.textContent.trim()) {
-      const prog = JSON.parse(el.textContent);
-      if (prog && Array.isArray(prog.exercises) && prog.exercises.length) {
-        return prog.exercises.map(e => ({
-          ad: e.ad, hedef: e.hedef, kind: e.kind,
-          side: (e.side === undefined ? null : e.side), rationale: e.rationale || ""
-        }));
-      }
+    const prog = JSON.parse(el.textContent);
+    if (prog && Array.isArray(prog.exercises) && prog.exercises.length) {
+      return prog.exercises.map(e => ({
+        ad: e.ad, hedef: e.hedef, kind: e.kind,
+        side: (e.side === undefined ? null : e.side), rationale: e.rationale || ""
+      }));
     }
-  } catch (err) { console.warn("Program data parse failed; using default plan.", err); }
+    planSource = "fallback";
+    planProblem = "program bos geldi";
+  } catch (err) {
+    planSource = "fallback";
+    planProblem = "program okunamadi: " + (err && err.message ? err.message : err);
+    console.warn("Program data parse failed; using default plan.", err);
+  }
   return DEFAULT_PLAN;
 }
 let PLAN = loadPlan();
@@ -317,6 +332,7 @@ let lastTime = performance.now(), frameCount = 0;
 // rep state machine
 let phase = "rest";                 // "rest" | "engaged"
 let lastRepAt = 0;
+let lastLandmarkAt = 0;      // when the model last returned anything
 
 // The LRV pipeline: better pixels in, cleaner landmarks out. See lowres.js.
 const pipeline = new LowResPipeline();
@@ -522,7 +538,7 @@ function detectorFor(kind) {
  */
 function decidePhase(kind, value, measured = null) {
   const det = detectorFor(kind);
-  const out = det.update(value, performance.now(), pipeline.jitter, measured);
+  const out = det.update(value, performance.now(), lrvJitter(), measured);
   if (out === null) return null;
   if (out === "calibrating") return "calibrating";
   phase = det.phase;
@@ -985,15 +1001,26 @@ function updateCameraBadge(now) {
   const st = pipeline.status();
   const tr = LANG() === "tr";
   const res = (video.videoWidth && video.videoHeight) ? `${video.videoWidth}x${video.videoHeight}` : "—";
+  const noBody = running && lastLandmarkAt && (now - lastLandmarkAt > 1500);
   let text, cls;
-  if (st.quality < 0.45) {
+
+  if (planSource === "fallback") {
+    cls = "warn";
+    text = tr ? "Program yüklenemedi — yedek liste kullanılıyor" : "Program failed to load — using the fallback list";
+  } else if (noBody) {
+    cls = "warn";
+    text = tr ? "Vücudun görünmüyor — kadraja gir, ışığı artır" : "You are not visible — step into frame, add light";
+  } else if (!lrvOk) {
+    cls = "warn";
+    text = tr ? "Kamera iyileştirmesi kapalı · " + res : "Camera enhancement off · " + res;
+  } else if (st.quality < 0.45) {
     cls = "warn";
     text = tr ? "Ortam karanlık — ışığı artır" : "Too dark — add more light";
   } else if (st.lowRes || st.magnification > 1.2) {
     cls = "ok";
     text = tr
-      ? `Düşük çözünürlük telafisi açık · ${res} · ${st.magnification.toFixed(1)}x yakınlaştırma`
-      : `Low-resolution boost on · ${res} · ${st.magnification.toFixed(1)}x zoom`;
+      ? `Düşük çözünürlük telafisi açık · ${res} · ${st.magnification.toFixed(1)}x`
+      : `Low-resolution boost on · ${res} · ${st.magnification.toFixed(1)}x`;
   } else {
     cls = "ok";
     text = tr ? `Kamera iyi · ${res}` : `Camera good · ${res}`;
@@ -1001,27 +1028,49 @@ function updateCameraBadge(now) {
   el.className = "cam-chip " + cls;
   el.textContent = text;
   el.hidden = false;
+
+  // one compact technical line, only when something is actually wrong
+  if (diagEl && (planSource === "fallback" || !lrvOk || noBody)) {
+    const bits = [];
+    if (planSource === "fallback") bits.push("plan: yedek (" + planProblem + ")");
+    if (!lrvOk) bits.push("LRV: kapali (" + lrvError + ")");
+    if (noBody) bits.push("model " + Math.round((now - lastLandmarkAt) / 1000) + " sn'dir nokta dondurmuyor");
+    diagEl.textContent = bits.join(" · ");
+  }
 }
 
 // ---------------- MediaPipe init ----------------
-async function initModels(kindsNeeded) {
+async function initModels() {
   const vision = await FilesetResolver.forVisionTasks(
     "https://cdn.jsdelivr.net/npm/@mediapipe/tasks-vision@0.10.8/wasm"
   );
   const base = path => ({ baseOptions: { modelAssetPath: path }, runningMode: "VIDEO" });
 
-  handLandmarker = await HandLandmarker.createFromOptions(vision, {
+  // One retry per model: a single failed download used to leave a landmarker
+  // undefined, and every frame of that exercise then threw silently.
+  const withRetry = async (name, make) => {
+    try { return await make(); }
+    catch (e) {
+      console.warn("model retry:", name, e);
+      return await make();
+    }
+  };
+
+  handLandmarker = await withRetry("hand", () => HandLandmarker.createFromOptions(vision, {
     ...base("https://storage.googleapis.com/mediapipe-models/hand_landmarker/hand_landmarker/float16/latest/hand_landmarker.task"),
     numHands: 2, minHandDetectionConfidence: 0.6, minTrackingConfidence: 0.6
-  });
-  faceLandmarker = await FaceLandmarker.createFromOptions(vision, {
+  }));
+  faceLandmarker = await withRetry("face", () => FaceLandmarker.createFromOptions(vision, {
     ...base("https://storage.googleapis.com/mediapipe-models/face_landmarker/face_landmarker/float16/latest/face_landmarker.task"),
     numFaces: 1, outputFaceBlendshapes: false
-  });
-  poseLandmarker = await PoseLandmarker.createFromOptions(vision, {
+  }));
+  poseLandmarker = await withRetry("pose", () => PoseLandmarker.createFromOptions(vision, {
     ...base("https://storage.googleapis.com/mediapipe-models/pose_landmarker/pose_landmarker_full/float16/latest/pose_landmarker_full.task"),
     numPoses: 1, minPoseDetectionConfidence: 0.6, minTrackingConfidence: 0.6
-  });
+  }));
+  if (!handLandmarker || !faceLandmarker || !poseLandmarker) {
+    throw new Error("AI modelleri yuklenemedi");
+  }
 }
 
 // ---------------- Camera ----------------
@@ -1049,6 +1098,34 @@ async function startCam() {
   try { await video.play(); } catch {}
 }
 
+// ---------------- Pipeline safety ----------------
+// The LRV pipeline is an ENHANCEMENT. If anything in it ever throws on a
+// particular device or browser, the exercise itself must keep working: we
+// disable the pipeline for the rest of the session, fall back to the raw
+// landmarks, and say so on screen instead of silently freezing.
+let lrvOk = true;
+let lrvError = "";
+function lrvFail(where, e) {
+  lrvOk = false;
+  pipeline.enabled = false;
+  lrvError = where + ": " + (e && e.message ? e.message : e);
+  if (diagEl) diagEl.textContent = "LRV devre disi (" + lrvError + ") — egzersiz ham veriyle devam ediyor.";
+  console.warn("LRV disabled -", lrvError);
+}
+function lrvPrepare(v) {
+  if (!lrvOk) return v;
+  try { return pipeline.prepare(v); } catch (e) { lrvFail("prepare", e); return v; }
+}
+function lrvStabilize(lms, t) {
+  if (!lrvOk) return lms;
+  try { return pipeline.stabilize(lms, t); } catch (e) { lrvFail("stabilize", e); return lms; }
+}
+function lrvToFrame(lms) {
+  if (!lrvOk) return lms;
+  try { return pipeline.toFrame(lms); } catch (e) { lrvFail("toFrame", e); return lms; }
+}
+function lrvJitter() { return lrvOk ? pipeline.jitter : 0; }
+
 // ---------------- Main loop ----------------
 function tick() {
   if (!running) return;
@@ -1068,7 +1145,7 @@ function tick() {
   // The LRV pipeline decides what the model actually looks at this frame:
   // the raw video, or a cropped-and-upscaled window around the body part in
   // use (which is what rescues a low-resolution camera).
-  const input = pipeline.prepare(video);
+  const input = lrvPrepare(video);
 
   try {
     if (ex.kind === "hand" || ex.kind === "fingertap") {
@@ -1080,9 +1157,10 @@ function tick() {
           if (userSide(r.handedness[i]?.[0]?.categoryName || "") === ex.side) raw = r.landmarks[i];
         }
       }
-      const lm = pipeline.stabilize(raw, now);          // smooth rail (measuring)
+      if (raw) lastLandmarkAt = now;
+      const lm = lrvStabilize(raw, now);          // smooth rail (measuring)
       const fast = pipeline.fast || lm;                 // low-lag rail (counting)
-      if (raw || lm) drawDots(pipeline.toFrame(raw) || lm, "#22d3ee");
+      if (raw || lm) drawDots(lrvToFrame(raw) || lm, "#22d3ee");
       if (lm && fast) {
         if (ex.kind === "fingertap") {
           const v = fingerTapRatio(fast), m = fingerTapRatio(lm);
@@ -1098,11 +1176,12 @@ function tick() {
     else if (ex.kind === "mouth" || ex.kind === "blink") {
       const r = faceLandmarker.detectForVideo(input, now);
       const raw = r?.faceLandmarks?.[0] || null;
-      const f = pipeline.stabilize(raw, now);
+      if (raw) lastLandmarkAt = now;
+      const f = lrvStabilize(raw, now);
       const fast = pipeline.fast || f;
       results.face = f;
       if (f && fast) {
-        drawDots((pipeline.toFrame(raw) || f).filter((_, i) => i % 6 === 0), "#f9a8d4", 1.5);
+        drawDots((lrvToFrame(raw) || f).filter((_, i) => i % 6 === 0), "#f9a8d4", 1.5);
         if (ex.kind === "mouth") {
           const m = mouthRatio(f);
           amp = m;
@@ -1116,11 +1195,12 @@ function tick() {
     }
     else { // every pose-based movement
       const r = poseLandmarker.detectForVideo(input, now);
-      const p = pipeline.stabilize(r?.landmarks?.[0] || null, now);
+      if (r?.landmarks?.[0]) lastLandmarkAt = now;
+      const p = lrvStabilize(r?.landmarks?.[0] || null, now);
       const fast = pipeline.fast || p;
       results.pose = p;
       if (p && fast) {
-        drawDots(pipeline.toFrame(r?.landmarks?.[0]) || p, "#86efac");
+        drawDots(lrvToFrame(r?.landmarks?.[0]) || p, "#86efac");
         const side = ex.side;
         // value = fast rail (decides the rep), measured = smooth rail (sizes it)
         const both = fn => [fn(fast, side), fn(p, side)];
@@ -1180,11 +1260,15 @@ function tick() {
     }
   }
 
-  if (outcome === "rep") countRep(now);
-  renderLive(ex, results);
-  updateCameraBadge(now);
+  try {
+    if (outcome === "rep") countRep(now);
+    renderLive(ex, results);
+    updateCameraBadge(now);
+  } catch (err) {
+    console.warn("frame render error", err);
+  }
 
-  requestAnimationFrame(tick);
+  requestAnimationFrame(tick);   // the loop always survives the frame
 }
 
 // ---------------- Events ----------------

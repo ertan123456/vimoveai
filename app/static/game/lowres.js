@@ -495,13 +495,22 @@ export class AdaptiveROI {
     this.active = false;
   }
 
-  _ensureCanvas() {
-    if (this.canvas) return true;
+  _ensureCanvas(w, h) {
     if (typeof document === "undefined") return false;
-    this.canvas = document.createElement("canvas");
-    this.canvas.width = this.canvas.height = this.target;
-    this.ctx = this.canvas.getContext("2d", { willReadFrequently: false });
-    if (this.ctx) { this.ctx.imageSmoothingEnabled = true; this.ctx.imageSmoothingQuality = "high"; }
+    if (!this.canvas) {
+      this.canvas = document.createElement("canvas");
+      this.ctx = this.canvas.getContext("2d", { willReadFrequently: false });
+      if (this.ctx) { this.ctx.imageSmoothingEnabled = true; this.ctx.imageSmoothingQuality = "high"; }
+    }
+    // IMPORTANT: the canvas keeps the camera's own size and never changes.
+    // MediaPipe Tasks runs a VIDEO-mode graph: handing it a <video> on one
+    // frame and a differently sized <canvas> on the next stalls that graph
+    // (detection silently stops). So we always hand it the SAME canvas, at the
+    // same size, and only change what we draw into it.
+    if (this.canvas.width !== w || this.canvas.height !== h) {
+      this.canvas.width = w; this.canvas.height = h;
+      if (this.ctx) { this.ctx.imageSmoothingEnabled = true; this.ctx.imageSmoothingQuality = "high"; }
+    }
     return !!this.ctx;
   }
 
@@ -538,21 +547,32 @@ export class AdaptiveROI {
    */
   frame(video, frameW, frameH) {
     const identity = { source: video, map: p => p, scale: 1 };
-    if (!this.box || !this._ensureCanvas()) { this.active = false; return identity; }
+    if (!this._ensureCanvas(frameW, frameH)) { this.active = false; return identity; }
+
+    // No box yet, or cropping would not buy us anything: copy the frame 1:1.
+    // (Still through the canvas, so the detector's input never changes type.)
+    const passthrough = () => {
+      this.ctx.drawImage(video, 0, 0, frameW, frameH);
+      this.active = false; this.scale = 1;
+      return { source: this.canvas, map: p => p, scale: 1 };
+    };
+    if (!this.box) return passthrough();
 
     // square crop around the body box, with margin, clamped to the frame
     const cx = (this.box.x + this.box.w / 2) * frameW;
     const cy = (this.box.y + this.box.h / 2) * frameH;
     const side = Math.max(this.box.w * frameW, this.box.h * frameH) * (1 + 2 * this.margin);
     const s = Math.min(side, Math.min(frameW, frameH));
+    if (!(s > 8)) return passthrough();
     let x = cx - s / 2, y = cy - s / 2;
     x = Math.max(0, Math.min(frameW - s, x));
     y = Math.max(0, Math.min(frameH - s, y));
 
-    const upscale = this.target / s;
-    if (!(upscale >= this.minUpscale)) { this.active = false; return identity; }
+    // Magnification we would gain by stretching that crop over the full canvas.
+    const upscale = Math.min(frameW, frameH) / s;
+    if (!(upscale >= this.minUpscale)) return passthrough();
 
-    this.ctx.drawImage(video, x, y, s, s, 0, 0, this.target, this.target);
+    this.ctx.drawImage(video, x, y, s, s, 0, 0, frameW, frameH);
     this.rect = { x, y, s };
     this.scale = upscale;
     this.active = true;
@@ -654,14 +674,15 @@ export class LowResPipeline {
   /** Landmark jitter currently measured on this camera (0 = perfectly stable). */
   get jitter() { return this.stab.jitter; }
 
-  /** Called at the top of every frame: returns what to hand the detector. */
+  /** Called at the top of every frame: returns what to hand the detector.
+   *  Always the SAME object for the whole session — see AdaptiveROI._ensureCanvas. */
   prepare(video) {
     if (!this.enabled || !this.frameW) { this.lastMap = p => p; return video; }
     this.lastQuality = this.quality.measure(video);
-    // Safety valve: if cropping ever costs us the subject, fall back to the
-    // full frame for a while rather than stalling the exercise.
-    if (this.roiCooldown > 0) { this.roiCooldown--; this.roi.active = false; this.lastMap = p => p; return video; }
-    if (!this.roiEnabled) { this.lastMap = p => p; return video; }
+    // Safety valve: if cropping ever costs us the subject, stop cropping for a
+    // while. We still go through the same canvas, we just copy the frame 1:1.
+    if (this.roiCooldown > 0) { this.roiCooldown--; this.roi.box = null; }
+    if (!this.roiEnabled) this.roi.box = null;
     const f = this.roi.frame(video, this.frameW, this.frameH);
     this.lastMap = f.map;
     return f.source;
