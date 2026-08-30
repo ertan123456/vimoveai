@@ -1,0 +1,172 @@
+{% extends "panel_base.html" %}
+{% block title %}Uzman Paneli — ViMove AI{% endblock %}
+{% block roleName %}<span data-en="Specialist" data-tr="Uzman">Uzman</span>{% endblock %}
+{% block topTitle %}<span data-en="Specialist panel" data-tr="Uzman paneli">Uzman paneli</span>{% endblock %}
+
+{% block sidebar %}
+<a href="/uzman" class="is-active"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="9"/><rect x="14" y="3" width="7" height="5"/><rect x="14" y="12" width="7" height="9"/><rect x="3" y="16" width="7" height="5"/></svg><span data-en="Overview" data-tr="Genel bakış">Genel bakış</span></a>
+<a href="/uzman#aktivite"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg><span data-en="Activity" data-tr="Aktivite">Aktivite</span></a>
+<a href="/uzman#hastalar"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75"/></svg><span data-en="My patients" data-tr="Hastalarım">Hastalarım</span></a>
+<a href="/uzman#mesajlar"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg><span data-en="Messages" data-tr="Mesajlar">Mesajlar</span></a>
+<a href="/uzman#davet"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 11h-6M19 8v6"/></svg><span data-en="Invite" data-tr="Hasta davet">Hasta davet</span></a>
+{% endblock %}
+
+{% block panel %}
+<div class="panel-cards">
+  <div class="panel-stat brand"><div class="n" id="statPatients">0</div><div class="l" data-en="Patients" data-tr="Hasta">Hasta</div></div>
+  <div class="panel-stat"><div class="n" id="statActive">0</div><div class="l" data-en="Active prescriptions" data-tr="Aktif reçete">Aktif reçete</div></div>
+  <div class="panel-stat"><div class="n" id="statSessions">0</div><div class="l" data-en="Sessions (7d)" data-tr="Seans (7g)">Seans (7g)</div></div>
+  <div class="panel-stat"><div class="n" id="statUnread">0</div><div class="l" data-en="Unread" data-tr="Okunmamış">Okunmamış</div></div>
+</div>
+
+<div class="panel-card" id="aktivite" style="margin-top:26px">
+  <div class="panel-card-head"><h3 data-en="Recent activity" data-tr="Son aktivite">Son aktivite</h3></div>
+  <div id="activityFeed">
+    <div class="panel-empty" id="activityEmpty">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg>
+      <p data-en="When your patients complete sessions, they'll appear here with their results and an AI note."
+         data-tr="Hastaların seans tamamladıkça, sonuçları ve yapay zeka notuyla burada görünecek.">Hastaların seans tamamladıkça, sonuçları ve yapay zeka notuyla burada görünecek.</p>
+    </div>
+  </div>
+</div>
+
+<div class="panel-card" id="hastalar" style="margin-top:22px">
+  <div class="panel-card-head"><h3 data-en="My patients" data-tr="Hastalarım">Hastalarım</h3>
+    <button class="btn btn--primary" id="newPatientBtn" style="min-height:40px;padding:9px 16px">
+      <svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14M5 12h14"/></svg>
+      <span data-en="Create patient" data-tr="Yeni hasta">Yeni hasta</span>
+    </button>
+  </div>
+  <table class="ptable">
+    <thead><tr>
+      <th data-en="Name" data-tr="İsim">İsim</th>
+      <th data-en="Active prescription" data-tr="Aktif reçete">Aktif reçete</th>
+      <th></th>
+    </tr></thead>
+    <tbody id="patientRows"><tr><td colspan="3" class="muted" style="padding:22px 12px" data-en="Loading…" data-tr="Yükleniyor…">Yükleniyor…</td></tr></tbody>
+  </table>
+</div>
+
+<div class="panel-card" id="mesajlar" style="margin-top:22px">
+  <div class="panel-card-head"><h3 data-en="Messages &amp; notifications" data-tr="Mesajlar &amp; bildirimler">Mesajlar &amp; bildirimler</h3></div>
+  <div id="inbox">
+    <div class="panel-empty" id="inboxEmpty">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+      <p data-en="Messages from your patients and session notifications will appear here."
+         data-tr="Hastalarından gelen mesajlar ve seans bildirimleri burada görünecek.">Hastalarından gelen mesajlar ve seans bildirimleri burada görünecek.</p>
+    </div>
+  </div>
+</div>
+
+<div class="panel-card" id="davet" style="margin-top:22px">
+  <div class="panel-card-head"><h3 data-en="Invite a patient" data-tr="Hasta davet et">Hasta davet et</h3></div>
+  <p class="muted" style="margin:0 0 12px" data-en="Share this code. Your patient enters it under “Connect to specialist” on their panel to link to you."
+     data-tr="Bu kodu paylaş. Hastan kendi panelinde “Uzmanına bağlan” alanına girince sana bağlanır.">Bu kodu paylaş. Hastan kendi panelinde “Uzmanına bağlan” alanına girince sana bağlanır.</p>
+  <div class="invite-row">
+    <code id="inviteCode" class="invite-code">—</code>
+    <button class="btn btn--secondary" id="copyInvite" data-en="Copy" data-tr="Kopyala">Kopyala</button>
+  </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<!-- Prescription modal -->
+<div class="pmodal" id="prescModal" hidden>
+  <div class="pmodal-box">
+    <div class="pmodal-head">
+      <h3 id="prescFor" data-en="New prescription" data-tr="Reçete oluştur">Reçete oluştur</h3>
+      <button class="pmodal-x" data-close aria-label="Kapat">&times;</button>
+    </div>
+    <label class="pmodal-label" data-en="Title" data-tr="Reçete başlığı">Reçete başlığı</label>
+    <input class="pmodal-input" id="prescTitle" placeholder="Örn. Haftalık program" />
+    <label class="pmodal-label" data-en="Exercises &amp; targets" data-tr="Egzersizler ve hedefler">Egzersizler ve hedefler</label>
+    <div class="presc-list" id="prescList"></div>
+    <label class="pmodal-label" data-en="Note (optional)" data-tr="Not (opsiyonel)">Not (opsiyonel)</label>
+    <textarea class="pmodal-input" id="prescNote" rows="2" placeholder="Hastaya not…"></textarea>
+    <div class="pmodal-foot">
+      <button class="btn btn--secondary" data-close data-en="Cancel" data-tr="Vazgeç">Vazgeç</button>
+      <button class="btn btn--primary" id="prescSave" data-en="Give prescription" data-tr="Reçeteyi ver">Reçeteyi ver</button>
+    </div>
+  </div>
+</div>
+
+<!-- Patient detail modal -->
+<div class="pmodal" id="detailModal" hidden>
+  <div class="pmodal-box wide">
+    <div class="pmodal-head">
+      <h3 id="detailName">—</h3>
+      <button class="pmodal-x" data-close aria-label="Kapat">&times;</button>
+    </div>
+    <div class="detail-sec">
+      <h4 data-en="Active prescription" data-tr="Aktif reçete">Aktif reçete</h4>
+      <div id="detailPresc"></div>
+      <button class="btn btn--primary" id="detailPrescribe" style="margin-top:10px;min-height:40px;padding:9px 16px" data-en="New prescription" data-tr="Reçete ver">Reçete ver</button>
+    </div>
+    <div class="detail-sec">
+      <h4 data-en="Recent sessions" data-tr="Son seanslar">Son seanslar</h4>
+      <div id="detailSessions"></div>
+    </div>
+    <div class="detail-sec">
+      <h4 data-en="Messages" data-tr="Mesajlaşma">Mesajlaşma</h4>
+      <div class="thread" id="detailThread"></div>
+      <form class="msg-form" id="detailMsgForm">
+        <input id="detailMsgInput" placeholder="Mesaj yaz…" autocomplete="off" />
+        <button class="btn btn--primary" type="submit" data-en="Send" data-tr="Gönder">Gönder</button>
+      </form>
+    </div>
+  </div>
+</div>
+
+<!-- Video player modal -->
+<div class="pmodal" id="videoModal" hidden>
+  <div class="pmodal-box">
+    <div class="pmodal-head">
+      <h3 data-en="Exercise video" data-tr="Egzersiz videosu">Egzersiz videosu</h3>
+      <button class="pmodal-x" data-close aria-label="Kapat">&times;</button>
+    </div>
+    <video id="videoPlayer" controls playsinline preload="metadata" style="width:100%;border-radius:12px;background:#000;max-height:70vh"></video>
+  </div>
+</div>
+
+<!-- Create-patient modal -->
+<div class="pmodal" id="newPatientModal" hidden>
+  <div class="pmodal-box">
+    <div class="pmodal-head">
+      <h3 data-en="Create a patient" data-tr="Yeni hasta oluştur">Yeni hasta oluştur</h3>
+      <button class="pmodal-x" data-close aria-label="Kapat">&times;</button>
+    </div>
+    <p class="muted" style="margin:0 0 4px" data-en="For a patient with no email. Give them the username &amp; password — they just sign in."
+       data-tr="E-postası olmayan hasta için. Kullanıcı adı ve şifreyi ona ver — sadece giriş yapar.">E-postası olmayan hasta için. Kullanıcı adı ve şifreyi ona ver — sadece giriş yapar.</p>
+    <label class="pmodal-label" data-en="Full name" data-tr="Ad soyad">Ad soyad</label>
+    <input class="pmodal-input" id="npName" placeholder="Ahmet Yılmaz" />
+    <label class="pmodal-label" data-en="Username" data-tr="Kullanıcı adı">Kullanıcı adı</label>
+    <input class="pmodal-input" id="npUser" autocapitalize="none" spellcheck="false" placeholder="ahmet2026" />
+    <label class="pmodal-label" data-en="Password" data-tr="Şifre">Şifre</label>
+    <div style="display:flex;gap:8px">
+      <input class="pmodal-input" id="npPass" />
+      <button class="btn btn--secondary" id="npGen" type="button" style="min-height:44px;white-space:nowrap" data-en="Generate" data-tr="Üret">Üret</button>
+    </div>
+    <div id="npResult" class="ainote" hidden style="margin-top:14px"></div>
+    <div class="pmodal-foot">
+      <button class="btn btn--secondary" data-close data-en="Close" data-tr="Kapat">Kapat</button>
+      <button class="btn btn--primary" id="npCreate" data-en="Create" data-tr="Oluştur">Oluştur</button>
+    </div>
+  </div>
+</div>
+
+<!-- Floating messages bubble -->
+<button class="chat-fab" id="chatFab">
+  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+  <span data-en="Messages" data-tr="Mesajlar">Mesajlar</span>
+  <span class="chat-badge" id="chatBadge" hidden>0</span>
+</button>
+<div class="chat-pop" id="chatPop" hidden>
+  <div class="chat-pop-head">
+    <div><h4 data-en="Messages" data-tr="Mesajlar">Mesajlar</h4><span class="cp-sub" data-en="Tap a patient to open" data-tr="Açmak için bir hastaya dokun">Açmak için bir hastaya dokun</span></div>
+    <button class="chat-x" id="chatClose" aria-label="Kapat">&times;</button>
+  </div>
+  <div class="inbox-wrap" id="chatInbox"><div class="thread-empty" data-en="No messages yet." data-tr="Henüz mesaj yok.">Henüz mesaj yok.</div></div>
+</div>
+
+<script src="/static/panel-uzman.js?v=8"></script>
+{% endblock %}

@@ -1,0 +1,79 @@
+{
+  "generated": "2026-08-30T12:07:53.521Z",
+  "seeds": 60,
+  "trueReps": 20,
+  "rows": [
+    {
+      "case": "1280x720 · yakin",
+      "height": 720,
+      "subjectScale": 1,
+      "trueReps": 20,
+      "baselineMeanCount": 20,
+      "lrvMeanCount": 20,
+      "baselineAccuracy": 100,
+      "lrvAccuracy": 100,
+      "baselineAmpErrorPct": 0.9,
+      "lrvAmpErrorPct": 1.1
+    },
+    {
+      "case": "640x480 · yakin",
+      "height": 480,
+      "subjectScale": 1,
+      "trueReps": 20,
+      "baselineMeanCount": 20,
+      "lrvMeanCount": 20,
+      "baselineAccuracy": 100,
+      "lrvAccuracy": 100,
+      "baselineAmpErrorPct": 1.4,
+      "lrvAmpErrorPct": 1.6
+    },
+    {
+      "case": "640x480 · uzak",
+      "height": 480,
+      "subjectScale": 0.45,
+      "trueReps": 20,
+      "baselineMeanCount": 20,
+      "lrvMeanCount": 19.98,
+      "baselineAccuracy": 100,
+      "lrvAccuracy": 99.9,
+      "baselineAmpErrorPct": 3.3,
+      "lrvAmpErrorPct": 3.2
+    },
+    {
+      "case": "320x240 · yakin",
+      "height": 240,
+      "subjectScale": 1,
+      "trueReps": 20,
+      "baselineMeanCount": 20,
+      "lrvMeanCount": 20,
+      "baselineAccuracy": 100,
+      "lrvAccuracy": 100,
+      "baselineAmpErrorPct": 3.3,
+      "lrvAmpErrorPct": 3
+    },
+    {
+      "case": "320x240 · uzak",
+      "height": 240,
+      "subjectScale": 0.45,
+      "trueReps": 20,
+      "baselineMeanCount": 19.8,
+      "lrvMeanCount": 19.82,
+      "baselineAccuracy": 99,
+      "lrvAccuracy": 99.1,
+      "baselineAmpErrorPct": 8.8,
+      "lrvAmpErrorPct": 6.9
+    },
+    {
+      "case": "160x120 · uzak",
+      "height": 120,
+      "subjectScale": 0.45,
+      "trueReps": 20,
+      "baselineMeanCount": 20.35,
+      "lrvMeanCount": 19.47,
+      "baselineAccuracy": 95.8,
+      "lrvAccuracy": 96,
+      "baselineAmpErrorPct": 28.1,
+      "lrvAmpErrorPct": 14.9
+    }
+  ]
+}

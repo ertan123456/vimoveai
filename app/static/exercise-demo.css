@@ -1,0 +1,182 @@
+/* ViMove — animated demo character on the exercise screen.
+   One figure per exercise family, driven by [data-demo-kind] / [data-demo-side]. */
+.demo-card { text-align: center; }
+.demo-stage {
+  position: relative; width: 100%; max-width: 260px; margin: 2px auto 0;
+  aspect-ratio: 200 / 264;
+  background: radial-gradient(120% 120% at 50% 20%, var(--brand-50), #fff 70%);
+  border: 1px solid var(--ink-100); border-radius: 14px; overflow: hidden;
+}
+.demo-fig { position: absolute; inset: 0; width: 100%; height: 100%; display: none; }
+.demo-cap { text-align: center; margin: 8px 0 0; font-size: .9rem; color: var(--ink-500); min-height: 1.1em; }
+
+/* which figure shows for which family */
+.demo-card[data-demo-kind="arm"] .demo-skeleton,
+.demo-card[data-demo-kind="leg"] .demo-skeleton,
+.demo-card[data-demo-kind="march"] .demo-skeleton,
+.demo-card[data-demo-kind="kneeext"] .demo-skeleton,
+.demo-card[data-demo-kind="elbow"] .demo-skeleton,
+.demo-card[data-demo-kind="neckturn"] .demo-skeleton,
+.demo-card[data-demo-kind="sitstand"] .demo-skeleton,
+.demo-card[data-demo-kind="armabduct"] .demo-skeleton,
+.demo-card[data-demo-kind="trunkbend"] .demo-skeleton,
+.demo-card[data-demo-kind="necktilt"] .demo-skeleton,
+.demo-card[data-demo-kind="neckflex"] .demo-skeleton,
+.demo-card[data-demo-kind="shrug"] .demo-skeleton { display: block; }
+.demo-card[data-demo-kind="hand"] .demo-hand { display: block; }
+.demo-card[data-demo-kind="fingertap"] .demo-fingertap { display: block; }
+.demo-card[data-demo-kind="mouth"] .demo-face,
+.demo-card[data-demo-kind="blink"] .demo-face { display: block; }
+/* nothing selected yet -> hide the whole demo card */
+.demo-card:not([data-demo-kind]) , .demo-card[data-demo-kind=""] { display: none; }
+
+/* skeleton look */
+.df-bone { stroke: var(--brand-500); stroke-width: 7; stroke-linecap: round; stroke-linejoin: round; }
+.df-head { stroke: var(--brand-500); stroke-width: 7; fill: var(--brand-50); }
+.df-joint { fill: var(--brand-600); }
+.df-core { fill: var(--brand-400); }
+.df-wrist { fill: var(--brand-700); }
+
+/* pivots */
+.df-neck   { transform-box: view-box; transform-origin: 100px 50px; }
+.df-arm-l  { transform-box: view-box; transform-origin: 74px 66px; }
+.df-arm-r  { transform-box: view-box; transform-origin: 126px 66px; }
+.df-fore-l { transform-box: view-box; transform-origin: 60px 102px; }
+.df-fore-r { transform-box: view-box; transform-origin: 140px 102px; }
+.df-leg-l  { transform-box: view-box; transform-origin: 86px 150px; }
+.df-leg-r  { transform-box: view-box; transform-origin: 114px 150px; }
+.df-shin-l { transform-box: view-box; transform-origin: 84px 200px; }
+.df-shin-r { transform-box: view-box; transform-origin: 116px 200px; }
+.df-all    { transform-box: view-box; transform-origin: 100px 150px; }
+.df-torso  { transform-box: view-box; transform-origin: 100px 150px; }
+
+/* ---- ARM RAISE ---- */
+.demo-card[data-demo-kind="arm"] .df-arm-l { animation: dArmL 2.6s var(--ease-in-out) infinite; }
+.demo-card[data-demo-kind="arm"] .df-arm-r { animation: dArmR 2.6s var(--ease-in-out) infinite; }
+.demo-card[data-demo-kind="arm"][data-demo-side="left"]  .df-arm-r { animation: none; }
+.demo-card[data-demo-kind="arm"][data-demo-side="right"] .df-arm-l { animation: none; }
+@keyframes dArmL { 0%,100% { transform: rotate(6deg); } 45%,58% { transform: rotate(96deg); } }
+@keyframes dArmR { 0%,100% { transform: rotate(-6deg); } 45%,58% { transform: rotate(-96deg); } }
+
+/* ---- ELBOW CURL ---- */
+.demo-card[data-demo-kind="elbow"] .df-fore-l { animation: dCurlL 2s var(--ease-in-out) infinite; }
+.demo-card[data-demo-kind="elbow"] .df-fore-r { animation: dCurlR 2s var(--ease-in-out) infinite; }
+.demo-card[data-demo-kind="elbow"][data-demo-side="left"]  .df-fore-r { animation: none; }
+.demo-card[data-demo-kind="elbow"][data-demo-side="right"] .df-fore-l { animation: none; }
+@keyframes dCurlL { 0%,100% { transform: rotate(0deg); } 50% { transform: rotate(148deg); } }
+@keyframes dCurlR { 0%,100% { transform: rotate(0deg); } 50% { transform: rotate(-148deg); } }
+
+/* ---- LEG EXTENSION (swing out to the side) ---- */
+.demo-card[data-demo-kind="leg"] .df-leg-l { animation: dLegL 2.4s var(--ease-in-out) infinite; }
+.demo-card[data-demo-kind="leg"] .df-leg-r { animation: dLegR 2.4s var(--ease-in-out) infinite; }
+.demo-card[data-demo-kind="leg"][data-demo-side="left"]  .df-leg-r { animation: none; }
+.demo-card[data-demo-kind="leg"][data-demo-side="right"] .df-leg-l { animation: none; }
+@keyframes dLegL { 0%,100% { transform: rotate(0deg); } 50% { transform: rotate(-26deg); } }
+@keyframes dLegR { 0%,100% { transform: rotate(0deg); } 50% { transform: rotate(26deg); } }
+
+/* ---- KNEE EXTENSION (straighten the lower leg) ---- */
+.demo-card[data-demo-kind="kneeext"] .df-shin-l { animation: dKneeL 2s var(--ease-in-out) infinite; }
+.demo-card[data-demo-kind="kneeext"] .df-shin-r { animation: dKneeR 2s var(--ease-in-out) infinite; }
+.demo-card[data-demo-kind="kneeext"][data-demo-side="left"]  .df-shin-r { animation: none; }
+.demo-card[data-demo-kind="kneeext"][data-demo-side="right"] .df-shin-l { animation: none; }
+@keyframes dKneeL { 0%,100% { transform: rotate(52deg); } 50% { transform: rotate(0deg); } }
+@keyframes dKneeR { 0%,100% { transform: rotate(-52deg); } 50% { transform: rotate(0deg); } }
+
+/* ---- MARCH (alternating knee lifts) ---- */
+.demo-card[data-demo-kind="march"] .df-leg-l { animation: dMarchL 1.6s var(--ease-in-out) infinite; }
+.demo-card[data-demo-kind="march"] .df-leg-r { animation: dMarchR 1.6s var(--ease-in-out) infinite; }
+.demo-card[data-demo-kind="march"] .df-shin-l { animation: dShinL 1.6s var(--ease-in-out) infinite; }
+.demo-card[data-demo-kind="march"] .df-shin-r { animation: dShinR 1.6s var(--ease-in-out) infinite; }
+@keyframes dMarchL { 0%,100% { transform: rotate(0deg); } 25% { transform: rotate(30deg); } 50% { transform: rotate(0deg); } }
+@keyframes dMarchR { 0%,50% { transform: rotate(0deg); } 75% { transform: rotate(-30deg); } 100% { transform: rotate(0deg); } }
+@keyframes dShinL { 0%,100% { transform: rotate(0deg); } 25% { transform: rotate(-40deg); } 50% { transform: rotate(0deg); } }
+@keyframes dShinR { 0%,50% { transform: rotate(0deg); } 75% { transform: rotate(40deg); } 100% { transform: rotate(0deg); } }
+
+/* ---- NECK TURN ---- */
+.demo-card[data-demo-kind="neckturn"] .df-neck { animation: dNeck 2.8s var(--ease-in-out) infinite; }
+@keyframes dNeck { 0%,100% { transform: rotate(-24deg); } 50% { transform: rotate(24deg); } }
+
+/* ---- SIT TO STAND ---- */
+.demo-card[data-demo-kind="sitstand"] .df-all { animation: dSit 3s var(--ease-in-out) infinite; }
+.demo-card[data-demo-kind="sitstand"] .df-shin-l,
+.demo-card[data-demo-kind="sitstand"] .df-shin-r { animation: dSitShin 3s var(--ease-in-out) infinite; }
+@keyframes dSit { 0%,100% { transform: translateY(0); } 50% { transform: translateY(34px); } }
+@keyframes dSitShin { 0%,100% { transform: rotate(0deg); } 50% { transform: rotate(6deg); } }
+
+/* ---- HAND OPEN / CLOSE (crossfade open hand <-> fist) ---- */
+.dh-part { fill: var(--brand-100); stroke: var(--brand-500); stroke-width: 6; stroke-linejoin: round; }
+.dh-open, .dh-fist { transform-box: view-box; transform-origin: 100px 140px; }
+.demo-card[data-demo-kind="hand"] .dh-open { animation: dHandOpen 2.2s var(--ease-in-out) infinite; }
+.demo-card[data-demo-kind="hand"] .dh-fist { animation: dHandFist 2.2s var(--ease-in-out) infinite; }
+@keyframes dHandOpen { 0%,100% { opacity: 1; transform: scale(1); } 50% { opacity: 0; transform: scale(.8); } }
+@keyframes dHandFist { 0%,100% { opacity: 0; transform: scale(.8); } 50% { opacity: 1; transform: scale(1); } }
+
+/* ---- FINGER TAP (thumb tip taps index tip) ---- */
+.dft-bone { stroke: var(--brand-500); stroke-width: 13; stroke-linecap: round; }
+.dft-tip { fill: var(--brand-600); }
+.dft-tip2 { fill: var(--brand-700); }
+.dft-thumb { transform-box: view-box; transform-origin: 124px 158px; }
+.demo-card[data-demo-kind="fingertap"] .dft-thumb { animation: dTap 1.6s var(--ease-in-out) infinite; }
+@keyframes dTap { 0%,100% { transform: rotate(34deg); } 40%,52% { transform: rotate(0deg); } }
+.dft-tap { fill: var(--brand-400); transform-box: view-box; transform-origin: 96px 87px; opacity: 0; }
+.demo-card[data-demo-kind="fingertap"] .dft-tap { animation: dTapPulse 1.6s var(--ease-in-out) infinite; }
+@keyframes dTapPulse { 0%,34%,60%,100% { opacity: 0; transform: scale(.4); } 42%,50% { opacity: .75; transform: scale(1.7); } }
+
+/* ---- FACE: MOUTH / BLINK ---- */
+.dface-head { fill: var(--brand-50); stroke: var(--brand-500); stroke-width: 6; }
+.dface-eye { fill: var(--brand-700); }
+.dface-mouth { fill: var(--brand-600); transform-box: view-box; transform-origin: 100px 162px; }
+.dface-eyes { transform-box: view-box; transform-origin: 100px 112px; }
+.demo-card[data-demo-kind="mouth"] .dface-mouth { animation: dMouth 1.8s var(--ease-in-out) infinite; }
+@keyframes dMouth { 0%,100% { transform: scaleY(.28); } 50% { transform: scaleY(1); } }
+.demo-card[data-demo-kind="blink"] .dface-eyes { animation: dBlink 2.4s var(--ease-in-out) infinite; }
+@keyframes dBlink { 0%,40%,100% { transform: scaleY(1); } 50%,58% { transform: scaleY(.1); } }
+
+@media (prefers-reduced-motion: reduce) {
+  .demo-fig * { animation: none !important; }
+}
+
+
+/* ---- new in v20: side arm raise, side bend, neck tilt, chin tuck, shrug ---- */
+
+/* SIDE ARM RAISE (abduction): the arm swings out sideways, not forward */
+.demo-card[data-demo-kind="armabduct"] .df-arm-l { animation: dAbdL 2.6s var(--ease-in-out) infinite; }
+.demo-card[data-demo-kind="armabduct"] .df-arm-r { animation: dAbdR 2.6s var(--ease-in-out) infinite; }
+.demo-card[data-demo-kind="armabduct"][data-demo-side="left"]  .df-arm-r { animation: none; }
+.demo-card[data-demo-kind="armabduct"][data-demo-side="right"] .df-arm-l { animation: none; }
+@keyframes dAbdL { 0%,100% { transform: rotate(4deg); } 45%,58% { transform: rotate(72deg); } }
+@keyframes dAbdR { 0%,100% { transform: rotate(-4deg); } 45%,58% { transform: rotate(-72deg); } }
+
+/* SIDE BEND: the whole trunk leans over the hips */
+.demo-card[data-demo-kind="trunkbend"] .df-torso { animation: dBendR 3s var(--ease-in-out) infinite; }
+.demo-card[data-demo-kind="trunkbend"][data-demo-side="left"] .df-torso { animation-name: dBendL; }
+@keyframes dBendR { 0%,100% { transform: rotate(0deg); } 50% { transform: rotate(16deg); } }
+@keyframes dBendL { 0%,100% { transform: rotate(0deg); } 50% { transform: rotate(-16deg); } }
+
+/* NECK TILT: ear toward the shoulder */
+.demo-card[data-demo-kind="necktilt"] .df-neck { animation: dTiltR 2.8s var(--ease-in-out) infinite; }
+.demo-card[data-demo-kind="necktilt"][data-demo-side="left"] .df-neck { animation-name: dTiltL; }
+@keyframes dTiltR { 0%,100% { transform: rotate(0deg); } 50% { transform: rotate(22deg); } }
+@keyframes dTiltL { 0%,100% { transform: rotate(0deg); } 50% { transform: rotate(-22deg); } }
+
+/* CHIN TUCK: the head draws straight back and slightly down */
+.demo-card[data-demo-kind="neckflex"] .df-neck { animation: dTuck 2.6s var(--ease-in-out) infinite; }
+@keyframes dTuck { 0%,100% { transform: translateY(0) scale(1); } 50% { transform: translateY(7px) scale(.96); } }
+
+/* SHOULDER SHRUG: shoulders (and the arms hanging from them) lift */
+.demo-card[data-demo-kind="shrug"] .df-torso { animation: dShrug 2.4s var(--ease-in-out) infinite; }
+.demo-card[data-demo-kind="shrug"] .df-arm-l,
+.demo-card[data-demo-kind="shrug"] .df-arm-r { animation: dShrugArm 2.4s var(--ease-in-out) infinite; }
+@keyframes dShrug { 0%,100% { transform: translateY(0); } 50% { transform: translateY(-9px); } }
+@keyframes dShrugArm { 0%,100% { transform: translateY(0); } 50% { transform: translateY(-9px); } }
+
+@media (prefers-reduced-motion: reduce) {
+  .demo-card[data-demo-kind="armabduct"] .df-arm-l,
+  .demo-card[data-demo-kind="armabduct"] .df-arm-r,
+  .demo-card[data-demo-kind="trunkbend"] .df-torso,
+  .demo-card[data-demo-kind="necktilt"] .df-neck,
+  .demo-card[data-demo-kind="neckflex"] .df-neck,
+  .demo-card[data-demo-kind="shrug"] .df-torso,
+  .demo-card[data-demo-kind="shrug"] .df-arm-l,
+  .demo-card[data-demo-kind="shrug"] .df-arm-r { animation: none; }
+}

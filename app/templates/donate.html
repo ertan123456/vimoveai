@@ -1,0 +1,124 @@
+{% extends "base.html" %}
+{% block title %}Donate — keep ViMove AI free · ViMove AI{% endblock %}
+{% block description %}ViMove AI is free for everyone. Support two high-school students keeping the servers running and building new exercise programs.{% endblock %}
+
+{% block content %}
+
+<!-- ============================ HERO ============================ -->
+<section class="donate-hero">
+  <div class="hearts" aria-hidden="true">
+    <span style="--x:8%;--d:0s;--s:1">&#9829;</span>
+    <span style="--x:22%;--d:2.4s;--s:.7">&#9829;</span>
+    <span style="--x:40%;--d:1.1s;--s:1.2">&#9829;</span>
+    <span style="--x:58%;--d:3.1s;--s:.8">&#9829;</span>
+    <span style="--x:74%;--d:.6s;--s:1.1">&#9829;</span>
+    <span style="--x:90%;--d:2s;--s:.9">&#9829;</span>
+  </div>
+  <div class="container donate-hero-inner">
+    <div class="donate-heart" aria-hidden="true">
+      <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 21s-7.5-4.6-10-9.3C.6 8.9 2 5.5 5.2 5.1c1.8-.2 3.4.7 4.3 2 .9-1.3 2.5-2.2 4.3-2 3.2.4 4.6 3.8 3.2 6.6C19.5 16.4 12 21 12 21z"/></svg>
+    </div>
+    <span class="eyebrow" data-i18n="donate.eyebrow">Support ViMove AI</span>
+    <h1 data-i18n-html="donate.title">Keep ViMove AI free for <span class="grad">everyone</span></h1>
+    <p class="lead" data-i18n="donate.lead">ViMove AI is free — and always will be. Two high-school students build it on evenings and weekends, and your support keeps the servers running and new exercise programs coming.</p>
+    <div class="donate-cta-row">
+      <a href="#give" class="btn btn--primary btn--lg">
+        <svg class="ic" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 21s-7.5-4.6-10-9.3C.6 8.9 2 5.5 5.2 5.1c1.8-.2 3.4.7 4.3 2 .9-1.3 2.5-2.2 4.3-2 3.2.4 4.6 3.8 3.2 6.6C19.5 16.4 12 21 12 21z"/></svg>
+        <span data-i18n="donate.methodsTitle">Ways to give</span>
+      </a>
+    </div>
+  </div>
+</section>
+
+<!-- ============================ WHERE IT GOES ============================ -->
+<section class="section">
+  <div class="container">
+    <div class="section-head reveal">
+      <span class="eyebrow" data-i18n="donate.whyEyebrow">Where it goes</span>
+      <h2 data-i18n="donate.whyTitle">Your support, in good hands</h2>
+    </div>
+
+    <div class="features reveal-stagger">
+      <article class="card feature">
+        <div class="feature-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="3" width="20" height="14" rx="2"/><path d="M8 21h8M12 17v4"/></svg></div>
+        <h3 data-i18n="donate.c1t">Keep it online</h3>
+        <p data-i18n="donate.c1p">Hosting and domain costs, so anyone can reach ViMove AI at any time of day.</p>
+      </article>
+      <article class="card feature">
+        <div class="feature-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2a3 3 0 0 0-3 3v6a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3z"/><path d="M5 11a7 7 0 0 0 14 0M12 18v4M8 22h8"/></svg></div>
+        <h3 data-i18n="donate.c2t">Build new programs</h3>
+        <p data-i18n="donate.c2p">Research and develop evidence-based exercises for more conditions.</p>
+      </article>
+      <article class="card feature">
+        <div class="feature-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 1 0-7.78 7.78L12 21.23l8.84-8.84a5.5 5.5 0 0 0 0-7.78z"/></svg></div>
+        <h3 data-i18n="donate.c3t">Keep it free</h3>
+        <p data-i18n="donate.c3p">No ads, no paywalls, no subscriptions — especially for older adults.</p>
+      </article>
+    </div>
+
+    <div class="donate-transparency">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4M12 8h.01"/></svg>
+      <div>
+        <strong data-i18n="donate.transTitle">Full transparency</strong>
+        <p data-i18n="donate.transText">ViMove AI runs on about €6 a month for the server. Every contribution — big or small — goes straight to keeping it alive and growing.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============================ WAYS TO GIVE ============================ -->
+<section class="section section--alt" id="give">
+  <div class="container">
+    <div class="section-head reveal">
+      <h2 data-i18n="donate.methodsTitle">Ways to give</h2>
+      <p data-i18n="donate.methodsSub">A quick bank transfer is all it takes — and every little bit means a lot.</p>
+    </div>
+
+    <div class="donate-give-single reveal">
+      <article class="card give-card give-iban-main">
+        <div class="give-head">
+          <span class="give-emoji">&#127974;</span>
+          <div>
+            <h3 data-i18n="donate.ibanTitle">Bank transfer (IBAN)</h3>
+            <p class="muted" data-i18n="donate.ibanDesc">From Turkey, with no fees.</p>
+          </div>
+        </div>
+
+        <div class="iban-box">
+          <span class="iban-num" id="ibanValue">TR16 0001 5001 5800 7301 6378 91</span>
+          <div class="iban-holder">
+            <span data-i18n="donate.ibanHolder">Account holder</span>: <b>Emine Erdem</b>
+          </div>
+        </div>
+
+        <button type="button" class="btn btn--primary btn--block copy-btn"
+                data-copy="TR16 0001 5001 5800 7301 6378 91">
+          <svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+          <span data-i18n="donate.copyBtn">Copy IBAN</span>
+        </button>
+
+        <div class="amount-chips">
+          <span class="chip">&#9749; <b>&#8378;50</b></span>
+          <span class="chip">&#127793; <b>&#8378;150</b></span>
+          <span class="chip">&#128154; <b>&#8378;500</b></span>
+        </div>
+      </article>
+    </div>
+  </div>
+</section>
+
+<!-- ============================ THANK YOU ============================ -->
+<section class="section section--tight">
+  <div class="container">
+    <div class="donate-thanks card card--raised">
+      <div class="donate-heart sm" aria-hidden="true">
+        <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 21s-7.5-4.6-10-9.3C.6 8.9 2 5.5 5.2 5.1c1.8-.2 3.4.7 4.3 2 .9-1.3 2.5-2.2 4.3-2 3.2.4 4.6 3.8 3.2 6.6C19.5 16.4 12 21 12 21z"/></svg>
+      </div>
+      <h2 data-i18n="donate.thanksTitle">Thank you, truly</h2>
+      <p class="lead" data-i18n="donate.thanksText">Every coffee and every transfer means the world to two students trying to make therapy reachable for everyone. — Erdem &amp; Oğuz</p>
+      <p class="muted donate-note" data-i18n="donate.note">ViMove AI is a student project; donations are a voluntary gift, not a payment for medical services.</p>
+    </div>
+  </div>
+</section>
+
+{% endblock %}

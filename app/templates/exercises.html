@@ -1,17 +1,17 @@
 {% extends "base.html" %}
-{% block title %}Exercise library — ViMove{% endblock %}
+{% block title %}Exercise library — ViMove AI{% endblock %}
 
 {% block content %}
 <section class="section">
   <div class="container">
-    <div class="section-head">
+    <div class="section-head reveal">
       <span class="eyebrow" data-i18n="ex.eyebrow">Exercise library</span>
       <h1 data-i18n="ex.title">What you'll be doing</h1>
-      <p data-i18n="ex.intro">Every program below is built from movements ViMove can track with AI and counts automatically. Exercise choices and starting rep targets are grounded in published clinical guidance — shown with sources for each condition.</p>
+      <p data-i18n="ex.intro">Every program below is built from movements ViMove AI can track with AI and counts automatically. Exercise choices and starting rep targets are grounded in published clinical guidance — shown with sources for each condition.</p>
     </div>
 
     {% for slug, prog in programs.items() %}
-    <div class="card card--raised" style="margin-bottom:36px">
+    <div class="card card--raised reveal" style="margin-bottom:36px">
       <div style="display:flex;flex-wrap:wrap;align-items:center;gap:14px;justify-content:space-between">
         <div style="display:flex;align-items:center;gap:14px">
           <div class="condition-icon">
@@ -26,7 +26,7 @@
       </div>
 
       <p style="margin:18px 0 6px" data-en="{{ prog.summary }}" data-tr="{{ prog.summary_tr or prog.summary }}">{{ prog.summary }}</p>
-      <p class="muted" style="margin:0 0 6px"><strong>Approach:</strong> {{ prog.principles }}</p>
+      <p class="muted" style="margin:0 0 6px"><strong data-i18n="ex.approach">Approach:</strong> {{ prog.principles }}</p>
 
       <hr class="divider" style="margin:18px 0">
 
@@ -34,16 +34,17 @@
         {% for ex in prog.exercises %}
         <li>
           <div class="ex-info">
-            <strong>{{ ex.ad }}</strong> <span class="muted">· {{ ex.domain }}</span>
-            <span class="ex-why">{{ ex.rationale }}</span>
+            <strong data-en="{{ ex.ad }}" data-tr="{{ ex.ad_tr or ex.ad }}">{{ ex.ad }}</strong>
+            <span class="muted" data-en="· {{ ex.domain }}" data-tr="· {{ ex.domain_tr or ex.domain }}">· {{ ex.domain }}</span>
+            <span class="ex-why" data-en="{{ ex.rationale }}" data-tr="{{ ex.rationale_tr or ex.rationale }}">{{ ex.rationale }}</span>
           </div>
-          <span class="ex-target">{{ ex.hedef }} reps</span>
+          <span class="ex-target">{{ ex.hedef }} <span data-i18n="ex.repsWord">reps</span></span>
         </li>
         {% endfor %}
       </ul>
 
       <div class="sources">
-        <span class="sources-label">Evidence &amp; sources</span>
+        <span class="sources-label" data-i18n="ex.sources">Evidence &amp; sources</span>
         <ul>
           {% for s in prog.sources %}
           <li><a href="{{ s.url }}" target="_blank" rel="noopener">{{ s.label }}</a></li>
@@ -53,25 +54,17 @@
     </div>
     {% endfor %}
 
-    <div class="notice notice--warn" style="margin-bottom:48px">
+    <div class="notice notice--warn reveal" style="margin-bottom:48px">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
-      <span>Rep targets are evidence-informed <strong>starting points</strong> that ViMove adjusts for age — they are not a medical prescription. Please review your plan with a physiotherapist or doctor, especially after a recent stroke.</span>
+      <span data-i18n-html="ex.repNotice">Rep targets are evidence-informed <strong>starting points</strong> that ViMove AI adjusts for age — they are not a medical prescription. Please review your plan with a physiotherapist or doctor, especially after a recent stroke.</span>
     </div>
 
-    <!-- Coming soon -->
-    <div class="section-head" style="margin-bottom:28px">
-      <h2 data-i18n="ex.comingTitle">More conditions on the way</h2>
-      <p data-i18n="ex.comingSub">ViMove is built to grow — these programs are in development.</p>
-    </div>
-    <div class="conditions">
-      <article class="card condition is-soon">
-        <div class="condition-top">
-          <div class="condition-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg></div>
-          <h3 data-i18n="home.neckTitle">Neck &amp; lower back</h3>
-        </div>
-        <span class="badge badge--soon"><span class="dot"></span> <span data-i18n="home.comingSoon">Coming soon</span></span>
-        <p style="margin-top:14px">Posture and mobility exercises to relieve everyday neck and lower-back stiffness — needs new neck-rotation and trunk-bend detection, which is in development.</p>
-      </article>
+    <!-- How these movements are measured -->
+    <div class="section-head reveal" style="margin-bottom:28px">
+      <h2 data-en="How are these movements measured?" data-tr="Bu hareketler nasıl ölçülüyor?">Bu hareketler nasıl ölçülüyor?</h2>
+      <p data-en="Every repetition is counted by the camera on your own device. Our low-resolution vision pipeline is what makes that work on an old laptop camera in a dim room."
+         data-tr="Her tekrar, kendi cihazındaki kamerayla sayılır. Eski bir dizüstü kamerasında ve loş odada bunun çalışmasını sağlayan şey, düşük çözünürlük görüntü işleme hattımızdır.">Her tekrar, kendi cihazındaki kamerayla sayılır.</p>
+      <a href="/teknoloji" class="btn btn--secondary" data-en="See the technology" data-tr="Teknolojiyi incele">Teknolojiyi incele</a>
     </div>
   </div>
 </section>

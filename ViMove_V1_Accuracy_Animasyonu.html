@@ -1,0 +1,75 @@
+<!doctype html>
+<html lang="tr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>ViMove V1 — %74 Doğruluk Animasyonu</title>
+<style>
+  :root{ --teal:#14b8a6; --teal2:#0d9488; --muted:#9fe6da; }
+  *{margin:0;padding:0;box-sizing:border-box;}
+  html,body{height:100%;overflow:hidden;font-family:"Segoe UI",system-ui,Arial,sans-serif;
+    background:radial-gradient(1200px 800px at 50% 40%, #0a342f 0%, #052420 50%, #02110f 100%);}
+  .wrap{position:fixed;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:26px;}
+
+  .tag{font-size:26px;letter-spacing:5px;text-transform:uppercase;color:var(--muted);font-weight:700;
+       opacity:0;transition:opacity .7s ease;}
+  .gauge{position:relative;width:460px;height:460px;opacity:0;transform:scale(.94);
+         transition:opacity .7s ease, transform .7s cubic-bezier(.2,.7,.2,1);}
+  .gauge svg{transform:rotate(-90deg);}
+  .val{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;
+       font-size:150px;font-weight:800;color:#fff;}
+  .val small{font-size:70px;font-weight:700;color:var(--teal);margin-left:6px;}
+  .cap{font-size:34px;font-weight:600;color:#dffaf3;text-align:center;
+       opacity:0;transition:opacity .7s ease;}
+  .sub{font-size:22px;color:var(--muted);margin-top:-12px;opacity:0;transition:opacity .7s ease;}
+  .show{opacity:1 !important;transform:scale(1) !important;}
+
+  .replay{position:fixed;bottom:18px;right:18px;background:var(--teal2);color:#fff;border:none;
+          border-radius:9px;padding:10px 16px;font-size:14px;font-weight:700;cursor:pointer;opacity:.85;}
+  .replay:hover{opacity:1;}
+  .hint{position:fixed;bottom:20px;left:18px;color:#4f7a74;font-size:13px;}
+</style>
+</head>
+<body>
+  <div class="wrap">
+    <div class="tag" id="tag">ViMove V1 · Saha Ölçümü</div>
+    <div class="gauge" id="gauge">
+      <svg width="460" height="460" viewBox="0 0 460 460">
+        <circle cx="230" cy="230" r="195" fill="none" stroke="rgba(255,255,255,.13)" stroke-width="36"/>
+        <circle id="arc" cx="230" cy="230" r="195" fill="none" stroke="var(--teal)" stroke-width="36"
+                stroke-linecap="round" stroke-dasharray="1225" stroke-dashoffset="1225"/>
+      </svg>
+      <div class="val"><span id="num">0</span><small>%</small></div>
+    </div>
+    <div class="cap" id="cap">Tekrar-sayım doğruluğu</div>
+    <div class="sub" id="sub">ilk saha testi · ViMove V1</div>
+  </div>
+
+  <button class="replay" onclick="run()">↻ Tekrar oynat</button>
+  <div class="hint">F11 ile tam ekran · ekran kaydı alıp videoya ekleyin</div>
+
+<script>
+  const TARGET=74, C=2*Math.PI*195; // ~1225
+  let timers=[];
+  function run(){
+    timers.forEach(clearTimeout); timers=[];
+    const tag=document.getElementById('tag'), g=document.getElementById('gauge'),
+          cap=document.getElementById('cap'), sub=document.getElementById('sub'),
+          arc=document.getElementById('arc'), num=document.getElementById('num');
+    [tag,g,cap,sub].forEach(el=>el.classList.remove('show'));
+    arc.style.transition='none'; arc.setAttribute('stroke-dashoffset',C); num.textContent='0';
+    timers.push(setTimeout(()=>{tag.classList.add('show');g.classList.add('show');},250));
+    timers.push(setTimeout(()=>{
+      arc.style.transition='stroke-dashoffset 1.8s cubic-bezier(.2,.7,.2,1)';
+      arc.setAttribute('stroke-dashoffset', C*(1-TARGET/100));
+      const dur=1800,t0=performance.now();
+      (function step(t){const p=Math.min(1,(t-t0)/dur),e=1-Math.pow(1-p,3);
+        num.textContent=Math.round(TARGET*e);
+        if(p<1)requestAnimationFrame(step);else num.textContent=TARGET;})(t0);
+    },700));
+    timers.push(setTimeout(()=>{cap.classList.add('show');sub.classList.add('show');},1200));
+  }
+  run();
+</script>
+</body>
+</html>

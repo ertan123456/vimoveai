@@ -1,0 +1,54 @@
+{% extends "panel_base.html" %}
+{% block title %}Yönetim — ViMove AI{% endblock %}
+{% block roleName %}<span data-en="Admin" data-tr="Yönetim">Yönetim</span>{% endblock %}
+{% block topTitle %}<span data-en="Admin panel" data-tr="Yönetim paneli">Yönetim paneli</span>{% endblock %}
+
+{% block sidebar %}
+<a href="/admin" class="is-active"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="9"/><rect x="14" y="3" width="7" height="5"/><rect x="14" y="12" width="7" height="9"/><rect x="3" y="16" width="7" height="5"/></svg><span data-en="Overview" data-tr="Genel bakış">Genel bakış</span></a>
+<a href="/admin#uzmanlar"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="8.5" cy="7" r="4"/><path d="M20 8v6M23 11h-6"/></svg><span data-en="Specialists" data-tr="Uzmanlar">Uzmanlar</span></a>
+<a href="/admin#hastalar"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75"/></svg><span data-en="Patients" data-tr="Hastalar">Hastalar</span></a>
+<a href="/admin#sistem"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2a10 10 0 1 0 10 10A10 10 0 0 0 12 2z"/><path d="M12 6v6l4 2"/></svg><span data-en="System" data-tr="Sistem">Sistem</span></a>
+{% endblock %}
+
+{% block panel %}
+<div class="panel-hint" data-en="Super admin overview — full visibility across all specialists and patients."
+     data-tr="Süper admin görünümü — tüm uzmanlar ve hastalar üzerinde tam görünürlük.">
+  Süper admin görünümü — tüm uzmanlar ve hastalar üzerinde tam görünürlük.
+</div>
+
+<div class="panel-cards">
+  <div class="panel-stat brand"><div class="n" id="statUzman">0</div><div class="l" data-en="Specialists" data-tr="Uzman">Uzman</div></div>
+  <div class="panel-stat"><div class="n" id="statHasta">0</div><div class="l" data-en="Patients" data-tr="Hasta">Hasta</div></div>
+  <div class="panel-stat"><div class="n" id="statSeans">0</div><div class="l" data-en="Total sessions" data-tr="Toplam seans">Toplam seans</div></div>
+  <div class="panel-stat"><div class="n" id="statRecete">0</div><div class="l" data-en="Prescriptions" data-tr="Reçete">Reçete</div></div>
+</div>
+
+<div class="panel-card" id="uzmanlar" style="margin-top:26px">
+  <div class="panel-card-head"><h3 data-en="Specialists" data-tr="Uzmanlar">Uzmanlar</h3></div>
+  <table class="ptable">
+    <thead><tr>
+      <th data-en="Name" data-tr="İsim">İsim</th>
+      <th data-en="Title" data-tr="Ünvan">Ünvan</th>
+      <th data-en="Patients" data-tr="Hasta">Hasta</th>
+      <th data-en="Status" data-tr="Durum">Durum</th>
+    </tr></thead>
+    <tbody id="uzmanRows">
+      <tr><td colspan="4" style="color:var(--ink-500);padding:22px 12px" data-en="No specialists yet." data-tr="Henüz uzman yok.">Henüz uzman yok.</td></tr>
+    </tbody>
+  </table>
+</div>
+
+<h2 class="panel-section-title" id="sistem" data-en="System" data-tr="Sistem">Sistem</h2>
+<div class="panel-card">
+  <table class="ptable">
+    <tbody>
+      <tr><td data-en="Auth &amp; database" data-tr="Kimlik &amp; veritabanı">Kimlik &amp; veritabanı</td><td style="text-align:right"><span class="pill ok">Supabase</span></td></tr>
+      <tr><td data-en="Row-level security" data-tr="Satır düzeyi güvenlik">Satır düzeyi güvenlik</td><td style="text-align:right"><span class="pill ok" data-en="On" data-tr="Açık">Açık</span></td></tr>
+      <tr><td data-en="Recorded video storage" data-tr="Kayıtlı video depolama">Kayıtlı video depolama</td><td style="text-align:right"><span class="pill warn" data-en="Planned" data-tr="Planlandı">Planlandı</span></td></tr>
+    </tbody>
+  </table>
+</div>
+{% endblock %}
+{% block scripts %}
+<script src="/static/panel-admin.js?v=1"></script>
+{% endblock %}

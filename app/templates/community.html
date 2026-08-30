@@ -1,0 +1,23 @@
+{% extends "base.html" %}
+{% block title %}ViMove AI in action · ViMove AI{% endblock %}
+{% block description %}Real people using ViMove AI — moments from home sessions and demos.{% endblock %}
+
+{% block content %}
+<section class="section">
+  <div class="container">
+    <div class="section-head reveal" style="margin-bottom:38px">
+      <span class="eyebrow" data-i18n="community.eyebrow">From the community</span>
+      <h1 data-i18n="community.title">ViMove AI in action</h1>
+      <p data-i18n="community.sub">Moments from real people using ViMove AI — moving, one rep at a time.</p>
+    </div>
+
+    <div class="gallery reveal-stagger">
+      {% for i in range(1, 10) %}
+      <button class="gallery-item" type="button" aria-label="Open photo {{ i }}">
+        <img src="/static/gallery/g{{ i }}.jpg" alt="ViMove AI in use — {{ i }}" loading="lazy" data-lightbox />
+      </button>
+      {% endfor %}
+    </div>
+  </div>
+</section>
+{% endblock %}

@@ -1,28 +1,25 @@
 # Python
 __pycache__/
-*.py[cod]
-*$py.class
-*.egg-info/
-.eggs/
-
-# Virtual environments
+*.pyc
 .venv/
-venv/
-env/
-ENV/
 
-# Runtime / local state
+# build / deploy artefacts
+vimove_deploy.zip
+*.aab
+*.apk
+*.keystore
+
+# local tooling state
+.claude/
+.codex/
+.agents/
+.impeccable/
+skills-lock.json
 last_selection.json
-*.log
 
-# OS / editor
-.DS_Store
-Thumbs.db
-.idea/
-.vscode/
-*.swp
+# stale duplicate of an older snapshot of this repo
+vimoveai/
 
-# Build / deploy artifacts
-*.zip
-dist/
-build/
+# internal docs: contain the keystore password and server/deploy details
+PLAY_STORE.md
+HANDOFF.md

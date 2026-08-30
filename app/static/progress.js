@@ -42,6 +42,36 @@
     catch (e) { return []; }
   }
 
+  // --- cloud (Supabase) history when signed in, else localStorage ---
+  let cloudUserId = null; // set when the shown history came from the cloud
+
+  function whenSupabase(timeout) {
+    return new Promise(function (res) {
+      if (window.vimoveSupabase) return res(window.vimoveSupabase);
+      var done = false;
+      function on() { if (done) return; done = true; window.removeEventListener("vimove:supabase-ready", on); res(window.vimoveSupabase); }
+      window.addEventListener("vimove:supabase-ready", on);
+      setTimeout(function () { if (done) return; done = true; window.removeEventListener("vimove:supabase-ready", on); res(window.vimoveSupabase || null); }, timeout || 3000);
+    });
+  }
+
+  async function loadHistory() {
+    cloudUserId = null;
+    const sb = await whenSupabase();
+    if (sb) {
+      try {
+        const { data: { session } } = await sb.auth.getSession();
+        if (session) {
+          cloudUserId = session.user.id;
+          const { data, error } = await sb.from("sessions")
+            .select("data,created_at").order("created_at", { ascending: true });
+          if (!error && Array.isArray(data)) return data.map(function (r) { return r.data; });
+        }
+      } catch (e) { /* fall back to local */ }
+    }
+    return readHistory();
+  }
+
   function fmtDate(iso) {
     const d = new Date(iso);
     if (isNaN(d)) return "—";
@@ -76,8 +106,8 @@
     </div>`;
   }
 
-  function render() {
-    const hist = readHistory();
+  async function render() {
+    const hist = await loadHistory();
 
     if (!hist.length) {
       root.innerHTML = `<div class="card msg-card" style="margin:0 auto">
@@ -127,11 +157,18 @@
 
     root.innerHTML = tiles + charts + list;
     const clr = document.getElementById("clearHist");
-    if (clr) clr.addEventListener("click", () => {
-      if (confirm(t("confirm"))) { localStorage.removeItem("vimove:history"); render(); }
+    if (clr) clr.addEventListener("click", async () => {
+      if (!confirm(t("confirm"))) return;
+      if (cloudUserId && window.vimoveSupabase) {
+        try { await window.vimoveSupabase.from("sessions").delete().eq("user_id", cloudUserId); } catch (e) {}
+      } else {
+        localStorage.removeItem("vimove:history");
+      }
+      render();
     });
   }
 
   render();
   document.addEventListener("vimove:lang", render);  // re-render on language switch
+  window.addEventListener("vimove:auth", render);    // re-render on sign in / out
 })();

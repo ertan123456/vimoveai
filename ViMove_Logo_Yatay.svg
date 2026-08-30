@@ -1,0 +1,14 @@
+<svg width="540" height="150" viewBox="0 0 540 150" xmlns="http://www.w3.org/2000/svg">
+  <title>ViMove logo (yatay, asimetrik)</title>
+  <g stroke="#2E90E0" stroke-width="2.5" opacity="0.28" stroke-linecap="round">
+    <line x1="96" y1="70" x2="40" y2="40"/>
+    <line x1="96" y1="70" x2="62" y2="128"/>
+    <line x1="96" y1="70" x2="150" y2="112"/>
+  </g>
+  <circle cx="40" cy="40" r="13" fill="#3B82F6"/>
+  <circle cx="62" cy="128" r="9" fill="#0EA5E9"/>
+  <circle cx="150" cy="112" r="12" fill="#60A5FA"/>
+  <circle cx="96" cy="70" r="22" fill="#1D4ED8"/>
+  <text x="196" y="86" font-family="'Segoe UI',system-ui,sans-serif" font-size="72" fill="#2E90E0" font-weight="400">Vi<tspan fill="#1D4ED8" font-weight="700">Move</tspan></text>
+  <text x="200" y="118" font-family="'Segoe UI',system-ui,sans-serif" font-size="18" fill="#5B7C99" letter-spacing="1">yapay zekâ ile hareket terapisi</text>
+</svg>

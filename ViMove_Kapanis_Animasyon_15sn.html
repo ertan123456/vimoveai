@@ -1,0 +1,122 @@
+<!doctype html>
+<html lang="tr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>ViMove — Kapanış Animasyonu (15 sn)</title>
+<style>
+  :root{ --blue:#3B82F6; --deep:#1D4ED8; --cyan:#0EA5E9; --light:#7FB9EC; --ink:#EAF4FF; --muted:#8FB8DC; }
+  *{margin:0;padding:0;box-sizing:border-box;}
+  html,body{height:100%;overflow:hidden;font-family:"Segoe UI",system-ui,Arial,sans-serif;
+    background:radial-gradient(1300px 900px at 50% 42%, #0d2c56 0%, #08203f 50%, #040d1f 100%);color:var(--ink);}
+  .wrap{position:fixed;inset:0;display:flex;align-items:center;justify-content:center;}
+  .stage{position:relative;width:1920px;height:1080px;transform-origin:center center;overflow:hidden;
+         display:flex;flex-direction:column;align-items:center;justify-content:center;gap:18px;}
+
+  .mark{width:300px;height:240px;}
+  .mark .dot{transform-box:fill-box;transform-origin:center;transform:scale(0);}
+  .mark .ln{stroke:var(--light);stroke-width:4;opacity:0;stroke-linecap:round;
+            stroke-dasharray:140;stroke-dashoffset:140;}
+
+  .word{font-size:150px;font-weight:800;letter-spacing:-2px;opacity:0;transform:translateY(26px);
+        transition:opacity .8s ease, transform .8s cubic-bezier(.2,.7,.2,1);margin-top:6px;}
+  .word b{color:var(--light);}
+  .tagline{font-size:46px;font-weight:600;color:#dbeeff;opacity:0;transform:translateY(18px);
+           transition:opacity .7s ease, transform .7s ease;text-align:center;}
+  .cta{position:absolute;left:0;right:0;bottom:300px;text-align:center;opacity:0;transform:scale(.9);
+       transition:opacity .7s ease, transform .7s cubic-bezier(.2,.7,.2,1);}
+  .cta .url{font-size:72px;font-weight:800;color:#fff;}
+  .cta .url span{color:var(--cyan);}
+  .cta .ln2{width:0;height:5px;background:linear-gradient(90deg,var(--blue),var(--cyan));margin:14px auto 0;
+            border-radius:5px;transition:width .8s ease .2s;}
+
+  .subtitle{position:absolute;left:0;right:0;bottom:120px;text-align:center;font-size:34px;color:#eaf4ff;
+            text-shadow:0 2px 12px rgba(0,0,0,.6);padding:0 240px;line-height:1.35;opacity:0;transition:opacity .4s ease;}
+  .subtitle.on{opacity:1;}
+
+  /* play durumları */
+  .play .mark .ln{animation:draw .6s ease forwards;}
+  .play .mark .l1{animation-delay:.2s;} .play .mark .l2{animation-delay:.35s;} .play .mark .l3{animation-delay:.5s;}
+  .play .mark .dot{animation:pop .5s cubic-bezier(.2,1.5,.4,1) forwards;}
+  .play .mark .dB{animation-delay:.5s;} .play .mark .dC{animation-delay:.65s;}
+  .play .mark .dD{animation-delay:.8s;} .play .mark .dA{animation-delay:.95s;}
+  @keyframes pop{from{transform:scale(0);}to{transform:scale(1);}}
+  @keyframes draw{to{stroke-dashoffset:0;opacity:.4;}}
+
+  .show{opacity:1 !important;transform:translateY(0) !important;}
+  .show.cta{transform:scale(1) !important;}
+
+  .replay{position:fixed;bottom:16px;right:16px;background:var(--deep);color:#fff;border:none;border-radius:9px;
+          padding:10px 16px;font-size:14px;font-weight:700;cursor:pointer;opacity:.9;z-index:20;}
+  .replay:hover{opacity:1;}
+  .hint{position:fixed;bottom:20px;left:18px;color:#4c6f93;font-size:13px;z-index:20;}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="stage" id="stage">
+    <svg class="mark" viewBox="0 0 300 240">
+      <line class="ln l1" x1="165" y1="120" x2="80" y2="78"/>
+      <line class="ln l2" x1="165" y1="120" x2="108" y2="205"/>
+      <line class="ln l3" x1="165" y1="120" x2="240" y2="180"/>
+      <circle class="dot dB" cx="80" cy="78" r="20" fill="#3B82F6"/>
+      <circle class="dot dC" cx="108" cy="205" r="14" fill="#0EA5E9"/>
+      <circle class="dot dD" cx="240" cy="180" r="19" fill="#60A5FA"/>
+      <circle class="dot dA" cx="165" cy="120" r="34" fill="#1D4ED8"/>
+    </svg>
+
+    <div class="word" id="word">Vi<b>Move</b></div>
+    <div class="tagline" id="tagline">Spor ve sağlığa erişimi — herkes için.</div>
+
+    <div class="cta" id="cta">
+      <div class="url">vimove<span>ai</span>.com</div>
+      <div class="ln2" id="ln2"></div>
+    </div>
+
+    <div class="subtitle" id="sub"></div>
+  </div>
+</div>
+
+<button class="replay" onclick="run()">↻ Tekrar oynat (15 sn)</button>
+<div class="hint">F11 tam ekran · ekran kaydı alıp kapanışa koyun</div>
+
+<script>
+  function fit(){const s=document.getElementById('stage');
+    s.style.transform='scale('+Math.min(window.innerWidth/1920,(window.innerHeight-50)/1080)+')';}
+  addEventListener('resize',fit); fit();
+
+  const stage=document.getElementById('stage'), word=document.getElementById('word'),
+        tag=document.getElementById('tagline'), cta=document.getElementById('cta'),
+        ln2=document.getElementById('ln2'), sub=document.getElementById('sub');
+  const subs=[
+    [300,  "ViMove, spor ve sağlığa erişimi yapay zekâ aracılığıyla yaygınlaştırmayı amaçlayan bir sosyal değişim projesidir."],
+    [6800, "Bir gözlemle başladı, sahada doğrulanarak bugünkü hâline ulaştı."],
+    [10800,"Daha fazla bilgi için: vimoveai.com."]
+  ];
+  let timers=[];
+  function setSub(t){sub.classList.remove('on');setTimeout(()=>{sub.textContent=t;sub.classList.add('on');},160);}
+
+  function run(){
+    timers.forEach(clearTimeout);timers=[];
+    // reset
+    stage.classList.remove('play');
+    word.classList.remove('show');tag.classList.remove('show');cta.classList.remove('show');
+    ln2.style.width='0';sub.classList.remove('on');
+    void stage.offsetWidth; // reflow -> logo animasyonu yeniden başlasın
+    stage.classList.add('play');
+    // akış
+    timers.push(setTimeout(()=>word.classList.add('show'),1500));
+    timers.push(setTimeout(()=>tag.classList.add('show'),2600));
+    subs.forEach(s=>timers.push(setTimeout(()=>setSub(s[1]),s[0])));
+    // final CTA
+    timers.push(setTimeout(()=>{
+      tag.classList.remove('show');
+      cta.classList.add('show');
+      ln2.style.width='420px';
+    },10800));
+    timers.push(setTimeout(()=>sub.classList.remove('on'),14600));
+  }
+  run();
+</script>
+</body>
+</html>

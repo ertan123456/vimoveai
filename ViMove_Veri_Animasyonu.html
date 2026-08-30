@@ -1,0 +1,137 @@
+<!doctype html>
+<html lang="tr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>ViMove — Veri Animasyonu (Sahne 2)</title>
+<style>
+  :root{
+    --teal:#14b8a6; --teal2:#0d9488; --ink:#06201e; --paper:#e9fbf7;
+    --muted:#7fd8cc;
+  }
+  *{margin:0;padding:0;box-sizing:border-box;}
+  html,body{height:100%;background:#02110f;overflow:hidden;font-family:"Segoe UI",system-ui,Arial,sans-serif;}
+  /* 16:9 sahne, ekrana sığacak şekilde ölçeklenir */
+  .stage-wrap{position:fixed;inset:0;display:flex;align-items:center;justify-content:center;}
+  .stage{
+    position:relative;width:1920px;height:1080px;
+    background:radial-gradient(1200px 700px at 70% 25%, #0b3b36 0%, #052420 45%, #02110f 100%);
+    color:var(--paper);overflow:hidden;
+    transform-origin:center center;
+  }
+  /* dekoratif iskelet noktaları */
+  .dots{position:absolute;inset:0;opacity:.10;background-image:
+    radial-gradient(circle, #5eead4 1.5px, transparent 1.6px);
+    background-size:46px 46px;}
+  .brand{position:absolute;top:64px;left:88px;font-size:34px;font-weight:800;letter-spacing:.5px;color:#fff;}
+  .brand b{color:var(--teal);}
+  .eyebrow{position:absolute;top:70px;right:88px;font-size:22px;color:var(--muted);letter-spacing:3px;text-transform:uppercase;}
+
+  .wrap{position:absolute;left:88px;right:88px;top:200px;}
+  .lead{font-size:40px;font-weight:600;color:#cfeee8;max-width:1300px;line-height:1.3;
+        opacity:0;transform:translateY(18px);}
+
+  .grid{position:absolute;left:88px;right:88px;top:360px;display:grid;
+        grid-template-columns:1fr 1fr 1fr;gap:42px;}
+  .card{background:linear-gradient(180deg, rgba(20,184,166,.12), rgba(20,184,166,.04));
+        border:1px solid rgba(94,234,212,.25);border-radius:24px;padding:46px 42px;
+        opacity:0;transform:translateY(28px);}
+  .num{font-size:104px;font-weight:800;line-height:1;color:#fff;letter-spacing:-1px;}
+  .num .unit{font-size:48px;font-weight:700;color:var(--teal);margin-left:8px;}
+  .lab{margin-top:18px;font-size:27px;font-weight:600;color:#bfeae2;line-height:1.3;}
+  .src{margin-top:22px;font-size:18px;color:var(--muted);letter-spacing:.3px;}
+  .src::before{content:"";display:inline-block;width:10px;height:10px;border-radius:50%;
+        background:var(--teal);margin-right:9px;vertical-align:middle;}
+
+  .footer{position:absolute;left:88px;bottom:70px;font-size:22px;color:#8fd8cd;opacity:0;}
+  .footer b{color:#fff;}
+
+  .show{opacity:1 !important;transform:translateY(0) !important;
+        transition:opacity .8s ease, transform .8s cubic-bezier(.2,.7,.2,1);}
+
+  .replay{position:fixed;bottom:18px;right:18px;z-index:10;background:var(--teal2);color:#fff;
+          border:none;border-radius:10px;padding:10px 16px;font-size:14px;font-weight:700;cursor:pointer;opacity:.85;}
+  .replay:hover{opacity:1;}
+  .hint{position:fixed;bottom:18px;left:18px;z-index:10;color:#4f7a74;font-size:13px;}
+</style>
+</head>
+<body>
+<div class="stage-wrap">
+  <div class="stage" id="stage">
+    <div class="dots"></div>
+    <div class="brand">Vi<b>Move</b></div>
+    <div class="eyebrow">Problem · Veriler</div>
+
+    <div class="wrap">
+      <div class="lead" id="lead">Spor ve sağlığa erişim, küresel ölçekte çözülmemiş bir sorundur.</div>
+    </div>
+
+    <div class="grid">
+      <div class="card" id="c1">
+        <div class="num"><span data-count="2.4" data-dec="1">0</span><span class="unit">milyar</span></div>
+        <div class="lab">insan rehabilitasyon / fiziksel aktiviteden fayda görecek bir durumla yaşıyor</div>
+        <div class="src">Dünya Sağlık Örgütü &amp; IHME</div>
+      </div>
+      <div class="card" id="c2">
+        <div class="num"><span data-count="50" data-suffix="%">0</span><span class="unit">+</span></div>
+        <div class="lab">düşük ve orta gelirli ülkelerde ihtiyaç sahiplerinin erişemediği oran</div>
+        <div class="src">Dünya Sağlık Örgütü</div>
+      </div>
+      <div class="card" id="c3">
+        <div class="num"><span data-count="4.6" data-dec="1">0</span><span class="unit">milyar</span></div>
+        <div class="lab">insan temel sağlık hizmetlerine erişemiyor (2023)</div>
+        <div class="src">WHO – Dünya Bankası</div>
+      </div>
+    </div>
+
+    <div class="footer" id="foot">En çok ihtiyaç duyanlar — <b>yaşlı bireyler ve kronik hastalar</b> — spordan ve düzenli hareketten en çok dışlananlar.</div>
+  </div>
+</div>
+
+<button class="replay" onclick="run()">↻ Tekrar oynat</button>
+<div class="hint">Tam ekran için F11 · Ekran kaydı alıp videoya ekleyin</div>
+
+<script>
+  // Sahneyi ekrana sığacak şekilde ölçekle
+  function fit(){
+    const s=document.getElementById('stage');
+    const k=Math.min(window.innerWidth/1920, window.innerHeight/1080);
+    s.style.transform='scale('+k+')';
+  }
+  window.addEventListener('resize',fit); fit();
+
+  function countUp(el){
+    const target=parseFloat(el.dataset.count);
+    const dec=parseInt(el.dataset.dec||"0");
+    const suffix=el.dataset.suffix||"";
+    const dur=1400; const t0=performance.now();
+    function step(t){
+      const p=Math.min(1,(t-t0)/dur);
+      const e=1-Math.pow(1-p,3); // easeOut
+      el.textContent=(target*e).toFixed(dec)+suffix;
+      if(p<1) requestAnimationFrame(step);
+      else el.textContent=target.toFixed(dec)+suffix;
+    }
+    requestAnimationFrame(step);
+  }
+
+  let timers=[];
+  function run(){
+    timers.forEach(clearTimeout); timers=[];
+    const lead=document.getElementById('lead');
+    const cards=['c1','c2','c3'].map(id=>document.getElementById(id));
+    const foot=document.getElementById('foot');
+    // reset
+    lead.classList.remove('show'); foot.classList.remove('show');
+    cards.forEach(c=>{c.classList.remove('show'); c.querySelector('[data-count]').textContent='0';});
+    // sequence
+    timers.push(setTimeout(()=>lead.classList.add('show'),300));
+    cards.forEach((c,i)=>{
+      timers.push(setTimeout(()=>{c.classList.add('show'); countUp(c.querySelector('[data-count]'));}, 1400+i*1300));
+    });
+    timers.push(setTimeout(()=>foot.classList.add('show'), 1400+3*1300+400));
+  }
+  run();
+</script>
+</body>
+</html>

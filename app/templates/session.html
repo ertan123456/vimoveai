@@ -1,6 +1,7 @@
 {% extends "base.html" %}
-{% block title %}Live session — ViMove{% endblock %}
+{% block title %}Live session — ViMove AI{% endblock %}
 {% block body_attrs %} class="session-page"{% endblock %}
+{% block head %}<link rel="stylesheet" href="/static/exercise-demo.css?v=3" />{% endblock %}
 
 {% block content %}
 <section class="session">
@@ -10,12 +11,23 @@
       <div>
         <h1 data-i18n="session.h1">Live exercise session</h1>
         <p class="muted" style="margin:6px 0 0">
-          {% if program %}Program: <strong>{{ program.name }}</strong> · {{ program.difficulty }} pace{% if program.age %} · Age {{ program.age }}{% endif %} · {{ program.total_exercises }} exercises{% else %}Follow each exercise — ViMove counts your reps automatically.{% endif %}
+          {% if program %}
+          {% set diff_tr = {'Standard': 'Standart', 'Moderate': 'Orta', 'Gentle': 'Hafif'} %}
+          <span data-i18n="session.metaProgram">Program:</span>
+          <strong data-en="{{ program.name }}" data-tr="{{ program.name_tr or program.name }}">{{ program.name }}</strong> ·
+          <span data-en="{{ program.difficulty }}" data-tr="{{ diff_tr.get(program.difficulty, program.difficulty) }}">{{ program.difficulty }}</span>
+          <span data-i18n="session.metaPace">pace</span>
+          {% if program.age %} · <span data-i18n="session.metaAge">Age</span> {{ program.age }}{% endif %}
+          · {{ program.total_exercises }} <span data-i18n="session.metaExercises">exercises</span>
+          {% else %}
+          <span data-i18n="session.metaDefault">Follow each exercise — ViMove AI counts your reps automatically.</span>
+          {% endif %}
         </p>
       </div>
       <div class="session-status">
         <span id="status" class="pill warn"><span class="dot"></span> <span data-i18n="session.ready">Ready</span></span>
         <span id="fps" class="pill">FPS&nbsp;–</span>
+        <span id="camQuality" class="cam-chip" hidden></span>
         <button id="btnVoice" class="pill pill-btn" aria-pressed="true" title="Voice guidance">
           <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/><path d="M19.07 4.93a10 10 0 0 1 0 14.14M15.54 8.46a5 5 0 0 1 0 7.07"/></svg>
           <span id="voiceLabel">Voice</span>
@@ -41,7 +53,7 @@
         </div>
 
         <div class="row" style="display:flex;gap:12px;align-items:center;margin-top:16px;flex-wrap:wrap">
-          <button id="btnStart" class="btn btn--primary btn--lg">
+          <button id="btnStart" class="btn btn--primary btn--lg btn--pulse">
             <svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M23 7l-7 5 7 5V7z"/><rect x="1" y="5" width="15" height="14" rx="2"/></svg>
             <span data-i18n="session.turnOn">Turn on camera</span>
           </button>
@@ -50,7 +62,7 @@
       </div>
 
       <!-- ---------- Side panel ---------- -->
-      <div class="panel">
+      <div class="panel reveal-stagger">
 
         <div class="card">
           <div class="now-ex">
@@ -63,6 +75,88 @@
             <span class="rep-count"><span data-i18n="session.repsWord">Reps</span> <b id="reps">0</b> / <span id="target">0</span></span>
           </div>
           <p class="hint" id="hint" data-i18n="session.firstHint">Your first exercise will appear here once the camera starts.</p>
+        </div>
+
+        <!-- ---------- Example movement (animated demo character) ---------- -->
+        <div class="card demo-card" id="demoCard" data-demo-kind="" data-demo-side="">
+          <div class="now-ex" style="margin-bottom:6px"><span class="label" data-en="Example movement" data-tr="Örnek hareket">Örnek hareket</span></div>
+          <div class="demo-stage">
+            <!-- Full-body skeleton (pose exercises) -->
+            <svg class="demo-fig demo-skeleton" viewBox="0 0 200 264" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+              <g class="df-all">
+                <g class="df-torso">
+                  <path class="df-bone" d="M100 47 L100 150"/>
+                  <path class="df-bone" d="M74 66 L126 66"/>
+                  <path class="df-bone" d="M86 150 L114 150"/>
+                  <g class="df-neck"><circle class="df-head" cx="100" cy="32" r="15"/></g>
+                  <circle class="df-joint" cx="74" cy="66" r="5"/>
+                  <circle class="df-joint" cx="126" cy="66" r="5"/>
+                  <circle class="df-joint df-core" cx="100" cy="100" r="5"/>
+                  <circle class="df-joint" cx="86" cy="150" r="5"/>
+                  <circle class="df-joint" cx="114" cy="150" r="5"/>
+                </g>
+                <g class="df-arm df-arm-l">
+                  <path class="df-bone" d="M74 66 L60 102"/>
+                  <g class="df-fore df-fore-l"><path class="df-bone" d="M60 102 L56 138"/><circle class="df-joint df-wrist" cx="56" cy="138" r="5.5"/></g>
+                  <circle class="df-joint" cx="60" cy="102" r="5"/>
+                </g>
+                <g class="df-arm df-arm-r">
+                  <path class="df-bone" d="M126 66 L140 102"/>
+                  <g class="df-fore df-fore-r"><path class="df-bone" d="M140 102 L144 138"/><circle class="df-joint df-wrist" cx="144" cy="138" r="5.5"/></g>
+                  <circle class="df-joint" cx="140" cy="102" r="5"/>
+                </g>
+                <g class="df-leg df-leg-l">
+                  <path class="df-bone" d="M86 150 L84 200"/>
+                  <g class="df-shin df-shin-l"><path class="df-bone" d="M84 200 L82 246"/><circle class="df-joint" cx="82" cy="246" r="5.5"/></g>
+                  <circle class="df-joint" cx="84" cy="200" r="5"/>
+                </g>
+                <g class="df-leg df-leg-r">
+                  <path class="df-bone" d="M114 150 L116 200"/>
+                  <g class="df-shin df-shin-r"><path class="df-bone" d="M116 200 L118 246"/><circle class="df-joint" cx="118" cy="246" r="5.5"/></g>
+                  <circle class="df-joint" cx="116" cy="200" r="5"/>
+                </g>
+              </g>
+            </svg>
+            <!-- Hand: open <-> close (fist) -->
+            <svg class="demo-fig demo-hand" viewBox="0 0 200 264" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+              <g class="dh-open">
+                <rect class="dh-part" x="68" y="116" width="64" height="50" rx="22"/>
+                <rect class="dh-part" x="74"  y="60" width="12" height="62" rx="6"/>
+                <rect class="dh-part" x="90"  y="52" width="12" height="70" rx="6"/>
+                <rect class="dh-part" x="106" y="54" width="12" height="68" rx="6"/>
+                <rect class="dh-part" x="122" y="62" width="12" height="60" rx="6"/>
+                <rect class="dh-part" x="120" y="120" width="34" height="13" rx="6"/>
+              </g>
+              <g class="dh-fist">
+                <rect class="dh-part" x="70" y="112" width="60" height="56" rx="24"/>
+                <circle class="dh-part" cx="82"  cy="114" r="7"/>
+                <circle class="dh-part" cx="98"  cy="112" r="7"/>
+                <circle class="dh-part" cx="114" cy="114" r="7"/>
+                <rect class="dh-part" x="62" y="134" width="24" height="13" rx="6"/>
+              </g>
+            </svg>
+            <!-- Finger tap: thumb tip meets index tip -->
+            <svg class="demo-fig demo-fingertap" viewBox="0 0 200 264" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+              <rect class="dh-part" x="72" y="156" width="56" height="34" rx="16"/>
+              <line class="dft-bone" x1="96" y1="158" x2="96" y2="86"/>
+              <circle class="dft-tip" cx="96" cy="86" r="8"/>
+              <g class="dft-thumb">
+                <line class="dft-bone" x1="124" y1="158" x2="96" y2="88"/>
+                <circle class="dft-tip2" cx="96" cy="88" r="8"/>
+              </g>
+              <circle class="dft-tap" cx="96" cy="87" r="7"/>
+            </svg>
+            <!-- Face (mouth open/close, blink) -->
+            <svg class="demo-fig demo-face" viewBox="0 0 200 264" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+              <circle class="dface-head" cx="100" cy="132" r="72"/>
+              <g class="dface-eyes">
+                <circle class="dface-eye" cx="74" cy="112" r="9"/>
+                <circle class="dface-eye" cx="126" cy="112" r="9"/>
+              </g>
+              <ellipse class="dface-mouth" cx="100" cy="162" rx="26" ry="16"/>
+            </svg>
+          </div>
+          <p class="demo-cap" id="demoCap"></p>
         </div>
 
         <div class="card">
@@ -90,5 +184,5 @@
 
 {% block scripts %}
 {% if program %}<script type="application/json" id="program-data">{{ program | tojson }}</script>{% endif %}
-<script type="module" src="/static/game/game.js?v=11"></script>
+<script type="module" src="/static/game/game.js?v=20"></script>
 {% endblock %}

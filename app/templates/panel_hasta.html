@@ -1,0 +1,67 @@
+{% extends "panel_base.html" %}
+{% block title %}Panelim — ViMove AI{% endblock %}
+{% block roleName %}<span data-en="Patient" data-tr="Hasta">Hasta</span>{% endblock %}
+{% block topTitle %}<span data-en="My panel" data-tr="Panelim">Panelim</span>{% endblock %}
+
+{% block sidebar %}
+<a href="/hasta" class="is-active"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><path d="M9 22V12h6v10"/></svg><span data-en="Home" data-tr="Ana sayfa">Ana sayfa</span></a>
+<a href="/session"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="5 3 19 12 5 21 5 3"/></svg><span data-en="My exercises" data-tr="Egzersizlerim">Egzersizlerim</span></a>
+<a href="/progress"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3v18h18"/><path d="M7 15l4-4 3 3 5-6"/></svg><span data-en="My progress" data-tr="İlerlemem">İlerlemem</span></a>
+{% endblock %}
+
+{% block panel %}
+<!-- Connect to specialist (shown only if not linked) -->
+<div class="panel-card" id="linkCard" hidden style="border-color:var(--brand-200);background:var(--brand-50)">
+  <div class="panel-card-head"><h3 data-en="Connect to your specialist" data-tr="Uzmanına bağlan">Uzmanına bağlan</h3></div>
+  <p class="muted" style="margin:0 0 12px" data-en="Enter the invite code your physiotherapist gave you."
+     data-tr="Fizyoterapistinin verdiği davet kodunu gir.">Fizyoterapistinin verdiği davet kodunu gir.</p>
+  <div class="link-form">
+    <input id="linkCode" placeholder="Davet kodu" />
+    <button class="btn btn--primary" id="linkBtn" data-en="Connect" data-tr="Bağlan">Bağlan</button>
+  </div>
+</div>
+
+<!-- Today's session -->
+<div class="panel-card" style="background:linear-gradient(160deg,var(--brand-600),var(--brand-800));color:#fff;border:0">
+  <div class="panel-card-head" style="margin-bottom:10px">
+    <h3 style="color:#fff" data-en="Today's session" data-tr="Bugünkü seansın">Bugünkü seansın</h3>
+  </div>
+  <p style="opacity:.92;margin:0 0 18px;max-width:520px" data-en="Start your exercises whenever you're ready. The camera guides you and counts every repetition."
+     data-tr="Hazır olduğunda egzersizlerine başla. Kamera sana rehberlik eder ve her tekrarı sayar.">Hazır olduğunda egzersizlerine başla. Kamera sana rehberlik eder ve her tekrarı sayar.</p>
+  <a href="/session" class="btn btn--lg" style="background:#fff;color:var(--brand-700)">
+    <svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+    <span data-en="Start exercising" data-tr="Egzersize başla">Egzersize başla</span>
+  </a>
+</div>
+
+<h2 class="panel-section-title" data-en="My prescription" data-tr="Reçetem">Reçetem</h2>
+<div class="panel-card" id="rxCard">
+  <div class="panel-empty" id="rxEmpty">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 12h6M9 16h6M9 8h1"/><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6"/></svg>
+    <p data-en="No prescription yet. When your specialist assigns a program, it will show here."
+       data-tr="Henüz reçete yok. Uzmanın bir program atadığında burada görünecek.">Henüz reçete yok. Uzmanın bir program atadığında burada görünecek.</p>
+  </div>
+  <div id="rxBody" hidden></div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<button class="chat-fab" id="chatFab" hidden>
+  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+  <span data-en="Message specialist" data-tr="Uzmanına ulaş">Uzmanına ulaş</span>
+  <span class="chat-badge" id="chatBadge" hidden>0</span>
+</button>
+<div class="chat-pop" id="chatPop" hidden>
+  <div class="chat-pop-head">
+    <span class="cp-ini">Dr</span>
+    <div><h4 data-en="Your specialist" data-tr="Uzmanın">Uzmanın</h4></div>
+    <button class="chat-x" id="chatClose" aria-label="Kapat">&times;</button>
+  </div>
+  <div class="thread" id="hastaThread"><div class="thread-empty" data-en="No messages yet." data-tr="Henüz mesaj yok.">Henüz mesaj yok.</div></div>
+  <form class="msg-form" id="hastaMsgForm">
+    <input id="hastaMsgInput" placeholder="Mesaj yaz…" autocomplete="off" />
+    <button class="btn btn--primary" type="submit" data-en="Send" data-tr="Gönder">Gönder</button>
+  </form>
+</div>
+<script src="/static/panel-hasta.js?v=3"></script>
+{% endblock %}

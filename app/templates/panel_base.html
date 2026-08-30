@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="tr">
+{% from "base.html" import brand_mark %}
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>{% block title %}ViMove AI Panel{% endblock %}</title>
+  <meta name="theme-color" content="#0d9488" />
+  <meta name="robots" content="noindex" />
+  <link rel="icon" href="/static/favicon.svg?v=2" type="image/svg+xml" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Lexend:wght@500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="/static/styles.css?v=17" />
+  <link rel="stylesheet" href="/static/panel.css?v=5" />
+  <script src="/static/i18n.js?v=5" defer></script>
+</head>
+<body class="panel-body" data-role="{{ role }}">
+
+  <div class="panel-gate" id="panelGate">
+    <div class="panel-gate-inner">
+      <span class="spinner"></span>
+      <p data-en="Loading your panel…" data-tr="Panelin yükleniyor…">Panelin yükleniyor…</p>
+    </div>
+  </div>
+
+  <div class="panel-shell" id="panelShell" hidden>
+    <aside class="panel-side">
+      <a href="/" class="panel-brand">{{ brand_mark() }}<span>Vi<b>Move</b></span></a>
+      <span class="panel-role-badge">{% block roleName %}{% endblock %}</span>
+      <nav class="panel-nav">{% block sidebar %}{% endblock %}</nav>
+      <div class="panel-side-foot">
+        <button id="langToggle" class="lang-toggle" type="button" aria-label="Türkçeye geç">TR</button>
+      </div>
+    </aside>
+
+    <div class="panel-main">
+      <header class="panel-top">
+        <button class="panel-menu-btn" id="panelMenuBtn" aria-label="Menu" aria-hidden="true">&#9776;</button>
+        <div class="panel-top-title">{% block topTitle %}{% endblock %}</div>
+        <div class="auth-slot" id="authSlot"></div>
+      </header>
+      <main class="panel-content">
+        {% block panel %}{% endblock %}
+      </main>
+    </div>
+  </div>
+
+  <script type="module" src="/static/auth.js?v=6"></script>
+  <script src="/static/panel.js?v=3"></script>
+  {% block scripts %}{% endblock %}
+</body>
+</html>

@@ -1,136 +1,137 @@
-# ViMove
+# ViMove AI
 
-**AI-guided movement therapy that turns any webcam into a personal physiotherapy companion.**
+**Kameranı bir fizyoterapi asistanına çeviren, tarayıcıda çalışan hareket terapisi platformu.**
 
-ViMove builds a personalized, evidence-based exercise program from a person's age and condition, then uses on-device computer vision to track their movements in real time, validate form, and count repetitions automatically. It runs entirely in the browser — no installation, no special hardware, and the camera feed never leaves the device.
+ViMove AI, yaşlı bireylerin evde yaptığı egzersizleri web kamerasıyla izler, tekrarları sayar,
+hareket kalitesini ölçer ve sonucu hastanın fizyoterapistine iletir. Ek donanım, sensör veya
+bileklik gerekmez — sadece bir kamera ve bir tarayıcı.
 
-Live: **[vimoveai.com](https://vimoveai.com)**
+Canlı: **https://vimoveai.com**
 
----
-
-## Why
-
-Regular exercise and physiotherapy are core, evidence-based parts of managing conditions such as Parkinson's disease, post-stroke recovery, osteoarthritis and fall prevention. But for many older adults, getting to a clinic regularly is hard — transport, cost and appointment access all get in the way, so home exercise is often done incorrectly, partially, or not at all.
-
-ViMove brings guided, tracked exercise into the living room and makes physical activity accessible to the people who need it most.
+Geliştiriciler: Erdem Ertan ve Oğuz Çetinkaya (lise öğrencileri).
 
 ---
 
-## Features
+## Teknik yenilik: LRV (Low-Resolution Vision) hattı
 
-- **Real-time motion tracking** — hand, face and full-body landmark detection (500+ points per frame) running fully on-device.
-- **Automatic rep counting** — a single, robust rep-detection state machine with hysteresis, temporal smoothing and debounce to avoid false counts.
-- **Personalized programs** — exercise selection by condition and rep targets scaled by age, grounded in published clinical guidelines.
-- **Live feedback & session report** — on-screen counter, progress bar and an end-of-session movement-quality summary (consistency, tempo, left/right symmetry).
-- **Privacy by design** — all inference happens in the browser; the video stream is never uploaded.
-- **Accessibility** — voice guidance for low-vision users, large type, high contrast, and a Turkish/English interface.
+Hedef kullanıcımızın 1080p kamerası yok. Loş bir salonda, iki metre uzakta, beş yıllık bir
+dizüstü bilgisayarı var. Hazır bir poz-tahmin modelini o görüntüye doğrudan bağladığında üç şey
+bozulur:
 
----
+1. **Kişi kadrajda küçüktür** → modelin çalışacağı piksel kalmaz.
+2. **Noktalar titrer** → sayaç, yapılmayan tekrarları sayar.
+3. **Kareler kaybolur** → tekrarın ortasında durum makinesi kırılır.
 
-## Supported programs
+`app/static/game/lowres.js` bu üç sorunu MediaPipe'ın üzerine eklenen dört aşamayla çözer:
 
-| Program | Clinical basis |
+| Aşama | Ne yapar |
 |---|---|
-| Parkinson's disease | Large-amplitude movement (LSVT BIG), strength, balance, facial mobility |
-| Post-stroke rehabilitation | High-repetition, task-specific practice; bilateral symmetry |
-| Osteoarthritis & joint mobility | Range-of-motion + low-load strengthening (OARSI / ACR) |
-| Balance & fall prevention | Lower-limb strengthening core of the Otago programme |
-| General senior fitness | WHO multicomponent activity for adults 65+ |
+| **1 · Uyarlanır ROI** | Vücudu (ya da eli/yüzü) takip eder, etrafını kırpar ve model çalışmadan önce 512 piksele büyütür — modele giden piksel yoğunluğu ~2 katına çıkar. Kırpma kullanıcıyı kaybederse otomatik olarak tam kareye döner. |
+| **2 · Kararlılık** | 5 örneklik koşan **medyan** (tek karelik büyük hataları siler) + **One Euro filtresi** (Casiez ve ark., CHI 2012 — dururken sıkı yumuşatır, hızlı harekette gevşer) + kayıp karelerde son hızla **boşluk doldurma** (6 kareye kadar). |
+| **3 · Gürültüye uyarlanan sayaç** | Temizlenemeyen artık titreşimi (medyan mutlak sapma) ölçer; eşik geçişinin kaç kare sürmesi gerektiğini ve histerezis bandının ne kadar genişleyeceğini buna göre ayarlar. Eşik **asla** sinyalin ulaşabildiği aralığın dışına itilmez (yoksa egzersiz kilitlenir). |
+| **4 · Kare kalitesi** | Parlaklık / kontrast / keskinlik ölçer; kullanıcıya "ortam karanlık, ışığı artır" gibi uygulanabilir geri bildirim verir. |
 
-Exercise choices and starting rep targets are evidence-informed starting points, not a medical prescription.
+### İki ray
 
----
+Saymak ve ölçmek zıt şeyler ister. Saymak **hızlı** sinyal ister (ağır filtrelenmiş sinyal eşiği
+geç geçer, tekrar kaybolur); hareket açıklığını ölçmek **pürüzsüz** sinyal ister (gürültü tepe
+değerini şişirir, klinik skoru da onunla birlikte). Bu yüzden hat ikisini birden üretir:
 
-# Tech stack
+* **hızlı ray** (yalnız medyan, ~sıfır gecikme) → tekrar sayacını sürer
+* **pürüzsüz ray** (medyan + One Euro) → rapordaki hareket açıklığını ölçer
+* hareket açıklığı tek bir maksimum yerine **en iyi birkaç örneğin medyanı** olarak alınır —
+  tek kötü kare kullanıcının "hareket açıklığı" olmamalı
+* kamera temizse filtreleme kendiliğinden geri çekilir, iyi kamera hiçbir şey kaybetmez
 
-- **Backend:** Python, FastAPI, Jinja2 templates
-- **Frontend:** vanilla JavaScript, HTML, CSS (no build step)
-- **Computer vision:** Google MediaPipe Tasks Vision (Hand, Face, Pose Landmarkers) running in-browser via WebAssembly
-- **Storage:** browser `localStorage` for progress history (no server-side database)
-
----
-
-## Project structure
-
-```
-vimoveai/
-├── app/
-│   ├── main.py             # FastAPI app, routes, security headers
-│   ├── program_engine.py   # Rule-based, age-scaled program generator
-│   ├── data/
-│   │   └── programs.json    # Evidence-based knowledge base (exercises, doses, sources)
-│   ├── static/
-│   │   ├── game/game.js     # Real-time CV engine + rep-counting state machine
-│   │   ├── progress.js      # Progress dashboard (charts from local history)
-│   │   ├── i18n.js          # Lightweight TR/EN localization
-│   │   └── styles.css
-│   └── templates/           # Server-rendered pages
-├── requirements.txt
-├── render.yaml              # Render deployment
-├── passenger_wsgi.py        # cPanel/Passenger entry point
-└── run.sh / run.bat
-```
-
----
-
-## Getting started
-
-Requires Python 3.10+.
+### Ölçüm
 
 ```bash
-# 1. (optional) create a virtual environment
-python -m venv .venv
-source .venv/bin/activate          # Windows: .venv\Scripts\activate
-
-# 2. install dependencies
-pip install -r requirements.txt
-
-# 3. run the development server
-uvicorn app.main:app --reload
+node bench/lowres_bench.mjs
 ```
 
-Then open `http://127.0.0.1:8000` and allow camera access when prompted.
+20 temiz tekrar sentezlenir; nokta koordinatları gerçek bir kameranın belirli çözünürlük ve
+mesafede bozduğu gibi bozulur (piksel yuvarlama, ~1.5 piksel konum hatası, büyük sapma hataları,
+art arda kaybolan kare blokları). Aynı bozuk akışı iki sayaç okur: eski ViMove sayacı ve LRV.
 
-On Windows you can also use `run.bat`; on Linux/macOS, `run.sh`.
+| Senaryo | Sayım doğruluğu (eski → LRV) | Hareket açıklığı hatası (eski → LRV) |
+|---|---|---|
+| 1280x720 · yakın | %100 → %100 | %0.9 → %1.1 |
+| 640x480 · yakın | %100 → %100 | %1.4 → %1.6 |
+| 640x480 · uzak | %100 → %99.9 | %3.3 → %3.2 |
+| 320x240 · yakın | %100 → %100 | %3.3 → %3.0 |
+| 320x240 · uzak | %99.0 → %99.1 | %8.8 → %6.9 |
+| **160x120 · uzak** | %95.8 → **%96.0** | %28.1 → **%14.9** |
 
----
+Zor senaryolarda (kullanıcı kameradan uzakta) hareket açıklığı ölçüm hatası **%13.4'ten %8.3'e**
+düşüyor; tekrar sayımı ise en kötü durumda bile geriye gitmiyor. Bu önemli, çünkü rapordaki
+klinik göstergeler (tutarlılık, yorulma azalması, sağ-sol simetri) doğrudan bu ölçümden türüyor.
 
-## How the rep-counting works
-
-1. **Scale-invariant metrics.** Each exercise is reduced to a metric normalized by body, hand or face size (e.g. arm height ÷ torso length, eye aspect ratio, ankle offset ÷ hip width), so the result is independent of the user's height or distance from the camera.
-2. **Rep state machine.** A movement is counted only when it completes a full *engage → release* cycle. Separate engage/release thresholds (hysteresis), a 5-frame moving average, and a 350 ms cooldown reject noise and double counts.
-3. **Per-exercise calibration.** Sit-to-stand calibrates a standing reference over the first frames and confirms each rep with both body height and knee angle.
-4. **Quality report.** Each rep's amplitude and duration are logged to produce a session summary: consistency, tempo, decrement, and left/right symmetry.
-
----
-
-## Deployment
-
-Deployment notes are included for three targets:
-
-- `DEPLOY_RENDER.md` — Render (uses `render.yaml`)
-- `DEPLOY_VPS.md` — generic VPS with Gunicorn/Uvicorn
-- `DEPLOY_CPANEL.md` — shared hosting via Passenger (`passenger_wsgi.py`)
-
----
-
-## Acknowledgements
-
-ViMove was created by two high-school students as a research project. It is built on open-source work — most notably **Google MediaPipe** for landmark detection — and its programs are grounded in published clinical guidelines (LSVT BIG, Otago, WHO, OARSI/ACR, AHA/ASA). Development also made use of modern AI-assisted coding tools.
+> **Dürüst okuma:** Bu sayılar kamera bozulmasının **simülasyonundan** gelir, klinik bir denemeden
+> değil. ROI büyütme aşaması tabloya bilerek dahil edilmedi: o aşama matematiği değil sinir ağının
+> gördüğü görüntüyü değiştirir ve onu simüle ediyormuş gibi yapmak sonucu kurgulamak olurdu.
+> Sıradaki adım, gerçek cihazda elle sayılan tekrarlarla doğrulama.
 
 ---
 
-## Disclaimer
+## Hareket dedektörleri
 
-ViMove is an assistive movement-tracking tool and a student research project. It is **not a medical device** and does not provide diagnosis, treatment, or professional medical advice. Always consult a qualified healthcare professional before beginning any exercise program.
+16 hareket ailesi, hepsi ölçek ve mesafeden bağımsız (vücut/el/yüz boyutuna normalize) metriklerle:
+
+`hand` · `fingertap` · `arm` (öne kaldırma) · `armabduct` (yana kaldırma) · `elbow` · `shrug` ·
+`neckturn` · `necktilt` · `neckflex` · `trunkbend` · `leg` · `kneeext` · `march` · `sitstand` ·
+`mouth` · `blink`
+
+Duruşa bağlı olanlar (`neckflex`, `shrug`) sabit eşik yerine **kullanıcının kendi dinlenme
+değerine göre** çalışır: taban çizgisi son ~5 saniyenin yüzdeliğinden sürekli güncellenir, yani
+vücut tipi ya da sandalyede kayma sayımı bozmaz.
+
+## Egzersiz programları
+
+`app/data/programs.json` — 10 durum, 76 egzersiz tanımı, her biri kaynaklı:
+Parkinson, inme sonrası, osteoartrit, denge/düşme önleme, **bel ağrısı**, **boyun ağrısı**,
+**bel fıtığı**, **skolyoz**, **kas yaralanması sonrası**, genel yaşlı kondisyonu.
+
+Kural: **uydurma egzersiz yok.** Her programın gerekçesi ve kaynağı (NICE, Cochrane, SOSORT,
+JOSPT, Otago, OARSI/ACR…) veri dosyasında ve `/exercises` sayfasında yazılıdır.
+Programı yeniden üretmek için: `python tools/build_programs.py`
 
 ---
 
-## License
+## Mimari
 
-Released under the [MIT License](LICENSE).
+```
+FastAPI + Jinja2  ──  build adımı yok, vanilla CSS/JS
+        │
+        ├── app/static/game/game.js     16 dedektör, seans akışı, rapor
+        ├── app/static/game/lowres.js   LRV hattı (bu dosya bağımsız ve test edilebilir)
+        ├── app/program_engine.py       kanıta dayalı program üretici (yaşa göre ölçekleme)
+        └── Supabase                    auth + Postgres (RLS) + video depolama
+```
 
-## Authors
+Üç rol: **hasta** (`/hasta`), **uzman/fizyoterapist** (`/uzman`), **yönetici** (`/admin`).
+Uzman hastasına hesap açar, reçete verir, seans videolarını izler ve uygulama içinden mesajlaşır.
 
-- **Erdem Ertan** — erdemertan08@gmail.com
-- **Oğuz Çetinkaya** — oguzcetinkaya1903@gmail.com
+Android: siteyi saran bir **TWA** paketi (`com.vimoveai.twa`) — uygulama sitenin kendisini açar,
+bu yüzden web tarafındaki her güncelleme anında uygulamada da görünür.
+
+## Çalıştırma
+
+```bash
+python -m venv .venv && .venv/Scripts/pip install -r requirements.txt
+.venv/Scripts/python -m uvicorn app.main:app --reload --port 8000
+```
+
+Kamera `getUserMedia` için güvenli bağlam ister: `http://localhost:8000` veya HTTPS.
+
+---
+
+## Sorumluluk reddi
+
+ViMove AI bir **wellness ve egzersiz** aracıdır, tıbbi cihaz değildir. Teşhis veya tedavi
+iddiası taşımaz. Rapordaki ölçümler kamera tabanlı tahminlerdir ve kişinin kendi geçmiş
+seanslarıyla karşılaştırıldığında anlamlıdır. Egzersiz programına başlamadan önce bir sağlık
+uzmanına danışın.
+
+## Lisans
+
+MIT — bkz. [LICENSE](LICENSE).

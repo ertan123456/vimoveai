@@ -1,0 +1,8 @@
+[{
+  "relation": ["delegate_permission/common.handle_all_urls"],
+  "target": {
+    "namespace": "android_app",
+    "package_name": "com.vimoveai.twa",
+    "sha256_cert_fingerprints": ["0C:B0:9A:E1:CD:19:08:BA:93:20:29:74:08:A5:BC:42:B5:F5:08:CA:60:C0:D7:9A:DE:6D:51:FD:F4:A1:FD:91"]
+  }
+}]

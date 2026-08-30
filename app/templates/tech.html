@@ -1,0 +1,175 @@
+{% extends "base.html" %}
+{% block title %}Teknoloji — ViMove AI{% endblock %}
+{% block description %}ViMove AI LRV: düşük çözünürlüklü ve loş kameralarda hareket sayımını ve ölçümünü ayakta tutan görüntü işleme hattı.{% endblock %}
+
+{% block content %}
+<section class="section">
+  <div class="container" style="max-width:900px">
+
+    <div class="section-head reveal" style="text-align:left;margin-bottom:10px">
+      <span class="eyebrow" data-en="Under the hood" data-tr="Kaputun altı">Kaputun altı</span>
+      <h1 data-en="Making a cheap camera good enough for therapy"
+          data-tr="Ucuz bir kamerayı terapiye yetecek kadar iyi hale getirmek">Ucuz bir kamerayı terapiye yetecek kadar iyi hale getirmek</h1>
+      <p data-en="Our users are older adults at home. They do not own a 1080p webcam — they have a five-year-old laptop, in a dim living room, sitting two metres away. ViMove AI adds its own vision layer, the LRV pipeline, on top of MediaPipe so that the exercise still counts correctly on exactly that camera."
+         data-tr="Kullanıcılarımız evdeki yaşlı bireyler. Ellerinde 1080p kamera yok — loş bir salonda, iki metre uzakta, beş yıllık bir dizüstü var. ViMove AI, MediaPipe'ın üzerine kendi görüntü katmanını, LRV hattını ekler; böylece egzersiz tam da o kamerada doğru sayılır.">Kullanıcılarımız evdeki yaşlı bireyler. Ellerinde 1080p kamera yok — loş bir salonda, iki metre uzakta, beş yıllık bir dizüstü var. ViMove AI, MediaPipe'ın üzerine kendi görüntü katmanını, LRV hattını ekler.</p>
+    </div>
+
+    <!-- the problem -->
+    <div class="card" style="margin:26px 0">
+      <h2 style="margin-top:0" data-en="What actually breaks on a bad camera" data-tr="Kötü kamerada aslında ne bozulur">Kötü kamerada aslında ne bozulur</h2>
+      <div class="tech-grid">
+        <div>
+          <strong data-en="1. The person is tiny" data-tr="1. Kişi kadrajda küçücük">1. Kişi kadrajda küçücük</strong>
+          <p data-en="Two metres away on a 480p camera, a seated person is a few hundred pixels tall. The landmark model has almost nothing to work with."
+             data-tr="480p kamerada iki metre uzakta oturan biri, birkaç yüz piksel boyundadır. Modelin çalışacağı piksel neredeyse kalmaz.">480p kamerada iki metre uzakta oturan biri birkaç yüz piksel boyundadır; modelin çalışacağı piksel neredeyse kalmaz.</p>
+        </div>
+        <div>
+          <strong data-en="2. Landmarks jitter" data-tr="2. Noktalar titrer">2. Noktalar titrer</strong>
+          <p data-en="Joint coordinates shake from frame to frame. A rep counter reading a shaking signal counts repetitions the user never did."
+             data-tr="Eklem noktaları kareden kareye titrer. Titreyen bir sinyali okuyan sayaç, kullanıcının yapmadığı tekrarları sayar.">Eklem noktaları kareden kareye titrer; sayaç yapılmayan tekrarları sayar.</p>
+        </div>
+        <div>
+          <strong data-en="3. Frames disappear" data-tr="3. Kareler kaybolur">3. Kareler kaybolur</strong>
+          <p data-en="In low light the model returns nothing for several frames in a row — right in the middle of a repetition, which breaks the state machine."
+             data-tr="Loş ışıkta model üst üste birkaç kare hiçbir şey döndürmez — hem de tam tekrarın ortasında; bu da sayaç mantığını bozar.">Loş ışıkta model üst üste birkaç kare hiçbir şey döndürmez ve sayaç mantığı bozulur.</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- the pipeline -->
+    <h2 data-en="The LRV pipeline, stage by stage" data-tr="LRV hattı, adım adım">LRV hattı, adım adım</h2>
+    <div class="card" style="padding:22px 18px;margin:14px 0 26px">
+      <svg viewBox="0 0 900 210" class="tech-flow" role="img"
+           aria-label="Kamera görüntüsü sırayla ROI büyütme, medyan ve One Euro filtresi, gürültüye uyarlanan sayaç ve kare kalitesi ölçümünden geçer">
+        <defs>
+          <marker id="tarrow" markerWidth="9" markerHeight="9" refX="7" refY="4.5" orient="auto">
+            <path d="M0 0 L9 4.5 L0 9 z" fill="var(--brand-400)"/>
+          </marker>
+        </defs>
+        <g class="tf-box">
+          <rect x="6" y="70" width="120" height="66" rx="12"/>
+          <text x="66" y="97">Kamera</text>
+          <text x="66" y="117" class="tf-sub">480p, loş</text>
+        </g>
+        <line x1="130" y1="103" x2="168" y2="103" marker-end="url(#tarrow)"/>
+        <g class="tf-box tf-hi">
+          <rect x="172" y="52" width="150" height="102" rx="12"/>
+          <text x="247" y="80">1 · ROI</text>
+          <text x="247" y="102" class="tf-sub">gövdeyi kırp</text>
+          <text x="247" y="120" class="tf-sub">ve büyüt</text>
+          <text x="247" y="140" class="tf-sub">(≈2x piksel)</text>
+        </g>
+        <line x1="326" y1="103" x2="364" y2="103" marker-end="url(#tarrow)"/>
+        <g class="tf-box">
+          <rect x="368" y="52" width="150" height="102" rx="12"/>
+          <text x="443" y="80">MediaPipe</text>
+          <text x="443" y="102" class="tf-sub">pose / hand /</text>
+          <text x="443" y="120" class="tf-sub">face landmark</text>
+        </g>
+        <line x1="522" y1="103" x2="560" y2="103" marker-end="url(#tarrow)"/>
+        <g class="tf-box tf-hi">
+          <rect x="564" y="52" width="150" height="102" rx="12"/>
+          <text x="639" y="76">2 · Kararlılık</text>
+          <text x="639" y="98" class="tf-sub">medyan + One Euro</text>
+          <text x="639" y="116" class="tf-sub">+ boşluk doldurma</text>
+        </g>
+        <line x1="718" y1="103" x2="756" y2="103" marker-end="url(#tarrow)"/>
+        <g class="tf-box tf-hi">
+          <rect x="760" y="52" width="134" height="102" rx="12"/>
+          <text x="827" y="76">3 · Sayaç</text>
+          <text x="827" y="98" class="tf-sub">gürültüye</text>
+          <text x="827" y="116" class="tf-sub">uyarlanan eşik</text>
+        </g>
+        <g class="tf-box tf-soft">
+          <rect x="368" y="168" width="150" height="36" rx="10"/>
+          <text x="443" y="191" class="tf-sub">4 · kare kalitesi</text>
+        </g>
+        <line x1="443" y1="158" x2="443" y2="164" marker-end="url(#tarrow)"/>
+      </svg>
+    </div>
+
+    <div class="stack-sm" style="gap:16px">
+      <div class="card">
+        <h3 style="margin-top:0" data-en="1 · Adaptive ROI — better pixels, not a bigger model"
+            data-tr="1 · Uyarlanır ROI — daha büyük model değil, daha iyi piksel">1 · Uyarlanır ROI — daha büyük model değil, daha iyi piksel</h3>
+        <p data-en="Instead of feeding the whole frame to the landmark model, we track where the body (or hand, or face) is, crop a square around it with a margin, and re-render that crop at 512 px before inference. The model then sees the user roughly twice as large. The crop box is smoothed over time so it does not chase the movement, and if a crop ever costs us the subject, the pipeline falls back to the full frame automatically."
+           data-tr="Tüm kareyi modele vermek yerine, vücudun (ya da elin, yüzün) nerede olduğunu takip ediyoruz; etrafına pay bırakarak kare bir alan kırpıyor ve bu kırpılmış alanı model çalışmadan önce 512 piksele büyütüyoruz. Model kullanıcıyı yaklaşık iki kat büyük görüyor. Kırpma çerçevesi zamanla yumuşatılır ki hareketin peşinden koşmasın; kırpma yüzünden kullanıcı bir an kaybolursa hat kendiliğinden tam kareye geri döner.">Tüm kareyi modele vermek yerine vücudun yerini takip edip etrafını kırpıyor ve büyütüyoruz; model kullanıcıyı yaklaşık iki kat büyük görüyor.</p>
+      </div>
+      <div class="card">
+        <h3 style="margin-top:0" data-en="2 · Median + One Euro — two different kinds of noise"
+            data-tr="2 · Medyan + One Euro — iki farklı gürültü">2 · Medyan + One Euro — iki farklı gürültü</h3>
+        <p data-en="A landmark stream carries two errors at once: small continuous shake, and gross single-frame mistakes where a wrist lands on the background. A 3-5 tap running median removes the gross ones almost for free; a One Euro filter (Casiez et al., CHI 2012) then handles the shake — it smooths hard when you are still and lets go when you move fast, so it does not add lag to the actual repetition. If the model returns nothing at all, the last known position and velocity bridge up to six frames instead of freezing the counter."
+           data-tr="Nokta akışı aynı anda iki hata taşır: küçük sürekli titreme ve bileğin arka plana atladığı tek karelik büyük hatalar. 3-5 örneklik koşan medyan büyük hataları neredeyse bedava temizler; ardından One Euro filtresi (Casiez ve ark., CHI 2012) titremeyi alır — dururken sıkı yumuşatır, hızlı hareket edince gevşer; böylece tekrarın kendisine gecikme eklemez. Model hiçbir şey döndürmezse, son bilinen konum ve hız ile altı kareye kadar boşluk doldurulur ve sayaç donmaz.">Medyan büyük hataları, One Euro filtresi titremeyi temizler; kare kaybında son hız ile boşluk doldurulur.</p>
+      </div>
+      <div class="card">
+        <h3 style="margin-top:0" data-en="3 · A rep counter that knows how noisy its own camera is"
+            data-tr="3 · Kendi kamerasının ne kadar gürültülü olduğunu bilen sayaç">3 · Kendi kamerasının ne kadar gürültülü olduğunu bilen sayaç</h3>
+        <p data-en="The pipeline measures the residual jitter it could not remove (a median absolute deviation, so a real movement cannot inflate it) and feeds that number to the rep detector. On a noisy stream a threshold crossing must survive several consecutive frames before it is believed, and the hysteresis band widens — but only by the noise that exceeds what the band already absorbs, and never past the range the signal actually reaches. That last guard matters: a threshold pushed outside the signal would stall the exercise, which is worse than a miscount."
+           data-tr="Hat, temizleyemediği artık titreşimi ölçer (medyan mutlak sapma kullanır, böylece gerçek hareket bu sayıyı şişiremez) ve bu değeri tekrar dedektörüne verir. Gürültülü akışta bir eşik geçişinin inanılması için birkaç kare üst üste sürmesi gerekir ve histerezis bandı genişler — ama yalnızca bandın zaten soğurduğu miktarı aşan gürültü kadar ve asla sinyalin gerçekten ulaştığı aralığın dışına çıkmayacak şekilde. Bu son güvenlik önemli: sinyalin dışına itilmiş bir eşik egzersizi kilitler ki bu yanlış saymaktan daha kötüdür.">Hat kalan titreşimi ölçer ve eşikleri buna göre uyarlar; eşik asla sinyalin ulaşamayacağı yere itilmez.</p>
+      </div>
+      <div class="card">
+        <h3 style="margin-top:0" data-en="4 · Two rails: one to count, one to measure"
+            data-tr="4 · İki ray: biri saymak, biri ölçmek için">4 · İki ray: biri saymak, biri ölçmek için</h3>
+        <p data-en="Counting and measuring want opposite things. Counting wants a fast signal — a heavily smoothed one crosses the threshold late, or not at all, and the repetition is lost. Measuring range of motion wants a smooth signal — noise inflates the peak, and with it the clinical score. So the pipeline keeps both: the low-lag median rail drives the state machine, the fully filtered rail feeds the report, and the range of motion is taken as the median of the best few samples rather than a single maximum (one bad frame should not become the user's 'range of motion'). On a clean camera the filtering steps down on its own, so a good webcam loses nothing."
+           data-tr="Saymak ve ölçmek zıt şeyler ister. Saymak hızlı sinyal ister — ağır yumuşatılmış sinyal eşiği geç geçer ya da hiç geçmez, tekrar kaybolur. Hareket açıklığını ölçmek ise pürüzsüz sinyal ister — gürültü tepe değerini şişirir, klinik skoru da onunla birlikte. Bu yüzden hat ikisini birden tutar: düşük gecikmeli medyan rayı sayacı sürer, tam filtrelenmiş ray rapora gider ve hareket açıklığı tek bir maksimum yerine en iyi birkaç örneğin medyanı olarak alınır (tek kötü kare kullanıcının 'hareket açıklığı' olmamalı). Kamera temizse filtreleme kendiliğinden geri çekilir; iyi bir kamera hiçbir şey kaybetmez.">Sayım hızlı raydan, ölçüm pürüzsüz raydan yapılır; hareket açıklığı tek maksimum yerine en iyi birkaç örneğin medyanıdır.</p>
+      </div>
+    </div>
+
+    <!-- measured results -->
+    <h2 style="margin-top:34px" data-en="Does it actually help? We measured it."
+        data-tr="Gerçekten işe yarıyor mu? Ölçtük.">Gerçekten işe yarıyor mu? Ölçtük.</h2>
+    <p class="muted" data-en="A reproducible benchmark ships with the source code. It synthesises 20 clean repetitions, degrades the landmark coordinates the way a real camera degrades them at a given resolution and distance (pixel quantisation, localisation error, gross mislocalisation, bursts of dropped frames), and then lets the old counter and the LRV pipeline read the same degraded stream."
+       data-tr="Kaynak kodla birlikte, tekrar üretilebilir bir kıyaslama geliyor. 20 temiz tekrar üretiliyor; nokta koordinatları gerçek bir kameranın belirli çözünürlük ve mesafede bozduğu gibi bozuluyor (piksel yuvarlama, konum hatası, büyük sapma hataları, art arda kaybolan kareler) ve aynı bozuk akışı hem eski sayaç hem LRV hattı okuyor.">Kaynak kodla birlikte tekrar üretilebilir bir kıyaslama geliyor: 20 temiz tekrar üretilip gerçek kamera bozulmaları uygulanıyor ve aynı akışı iki sayaç okuyor.</p>
+
+    {% if bench %}
+    <div class="table-wrap">
+      <table class="tech-table">
+        <thead>
+          <tr>
+            <th data-en="Scenario" data-tr="Senaryo">Senaryo</th>
+            <th data-en="Rep accuracy — old" data-tr="Sayım doğruluğu — eski">Sayım doğruluğu — eski</th>
+            <th data-en="Rep accuracy — LRV" data-tr="Sayım doğruluğu — LRV">Sayım doğruluğu — LRV</th>
+            <th data-en="Range-of-motion error — old" data-tr="Hareket açıklığı hatası — eski">Hareket açıklığı hatası — eski</th>
+            <th data-en="Range-of-motion error — LRV" data-tr="Hareket açıklığı hatası — LRV">Hareket açıklığı hatası — LRV</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for r in bench.rows %}
+          <tr>
+            <td>{{ r.case }}</td>
+            <td>%{{ r.baselineAccuracy }}</td>
+            <td>%{{ r.lrvAccuracy }}</td>
+            <td>%{{ r.baselineAmpErrorPct }}</td>
+            <td class="is-better">%{{ r.lrvAmpErrorPct }}</td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+    <p class="muted" style="font-size:.9rem">
+      <span data-en="{{ bench.seeds }} random seeds per scenario, 20 true repetitions each."
+            data-tr="Senaryo başına {{ bench.seeds }} rastgele tohum, her birinde 20 gerçek tekrar.">Senaryo başına {{ bench.seeds }} rastgele tohum.</span>
+    </p>
+    {% endif %}
+
+    <div class="notice notice--warn" style="margin-top:18px">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+      <span data-en="Read this honestly: these numbers come from a SIMULATION of camera degradation, not from a clinical trial. The ROI-upscaling stage is deliberately excluded from the table, because it changes what the neural network sees rather than the arithmetic, and pretending to simulate it would rig the result. On-device validation against manually counted repetitions is our next step."
+            data-tr="Dürüstçe okunmalı: bu sayılar kamera bozulmasının SİMÜLASYONUNDAN geliyor, klinik bir denemeden değil. ROI büyütme adımı tabloya bilerek dahil edilmedi; çünkü o adım matematiği değil sinir ağının gördüğü görüntüyü değiştirir ve simüle ediyormuş gibi yapmak sonucu kurgulamak olurdu. Sıradaki adımımız, gerçek cihazda elle sayılan tekrarlarla doğrulama.">Dürüstçe okunmalı: bu sayılar bir simülasyondan geliyor, klinik denemeden değil.</span>
+    </div>
+
+    <!-- source -->
+    <h2 style="margin-top:34px" data-en="Read the code" data-tr="Kodu oku">Kodu oku</h2>
+    <div class="card">
+      <ul class="list">
+        <li><code>app/static/game/lowres.js</code> — <span data-en="the pipeline: One Euro filter, median prefilter, noise estimator, adaptive ROI, frame quality, rep detector" data-tr="hattın kendisi: One Euro filtresi, medyan ön-filtre, gürültü tahmini, uyarlanır ROI, kare kalitesi, tekrar dedektörü">hattın kendisi</span></li>
+        <li><code>app/static/game/game.js</code> — <span data-en="the 16 movement detectors and how they consume the pipeline" data-tr="16 hareket dedektörü ve hattı nasıl kullandıkları">16 hareket dedektörü</span></li>
+        <li><code>bench/lowres_bench.mjs</code> — <span data-en="the benchmark that produced the table above (node bench/lowres_bench.mjs)" data-tr="yukarıdaki tabloyu üreten kıyaslama (node bench/lowres_bench.mjs)">kıyaslama betiği</span></li>
+      </ul>
+      <a class="btn btn--primary" href="https://github.com/ertan123456/vimoveai" target="_blank" rel="noopener"
+         data-en="Source on GitHub" data-tr="GitHub'da kaynak kod">GitHub'da kaynak kod</a>
+    </div>
+
+  </div>
+</section>
+{% endblock %}

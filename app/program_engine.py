@@ -20,6 +20,7 @@ with DATA_FILE.open(encoding="utf-8") as _f:
     _DB = json.load(_f)
 
 _SIDE_LABEL = {"left": "Left", "right": "Right"}
+_SIDE_LABEL_TR = {"left": "Sol", "right": "Sağ"}
 
 
 def _tier(age: int) -> dict:
@@ -46,7 +47,19 @@ def get_condition(slug: str):
 def _display_name(ex: dict, side) -> str:
     if side is None:
         return ex["name"]
+    # some movements read badly as "Right <name>" and carry their own wording
+    if ex.get("sided", {}).get(side):
+        return ex["sided"][side]
     return f"{_SIDE_LABEL[side]} {ex['name']}"
+
+
+def _display_name_tr(ex: dict, side) -> str:
+    name = ex.get("name_tr", ex["name"])
+    if side is None:
+        return name
+    if ex.get("sided_tr", {}).get(side):
+        return ex["sided_tr"][side]
+    return f"{_SIDE_LABEL_TR[side]} {name}"
 
 
 def build_program(disease: str, age, gender: str | None = None):
@@ -74,11 +87,14 @@ def build_program(disease: str, age, gender: str | None = None):
         for side in ex["sides"]:
             plan.append({
                 "ad": _display_name(ex, side),
+                "ad_tr": _display_name_tr(ex, side),
                 "hedef": reps,
                 "kind": ex["kind"],
                 "side": side,
                 "domain": ex["domain"],
+                "domain_tr": ex.get("domain_tr", ex["domain"]),
                 "rationale": ex["rationale"],
+                "rationale_tr": ex.get("rationale_tr", ex["rationale"]),
             })
 
     return {

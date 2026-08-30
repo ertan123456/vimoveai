@@ -1,17 +1,17 @@
 {% extends "base.html" %}
-{% block title %}Start a session — ViMove{% endblock %}
+{% block title %}Start a session — ViMove AI{% endblock %}
 
 {% block content %}
 <section class="section">
   <div class="container">
     <div class="form-shell">
-      <div class="section-head" style="margin-bottom:32px">
+      <div class="section-head reveal" style="margin-bottom:32px">
         <span class="eyebrow" data-i18n="start.eyebrow">Set up your session</span>
         <h1 style="font-size:clamp(2rem,4vw,2.6rem)" data-i18n="start.title">Let's tailor your program</h1>
-        <p data-i18n="start.sub">A few quick details help ViMove choose the right exercises for you. It takes less than a minute.</p>
+        <p data-i18n="start.sub">A few quick details help ViMove AI choose the right exercises for you. It takes less than a minute.</p>
       </div>
 
-      <form method="POST" action="/start" class="card" style="padding:clamp(24px,4vw,38px)">
+      <form method="POST" action="/start" class="card card--raised reveal" style="padding:clamp(24px,4vw,38px)">
         <div class="form-grid">
 
           <div class="field">
@@ -64,7 +64,7 @@
       </form>
 
       <p class="muted text-center" style="margin-top:20px;font-size:.95rem" data-i18n="start.ack">
-        By continuing you acknowledge that ViMove is not a medical device and does not replace professional care.
+        By continuing you acknowledge that ViMove AI is not a medical device and does not replace professional care.
       </p>
     </div>
   </div>
