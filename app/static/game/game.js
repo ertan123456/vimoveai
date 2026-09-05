@@ -1,6 +1,6 @@
 // ViMove AI — exercise detection engine
 // MediaPipe Tasks Vision (hand / face / pose) in the browser, wrapped in the
-// ViMove AI LRV pipeline (see lowres.js) so it also works on the cheap, dim,
+// ViMove AI LRD pipeline (see lowres.js) so it also works on the cheap, dim,
 // low-resolution cameras our users actually own.
 //
 // Design goals (v20):
@@ -11,7 +11,7 @@
 //  - Consistent, user-perspective left/right (mirror-corrected once, used everywhere)
 //  - Only the model needed for the current exercise runs each frame (higher FPS)
 //  - Temporal smoothing + time-based debounce to reject noise/double counts
-//  - LRV pipeline: ROI upscaling before inference, median + One Euro landmark
+//  - LRD pipeline: ROI upscaling before inference, median + One Euro landmark
 //    stabilisation, dropout bridging, noise-adaptive rep detection and a
 //    robust range-of-motion estimator (bench/lowres_bench.mjs measures it)
 
@@ -24,7 +24,7 @@ import {
 // NOTE: the ?v= is not decoration. Without it the browser keeps a cached
 // lowres.js while game.js is refreshed by its own ?v=, the two versions
 // disagree, and every frame throws. BUMP THIS whenever lowres.js changes.
-import { LowResPipeline, RepDetector } from "./lowres.js?v=3";
+import { LowResPipeline, RepDetector } from "./lowres.js?v=4";
 
 // ---------------- DOM ----------------
 const video = document.getElementById("video");
@@ -88,7 +88,7 @@ const DEFAULT_PLAN = [
 //                  dir -1 => engaged when value <= engage, rest when value >= release.
 //
 // noiseGain converts "landmark jitter in image units" into "this metric's
-// units", so the LRV pipeline knows how much of the band the camera noise is
+// units", so the LRD pipeline knows how much of the band the camera noise is
 // eating (see lowres.js -> adaptHysteresis / persistFrames).
 //
 // rel: true  => engage/release are MULTIPLES of the user's own resting value,
@@ -116,7 +116,7 @@ const THRESH = {
   trunkbend: { engage: 0.19, release: 0.07, dir: +1, noiseGain: 4, zero: true },   // signed trunk lean / torso
   necktilt:  { engage: 14,   release: 5,    dir: +1, noiseGain: 250, zero: true }, // ear-line vs shoulder-line, degrees
   // A frontal camera sees a chin tuck and a shrug as a SMALL change, so these
-  // bands are narrow on purpose; the LRV pipeline widens them by exactly the
+  // bands are narrow on purpose; the LRD pipeline widens them by exactly the
   // measured camera noise instead of us guessing a safety margin.
   neckflex:  { engage: 0.88, release: 0.95, dir: -1, rel: true, calibFrames: 30, noiseGain: 4 },  // nose-to-shoulder gap, share of the user's own resting value
   shrug:     { engage: 0.88, release: 0.95, dir: -1, rel: true, calibFrames: 30, noiseGain: 4 },  // ear-to-shoulder gap, share of resting
@@ -334,7 +334,7 @@ let phase = "rest";                 // "rest" | "engaged"
 let lastRepAt = 0;
 let lastLandmarkAt = 0;      // when the model last returned anything
 
-// The LRV pipeline: better pixels in, cleaner landmarks out. See lowres.js.
+// The LRD pipeline: better pixels in, cleaner landmarks out. See lowres.js.
 const pipeline = new LowResPipeline();
 
 // sit-to-stand calibration
@@ -538,7 +538,7 @@ function detectorFor(kind) {
  */
 function decidePhase(kind, value, measured = null) {
   const det = detectorFor(kind);
-  const out = det.update(value, performance.now(), lrvJitter(), measured);
+  const out = det.update(value, performance.now(), lrdJitter(), measured);
   if (out === null) return null;
   if (out === "calibrating") return "calibrating";
   phase = det.phase;
@@ -989,7 +989,7 @@ function drawDots(pts, color, r = 3) {
 }
 
 // ---------------- Camera quality badge ----------------
-// Tells the user what the LRV pipeline is doing about their camera, in words
+// Tells the user what the LRD pipeline is doing about their camera, in words
 // they can act on ("the room is dark") rather than numbers.
 let lastBadgeAt = 0;
 function updateCameraBadge(now) {
@@ -1010,7 +1010,7 @@ function updateCameraBadge(now) {
   } else if (noBody) {
     cls = "warn";
     text = tr ? "Vücudun görünmüyor — kadraja gir, ışığı artır" : "You are not visible — step into frame, add light";
-  } else if (!lrvOk) {
+  } else if (!lrdOk) {
     cls = "warn";
     text = tr ? "Kamera iyileştirmesi kapalı · " + res : "Camera enhancement off · " + res;
   } else if (st.quality < 0.45) {
@@ -1030,10 +1030,10 @@ function updateCameraBadge(now) {
   el.hidden = false;
 
   // one compact technical line, only when something is actually wrong
-  if (diagEl && (planSource === "fallback" || !lrvOk || noBody)) {
+  if (diagEl && (planSource === "fallback" || !lrdOk || noBody)) {
     const bits = [];
     if (planSource === "fallback") bits.push("plan: yedek (" + planProblem + ")");
-    if (!lrvOk) bits.push("LRV: kapali (" + lrvError + ")");
+    if (!lrdOk) bits.push("LRD: kapali (" + lrdError + ")");
     if (noBody) bits.push("model " + Math.round((now - lastLandmarkAt) / 1000) + " sn'dir nokta dondurmuyor");
     diagEl.textContent = bits.join(" · ");
   }
@@ -1091,7 +1091,7 @@ async function startCam() {
   // (normalized to the source frame) map 1:1 — and object-fit:cover then crops
   // the canvas exactly like the <video>, keeping the dots glued to the body.
   syncCanvasToVideo();
-  // The LRV pipeline needs to know what it is really working with: many
+  // The LRD pipeline needs to know what it is really working with: many
   // laptops silently hand back 640x480 no matter what we asked for.
   pipeline.setFrameSize(video.videoWidth, video.videoHeight);
   updateCameraBadge();
@@ -1099,32 +1099,32 @@ async function startCam() {
 }
 
 // ---------------- Pipeline safety ----------------
-// The LRV pipeline is an ENHANCEMENT. If anything in it ever throws on a
+// The LRD pipeline is an ENHANCEMENT. If anything in it ever throws on a
 // particular device or browser, the exercise itself must keep working: we
 // disable the pipeline for the rest of the session, fall back to the raw
 // landmarks, and say so on screen instead of silently freezing.
-let lrvOk = true;
-let lrvError = "";
-function lrvFail(where, e) {
-  lrvOk = false;
+let lrdOk = true;
+let lrdError = "";
+function lrdFail(where, e) {
+  lrdOk = false;
   pipeline.enabled = false;
-  lrvError = where + ": " + (e && e.message ? e.message : e);
-  if (diagEl) diagEl.textContent = "LRV devre disi (" + lrvError + ") — egzersiz ham veriyle devam ediyor.";
-  console.warn("LRV disabled -", lrvError);
+  lrdError = where + ": " + (e && e.message ? e.message : e);
+  if (diagEl) diagEl.textContent = "LRD devre disi (" + lrdError + ") — egzersiz ham veriyle devam ediyor.";
+  console.warn("LRD disabled -", lrdError);
 }
-function lrvPrepare(v) {
-  if (!lrvOk) return v;
-  try { return pipeline.prepare(v); } catch (e) { lrvFail("prepare", e); return v; }
+function lrdPrepare(v) {
+  if (!lrdOk) return v;
+  try { return pipeline.prepare(v); } catch (e) { lrdFail("prepare", e); return v; }
 }
-function lrvStabilize(lms, t) {
-  if (!lrvOk) return lms;
-  try { return pipeline.stabilize(lms, t); } catch (e) { lrvFail("stabilize", e); return lms; }
+function lrdStabilize(lms, t) {
+  if (!lrdOk) return lms;
+  try { return pipeline.stabilize(lms, t); } catch (e) { lrdFail("stabilize", e); return lms; }
 }
-function lrvToFrame(lms) {
-  if (!lrvOk) return lms;
-  try { return pipeline.toFrame(lms); } catch (e) { lrvFail("toFrame", e); return lms; }
+function lrdToFrame(lms) {
+  if (!lrdOk) return lms;
+  try { return pipeline.toFrame(lms); } catch (e) { lrdFail("toFrame", e); return lms; }
 }
-function lrvJitter() { return lrvOk ? pipeline.jitter : 0; }
+function lrdJitter() { return lrdOk ? pipeline.jitter : 0; }
 
 // ---------------- Main loop ----------------
 function tick() {
@@ -1142,10 +1142,10 @@ function tick() {
   let outcome = null;
   let amp = null;            // continuous amplitude (ROM) signal this frame
 
-  // The LRV pipeline decides what the model actually looks at this frame:
+  // The LRD pipeline decides what the model actually looks at this frame:
   // the raw video, or a cropped-and-upscaled window around the body part in
   // use (which is what rescues a low-resolution camera).
-  const input = lrvPrepare(video);
+  const input = lrdPrepare(video);
 
   try {
     if (ex.kind === "hand" || ex.kind === "fingertap") {
@@ -1158,9 +1158,9 @@ function tick() {
         }
       }
       if (raw) lastLandmarkAt = now;
-      const lm = lrvStabilize(raw, now);          // smooth rail (measuring)
+      const lm = lrdStabilize(raw, now);          // smooth rail (measuring)
       const fast = pipeline.fast || lm;                 // low-lag rail (counting)
-      if (raw || lm) drawDots(lrvToFrame(raw) || lm, "#22d3ee");
+      if (raw || lm) drawDots(lrdToFrame(raw) || lm, "#22d3ee");
       if (lm && fast) {
         if (ex.kind === "fingertap") {
           const v = fingerTapRatio(fast), m = fingerTapRatio(lm);
@@ -1177,11 +1177,11 @@ function tick() {
       const r = faceLandmarker.detectForVideo(input, now);
       const raw = r?.faceLandmarks?.[0] || null;
       if (raw) lastLandmarkAt = now;
-      const f = lrvStabilize(raw, now);
+      const f = lrdStabilize(raw, now);
       const fast = pipeline.fast || f;
       results.face = f;
       if (f && fast) {
-        drawDots((lrvToFrame(raw) || f).filter((_, i) => i % 6 === 0), "#f9a8d4", 1.5);
+        drawDots((lrdToFrame(raw) || f).filter((_, i) => i % 6 === 0), "#f9a8d4", 1.5);
         if (ex.kind === "mouth") {
           const m = mouthRatio(f);
           amp = m;
@@ -1196,11 +1196,11 @@ function tick() {
     else { // every pose-based movement
       const r = poseLandmarker.detectForVideo(input, now);
       if (r?.landmarks?.[0]) lastLandmarkAt = now;
-      const p = lrvStabilize(r?.landmarks?.[0] || null, now);
+      const p = lrdStabilize(r?.landmarks?.[0] || null, now);
       const fast = pipeline.fast || p;
       results.pose = p;
       if (p && fast) {
-        drawDots(lrvToFrame(r?.landmarks?.[0]) || p, "#86efac");
+        drawDots(lrdToFrame(r?.landmarks?.[0]) || p, "#86efac");
         const side = ex.side;
         // value = fast rail (decides the rep), measured = smooth rail (sizes it)
         const both = fn => [fn(fast, side), fn(p, side)];

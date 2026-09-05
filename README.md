@@ -12,7 +12,7 @@ Geliştiriciler: Erdem Ertan ve Oğuz Çetinkaya (lise öğrencileri).
 
 ---
 
-## Teknik yenilik: LRV (Low-Resolution Vision) hattı
+## Teknik yenilik: LRD (Low-Resolution Detection) hattı
 
 Hedef kullanıcımızın 1080p kamerası yok. Loş bir salonda, iki metre uzakta, beş yıllık bir
 dizüstü bilgisayarı var. Hazır bir poz-tahmin modelini o görüntüye doğrudan bağladığında üç şey
@@ -51,9 +51,9 @@ node bench/lowres_bench.mjs
 
 20 temiz tekrar sentezlenir; nokta koordinatları gerçek bir kameranın belirli çözünürlük ve
 mesafede bozduğu gibi bozulur (piksel yuvarlama, ~1.5 piksel konum hatası, büyük sapma hataları,
-art arda kaybolan kare blokları). Aynı bozuk akışı iki sayaç okur: eski ViMove sayacı ve LRV.
+art arda kaybolan kare blokları). Aynı bozuk akışı iki sayaç okur: eski ViMove sayacı ve LRD.
 
-| Senaryo | Sayım doğruluğu (eski → LRV) | Hareket açıklığı hatası (eski → LRV) |
+| Senaryo | Sayım doğruluğu (eski → LRD) | Hareket açıklığı hatası (eski → LRD) |
 |---|---|---|
 | 1280x720 · yakın | %100 → %100 | %0.9 → %1.1 |
 | 640x480 · yakın | %100 → %100 | %1.4 → %1.6 |
@@ -103,7 +103,7 @@ Programı yeniden üretmek için: `python tools/build_programs.py`
 FastAPI + Jinja2  ──  build adımı yok, vanilla CSS/JS
         │
         ├── app/static/game/game.js     16 dedektör, seans akışı, rapor
-        ├── app/static/game/lowres.js   LRV hattı (bu dosya bağımsız ve test edilebilir)
+        ├── app/static/game/lowres.js   LRD hattı (bu dosya bağımsız ve test edilebilir)
         ├── app/program_engine.py       kanıta dayalı program üretici (yaşa göre ölçekleme)
         └── Supabase                    auth + Postgres (RLS) + video depolama
 ```

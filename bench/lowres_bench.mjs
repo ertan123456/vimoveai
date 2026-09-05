@@ -1,5 +1,5 @@
 // =====================================================================
-// ViMove AI — LRV pipeline benchmark
+// ViMove AI — LRD pipeline benchmark
 // ---------------------------------------------------------------------
 // Question: does the low-resolution pipeline actually make rep counting
 // more accurate on a bad camera, or does it just sound clever?
@@ -21,7 +21,7 @@
 //   * Two counters read the same degraded stream:
 //        BASELINE : 5-frame moving average + fixed hysteresis + 350 ms
 //                   cooldown  (what ViMove shipped before)
-//        LRV      : median prefilter + One Euro stabiliser + gap bridging +
+//        LRD      : median prefilter + One Euro stabiliser + gap bridging +
 //                   noise-adaptive persistence + robust peak (this pipeline)
 //   * Two scores, because a rep counter has two jobs:
 //        - counting  : |counted - 20|, averaged over N random seeds
@@ -126,8 +126,8 @@ function countBaseline(stream) {
   return { reps, peaks };
 }
 
-// ---------- counter B: the LRV pipeline ----------
-function countLRV(stream) {
+// ---------- counter B: the LRD pipeline ----------
+function countLRD(stream) {
   const stab = new LandmarkStabilizer();
   const det = new RepDetector(BASE);
   let reps = 0; const peaks = [];
@@ -162,7 +162,7 @@ for (const c of CASES) {
   for (let s = 0; s < SEEDS; s++) {
     const rand = rng(1000 + s * 7919 + c.h + Math.round(c.scale * 100));
     const stream = degrade(truth, c.h, rand);
-    const b = countBaseline(stream), l = countLRV(stream);
+    const b = countBaseline(stream), l = countLRD(stream);
     eB += Math.abs(b.reps - REPS); eL += Math.abs(l.reps - REPS);
     cB += b.reps; cL += l.reps;
     const mb = mae(b.peaks), ml = mae(l.peaks);
@@ -172,34 +172,34 @@ for (const c of CASES) {
   rows.push({
     case: c.label, height: c.h, subjectScale: c.scale, trueReps: REPS,
     baselineMeanCount: +(cB / SEEDS).toFixed(2),
-    lrvMeanCount: +(cL / SEEDS).toFixed(2),
+    lrdMeanCount: +(cL / SEEDS).toFixed(2),
     baselineAccuracy: +(100 * (1 - (eB / SEEDS) / REPS)).toFixed(1),
-    lrvAccuracy: +(100 * (1 - (eL / SEEDS) / REPS)).toFixed(1),
+    lrdAccuracy: +(100 * (1 - (eL / SEEDS) / REPS)).toFixed(1),
     // how wrong the measured movement SIZE was (this drives the report scores)
     baselineAmpErrorPct: nB ? +(100 * (aB / nB) / PEAK).toFixed(1) : null,
-    lrvAmpErrorPct: nL ? +(100 * (aL / nL) / PEAK).toFixed(1) : null,
+    lrdAmpErrorPct: nL ? +(100 * (aL / nL) / PEAK).toFixed(1) : null,
   });
 }
 
 const pad = (s, n) => String(s).padEnd(n);
 const padL = (s, n) => String(s).padStart(n);
 console.log(`
-ViMove AI — LRV benchmark (${REPS} gercek tekrar, ${SEEDS} tekrarli simulasyon)
+ViMove AI — LRD benchmark (${REPS} gercek tekrar, ${SEEDS} tekrarli simulasyon)
 `);
-console.log(pad("Senaryo", 20) + padL("Sayim B", 10) + padL("Sayim LRV", 12) +
-            padL("Genlik hatasi B", 18) + padL("Genlik hatasi LRV", 20));
+console.log(pad("Senaryo", 20) + padL("Sayim B", 10) + padL("Sayim LRD", 12) +
+            padL("Genlik hatasi B", 18) + padL("Genlik hatasi LRD", 20));
 console.log("-".repeat(80));
 for (const r of rows) {
-  console.log(pad(r.case, 20) + padL("%" + r.baselineAccuracy, 10) + padL("%" + r.lrvAccuracy, 12) +
-              padL("%" + r.baselineAmpErrorPct, 18) + padL("%" + r.lrvAmpErrorPct, 20));
+  console.log(pad(r.case, 20) + padL("%" + r.baselineAccuracy, 10) + padL("%" + r.lrdAccuracy, 12) +
+              padL("%" + r.baselineAmpErrorPct, 18) + padL("%" + r.lrdAmpErrorPct, 20));
 }
 
 const hard = rows.filter(r => r.subjectScale < 1);
 const avg = (a) => a.reduce((s, x) => s + x, 0) / a.length;
 console.log(`
 Zor senaryolar (kullanici uzakta):`);
-console.log(`  sayim dogrulugu : baseline %${avg(hard.map(r => r.baselineAccuracy)).toFixed(1)} -> LRV %${avg(hard.map(r => r.lrvAccuracy)).toFixed(1)}`);
-console.log(`  genlik hatasi   : baseline %${avg(hard.map(r => r.baselineAmpErrorPct)).toFixed(1)} -> LRV %${avg(hard.map(r => r.lrvAmpErrorPct)).toFixed(1)}
+console.log(`  sayim dogrulugu : baseline %${avg(hard.map(r => r.baselineAccuracy)).toFixed(1)} -> LRD %${avg(hard.map(r => r.lrdAccuracy)).toFixed(1)}`);
+console.log(`  genlik hatasi   : baseline %${avg(hard.map(r => r.baselineAmpErrorPct)).toFixed(1)} -> LRD %${avg(hard.map(r => r.lrdAmpErrorPct)).toFixed(1)}
 `);
 
 if (process.argv.includes("--json")) {

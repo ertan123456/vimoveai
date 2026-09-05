@@ -1,6 +1,6 @@
 {% extends "base.html" %}
 {% block title %}Teknoloji — ViMove AI{% endblock %}
-{% block description %}ViMove AI LRV: düşük çözünürlüklü ve loş kameralarda hareket sayımını ve ölçümünü ayakta tutan görüntü işleme hattı.{% endblock %}
+{% block description %}ViMove AI LRD: düşük çözünürlüklü ve loş kameralarda hareket sayımını ve ölçümünü ayakta tutan görüntü işleme hattı.{% endblock %}
 
 {% block content %}
 <section class="section">
@@ -10,8 +10,8 @@
       <span class="eyebrow" data-en="Under the hood" data-tr="Kaputun altı">Kaputun altı</span>
       <h1 data-en="Making a cheap camera good enough for therapy"
           data-tr="Ucuz bir kamerayı terapiye yetecek kadar iyi hale getirmek">Ucuz bir kamerayı terapiye yetecek kadar iyi hale getirmek</h1>
-      <p data-en="Our users are older adults at home. They do not own a 1080p webcam — they have a five-year-old laptop, in a dim living room, sitting two metres away. ViMove AI adds its own vision layer, the LRV pipeline, on top of MediaPipe so that the exercise still counts correctly on exactly that camera."
-         data-tr="Kullanıcılarımız evdeki yaşlı bireyler. Ellerinde 1080p kamera yok — loş bir salonda, iki metre uzakta, beş yıllık bir dizüstü var. ViMove AI, MediaPipe'ın üzerine kendi görüntü katmanını, LRV hattını ekler; böylece egzersiz tam da o kamerada doğru sayılır.">Kullanıcılarımız evdeki yaşlı bireyler. Ellerinde 1080p kamera yok — loş bir salonda, iki metre uzakta, beş yıllık bir dizüstü var. ViMove AI, MediaPipe'ın üzerine kendi görüntü katmanını, LRV hattını ekler.</p>
+      <p data-en="Our users are older adults at home. They do not own a 1080p webcam — they have a five-year-old laptop, in a dim living room, sitting two metres away. ViMove AI adds its own vision layer, the LRD pipeline, on top of MediaPipe so that the exercise still counts correctly on exactly that camera."
+         data-tr="Kullanıcılarımız evdeki yaşlı bireyler. Ellerinde 1080p kamera yok — loş bir salonda, iki metre uzakta, beş yıllık bir dizüstü var. ViMove AI, MediaPipe'ın üzerine kendi görüntü katmanını, LRD hattını ekler; böylece egzersiz tam da o kamerada doğru sayılır.">Kullanıcılarımız evdeki yaşlı bireyler. Ellerinde 1080p kamera yok — loş bir salonda, iki metre uzakta, beş yıllık bir dizüstü var. ViMove AI, MediaPipe'ın üzerine kendi görüntü katmanını, LRD hattını ekler.</p>
     </div>
 
     <!-- the problem -->
@@ -37,7 +37,7 @@
     </div>
 
     <!-- the pipeline -->
-    <h2 data-en="The LRV pipeline, stage by stage" data-tr="LRV hattı, adım adım">LRV hattı, adım adım</h2>
+    <h2 data-en="The LRD pipeline, stage by stage" data-tr="LRD hattı, adım adım">LRD hattı, adım adım</h2>
     <div class="card" style="padding:22px 18px;margin:14px 0 26px">
       <svg viewBox="0 0 900 210" class="tech-flow" role="img"
            aria-label="Kamera görüntüsü sırayla ROI büyütme, medyan ve One Euro filtresi, gürültüye uyarlanan sayaç ve kare kalitesi ölçümünden geçer">
@@ -118,8 +118,8 @@
     <!-- measured results -->
     <h2 style="margin-top:34px" data-en="Does it actually help? We measured it."
         data-tr="Gerçekten işe yarıyor mu? Ölçtük.">Gerçekten işe yarıyor mu? Ölçtük.</h2>
-    <p class="muted" data-en="A reproducible benchmark ships with the source code. It synthesises 20 clean repetitions, degrades the landmark coordinates the way a real camera degrades them at a given resolution and distance (pixel quantisation, localisation error, gross mislocalisation, bursts of dropped frames), and then lets the old counter and the LRV pipeline read the same degraded stream."
-       data-tr="Kaynak kodla birlikte, tekrar üretilebilir bir kıyaslama geliyor. 20 temiz tekrar üretiliyor; nokta koordinatları gerçek bir kameranın belirli çözünürlük ve mesafede bozduğu gibi bozuluyor (piksel yuvarlama, konum hatası, büyük sapma hataları, art arda kaybolan kareler) ve aynı bozuk akışı hem eski sayaç hem LRV hattı okuyor.">Kaynak kodla birlikte tekrar üretilebilir bir kıyaslama geliyor: 20 temiz tekrar üretilip gerçek kamera bozulmaları uygulanıyor ve aynı akışı iki sayaç okuyor.</p>
+    <p class="muted" data-en="A reproducible benchmark ships with the source code. It synthesises 20 clean repetitions, degrades the landmark coordinates the way a real camera degrades them at a given resolution and distance (pixel quantisation, localisation error, gross mislocalisation, bursts of dropped frames), and then lets the old counter and the LRD pipeline read the same degraded stream."
+       data-tr="Kaynak kodla birlikte, tekrar üretilebilir bir kıyaslama geliyor. 20 temiz tekrar üretiliyor; nokta koordinatları gerçek bir kameranın belirli çözünürlük ve mesafede bozduğu gibi bozuluyor (piksel yuvarlama, konum hatası, büyük sapma hataları, art arda kaybolan kareler) ve aynı bozuk akışı hem eski sayaç hem LRD hattı okuyor.">Kaynak kodla birlikte tekrar üretilebilir bir kıyaslama geliyor: 20 temiz tekrar üretilip gerçek kamera bozulmaları uygulanıyor ve aynı akışı iki sayaç okuyor.</p>
 
     {% if bench %}
     <div class="table-wrap">
@@ -128,9 +128,9 @@
           <tr>
             <th data-en="Scenario" data-tr="Senaryo">Senaryo</th>
             <th data-en="Rep accuracy — old" data-tr="Sayım doğruluğu — eski">Sayım doğruluğu — eski</th>
-            <th data-en="Rep accuracy — LRV" data-tr="Sayım doğruluğu — LRV">Sayım doğruluğu — LRV</th>
+            <th data-en="Rep accuracy — LRD" data-tr="Sayım doğruluğu — LRD">Sayım doğruluğu — LRD</th>
             <th data-en="Range-of-motion error — old" data-tr="Hareket açıklığı hatası — eski">Hareket açıklığı hatası — eski</th>
-            <th data-en="Range-of-motion error — LRV" data-tr="Hareket açıklığı hatası — LRV">Hareket açıklığı hatası — LRV</th>
+            <th data-en="Range-of-motion error — LRD" data-tr="Hareket açıklığı hatası — LRD">Hareket açıklığı hatası — LRD</th>
           </tr>
         </thead>
         <tbody>
@@ -138,9 +138,9 @@
           <tr>
             <td>{{ r.case }}</td>
             <td>%{{ r.baselineAccuracy }}</td>
-            <td>%{{ r.lrvAccuracy }}</td>
+            <td>%{{ r.lrdAccuracy }}</td>
             <td>%{{ r.baselineAmpErrorPct }}</td>
-            <td class="is-better">%{{ r.lrvAmpErrorPct }}</td>
+            <td class="is-better">%{{ r.lrdAmpErrorPct }}</td>
           </tr>
           {% endfor %}
         </tbody>

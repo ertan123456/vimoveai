@@ -1,5 +1,5 @@
 // =====================================================================
-// ViMove AI — LRV (Low-Resolution Vision) pipeline
+// ViMove AI — LRD (Low-Resolution Detection) pipeline
 // ---------------------------------------------------------------------
 // Why this exists
 // ---------------
@@ -15,7 +15,7 @@
 //   3. Landmarks DROP OUT for a few frames (motion blur, low light), which
 //      breaks a state machine mid-repetition.
 //
-// The LRV pipeline is four stages layered on top of MediaPipe Tasks —
+// The LRD pipeline is four stages layered on top of MediaPipe Tasks —
 // it does not replace the model, it feeds it better pixels and cleans up
 // what comes back:
 //
