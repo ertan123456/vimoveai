@@ -1039,6 +1039,82 @@ p  { margin: 0 0 1rem; }
 .plan-list li .ex-target { margin-left: auto; font-size: .85rem; color: var(--ink-400); font-weight: 500; }
 
 .hands-state { display: flex; flex-wrap: wrap; gap: 10px; }
+/* ---- Academic evaluation letter (community page) ---- */
+.letter-card {
+  display: grid; grid-template-columns: auto 1fr auto; align-items: center; gap: 20px;
+  width: 100%; text-align: left; cursor: pointer;
+  padding: 22px 24px; border-radius: 18px;
+  border: 1px solid var(--brand-200);
+  background:
+    linear-gradient(120% 140% at 0% 0%, var(--brand-50), #fff 58%);
+  box-shadow: var(--shadow-sm);
+  transition: transform .18s ease, box-shadow .18s ease, border-color .18s ease;
+}
+.letter-card:hover { transform: translateY(-2px); box-shadow: var(--shadow-lg); border-color: var(--brand-400); }
+.letter-card:focus-visible { outline: 3px solid var(--brand-400); outline-offset: 3px; }
+.letter-seal {
+  display: grid; place-items: center; flex: none;
+  width: 54px; height: 54px; border-radius: 14px;
+  background: var(--brand-500); color: #fff;
+}
+.letter-seal svg { width: 26px; height: 26px; }
+.letter-body { display: block; min-width: 0; }
+.letter-eyebrow {
+  display: block; font-size: .74rem; font-weight: 800; letter-spacing: .1em;
+  text-transform: uppercase; color: var(--brand-700); margin-bottom: 6px;
+}
+.letter-quote {
+  display: block; font-family: var(--font-head); font-size: 1.12rem; line-height: 1.4;
+  color: var(--ink-900); font-weight: 600;
+}
+.letter-who { display: block; margin-top: 8px; font-size: .9rem; color: var(--ink-500); }
+.letter-who b { display: block; color: var(--ink-800); font-weight: 700; }
+.letter-cta {
+  display: inline-flex; align-items: center; gap: 8px; flex: none;
+  font-weight: 700; color: var(--brand-700); font-size: .95rem; white-space: nowrap;
+}
+.letter-cta svg { width: 18px; height: 18px; transition: transform .18s ease; }
+.letter-card:hover .letter-cta svg { transform: translateX(4px); }
+@media (max-width: 720px) {
+  .letter-card { grid-template-columns: auto 1fr; gap: 14px; padding: 18px; }
+  .letter-cta { grid-column: 1 / -1; }
+}
+
+.letter-modal {
+  position: fixed; inset: 0; z-index: 120;
+  display: grid; place-items: center; padding: 20px;
+  background: rgba(15, 23, 42, .58);
+  backdrop-filter: blur(6px); -webkit-backdrop-filter: blur(6px);
+  animation: letterFade .18s ease;
+}
+.letter-modal[hidden] { display: none !important; }   /* attribute must win */
+@keyframes letterFade { from { opacity: 0 } to { opacity: 1 } }
+.letter-sheet {
+  position: relative; width: min(760px, 100%); max-height: 88vh; overflow-y: auto;
+  background: #fff; border-radius: 20px; padding: 34px clamp(20px, 4vw, 46px) 28px;
+  box-shadow: 0 30px 80px rgba(15, 23, 42, .35);
+  animation: letterRise .22s cubic-bezier(.2, .8, .2, 1);
+}
+@keyframes letterRise { from { opacity: 0; transform: translateY(14px) scale(.985) } to { opacity: 1; transform: none } }
+.letter-close {
+  position: absolute; top: 14px; right: 14px; width: 38px; height: 38px;
+  display: grid; place-items: center; border-radius: 50%;
+  border: 1px solid var(--ink-200); background: #fff; color: var(--ink-600); cursor: pointer;
+}
+.letter-close:hover { background: var(--ink-50); color: var(--ink-900); }
+.letter-close svg { width: 18px; height: 18px; }
+.letter-head { border-bottom: 1px solid var(--ink-100); padding-bottom: 16px; margin-bottom: 20px; }
+.letter-head h2 { margin: 4px 0 0; font-size: clamp(1.4rem, 3vw, 1.9rem); }
+.letter-date { font-size: .82rem; font-weight: 700; letter-spacing: .06em; color: var(--ink-400); }
+.letter-text p { margin: 0 0 15px; color: var(--ink-700); line-height: 1.72; font-size: 1rem; }
+.letter-text .letter-highlight {
+  padding: 16px 18px; border-radius: 14px; border-left: 4px solid var(--brand-500);
+  background: var(--brand-50); color: var(--ink-800);
+}
+.letter-text .letter-highlight b { color: var(--brand-700); }
+.letter-sign { color: var(--ink-800); line-height: 1.6; }
+.letter-actions { margin-top: 22px; padding-top: 18px; border-top: 1px solid var(--ink-100); }
+
 /* ---- /teknoloji page ---- */
 .tech-grid { display: grid; gap: 18px; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); }
 .tech-grid strong { display: block; margin-bottom: 6px; color: var(--ink-900); }

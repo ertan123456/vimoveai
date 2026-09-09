@@ -1,6 +1,6 @@
 {% extends "base.html" %}
 {% block title %}ViMove AI in action · ViMove AI{% endblock %}
-{% block description %}Real people using ViMove AI — moments from home sessions and demos.{% endblock %}
+{% block description %}Real people using ViMove AI — moments from home sessions and demos, plus an academic evaluation from Akdeniz University's Centre for Ageing Studies.{% endblock %}
 
 {% block content %}
 <section class="section">
@@ -11,7 +11,30 @@
       <p data-i18n="community.sub">Moments from real people using ViMove AI — moving, one rep at a time.</p>
     </div>
 
-    <div class="gallery reveal-stagger">
+    <!-- Academic evaluation — click to open the full letter -->
+    <button type="button" class="letter-card reveal" id="letterOpen" aria-haspopup="dialog">
+      <span class="letter-seal" aria-hidden="true">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M22 10v6a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2v-6"/>
+          <path d="M2 10l10-6 10 6"/><path d="M2 10l10 7 10-7"/>
+        </svg>
+      </span>
+      <span class="letter-body">
+        <span class="letter-eyebrow" data-en="Academic evaluation" data-tr="Akademik değerlendirme">Akademik değerlendirme</span>
+        <span class="letter-quote">“<span data-en="ViMove has been actively used and evaluated by more than 50 older adults."
+            data-tr="ViMove, 50'den fazla yaşlı birey tarafından aktif olarak kullanılmış ve değerlendirilmiştir.">ViMove, 50'den fazla yaşlı birey tarafından aktif olarak kullanılmış ve değerlendirilmiştir.</span>”</span>
+        <span class="letter-who">
+          <b>Prof. Dr. Gülüşan Özgün Başıbüyük</b>
+          <span data-en="Director, Centre for Ageing Studies · Akdeniz University, Department of Gerontology"
+                data-tr="Yaşlılık Çalışmaları Uygulama ve Araştırma Merkezi Müdürü · Akdeniz Üniversitesi, Gerontoloji Bölümü">Yaşlılık Çalışmaları Uygulama ve Araştırma Merkezi Müdürü · Akdeniz Üniversitesi, Gerontoloji Bölümü</span>
+        </span>
+      </span>
+      <span class="letter-cta" data-en="Read the letter" data-tr="Mektubu oku">Mektubu oku
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+      </span>
+    </button>
+
+    <div class="gallery reveal-stagger" style="margin-top:34px">
       {% for i in range(1, 10) %}
       <button class="gallery-item" type="button" aria-label="Open photo {{ i }}">
         <img src="/static/gallery/g{{ i }}.jpg" alt="ViMove AI in use — {{ i }}" loading="lazy" data-lightbox />
@@ -20,4 +43,42 @@
     </div>
   </div>
 </section>
+
+<!-- Letter modal -->
+<div class="letter-modal" id="letterModal" hidden role="dialog" aria-modal="true" aria-labelledby="letterTitle">
+  <div class="letter-sheet" role="document">
+    <button type="button" class="letter-close" id="letterClose" aria-label="Kapat">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M18 6L6 18M6 6l12 12"/></svg>
+    </button>
+
+    <div class="letter-head">
+      <span class="letter-date">13.06.2026</span>
+      <h2 id="letterTitle" data-en="Evaluation letter" data-tr="Değerlendirme mektubu">Değerlendirme mektubu</h2>
+      <p class="muted" style="margin:6px 0 0"
+         data-en="Akdeniz University · Faculty of Health Sciences · Department of Gerontology"
+         data-tr="Akdeniz Üniversitesi · Sağlık Bilimleri Fakültesi · Gerontoloji Bölümü">Akdeniz Üniversitesi · Sağlık Bilimleri Fakültesi · Gerontoloji Bölümü</p>
+    </div>
+
+    <div class="letter-text">
+      <p><em>İlgili Kişiye,</em></p>
+      <p>Ertan Bulut Erdem ve Oğuz Çetinkaya tarafından geliştirilen ViMove projesini inceleme ve hedef kullanıcı grubu üzerinde değerlendirme fırsatı buldum.</p>
+      <p>ViMove, spor ve hareket teknolojilerini kullanarak yaşlı bireylerin ve kronik hastalıklarla yaşayan kişilerin fiziksel aktiviteye erişimini artırmayı amaçlayan yenilikçi bir sosyal etki projesidir. Günümüzde düzenli egzersizin sağlıklı yaşlanma üzerindeki olumlu etkileri bilimsel olarak açıkça ortaya konmuş olsa da birçok yaşlı birey ulaşım, maliyet, sağlık durumu veya uzman desteğine erişim eksikliği nedeniyle düzenli fiziksel aktiviteye katılamamaktadır. ViMove, bu engelleri yapay zekâ destekli hareket analizi teknolojisiyle ortadan kaldırmayı hedeflemektedir.</p>
+      <p>Proje kapsamında geliştirilen sistem, herhangi bir web kamerasını kişisel bir egzersiz ve hareket koçuna dönüştürerek kullanıcıların egzersizlerini ev ortamında güvenli şekilde gerçekleştirmelerine olanak tanımaktadır. Bu yaklaşım, profesyonel sporcular için geliştirilen hareket takip teknolojilerinin toplumun en fazla desteğe ihtiyaç duyan kesimlerinden biri olan yaşlı bireylere uyarlanmasının başarılı bir örneğidir.</p>
+      <p class="letter-highlight">ViMove, Yaşlılık Çalışmaları Uygulama ve Araştırma Merkezimiz bünyesinde yürütmüş olduğumuz <b>“60+ Tazelenme Üniversitesi Sosyal Sorumluluk Projemiz”</b> öğrencileri dahil olmak üzere <b>50'den fazla yaşlı birey</b> tarafından aktif olarak kullanılmış ve değerlendirilmiştir. Katılımcıların önemli bir bölümü, “sistemin egzersiz yapma motivasyonlarını artırdığını, hareketlerini daha bilinçli gerçekleştirmelerine yardımcı olduğunu ve ev ortamında fiziksel olarak daha aktif kalmalarını teşvik ettiğini” ifade etmiştir.</p>
+      <p>Gerontoloji perspektifinden bakıldığında ViMove'un en güçlü yönü, fiziksel aktiviteyi daha erişilebilir hale getirerek aktif yaşlanmayı desteklemesidir. Proje yalnızca teknolojik bir yenilik sunmamakta, aynı zamanda yaşlı bireylerin bağımsızlıklarını korumalarına, yaşam kalitelerini artırmalarına ve sosyal hayata daha aktif katılmalarına katkı sağlayabilecek somut bir çözüm ortaya koymaktadır. Spor teknolojileri aracılığıyla toplumsal fayda üretme hedefi açısından değerlendirildiğinde ViMove'un son derece başarılı bir örnek olduğunu düşünüyorum.</p>
+      <p>Bu nedenle ViMove'u güçlü bir sosyal etki oluşturan, yenilikçi ve sürdürülebilir bir spor teknolojisi projesi olarak destekliyor ve ilgili yarışmada değerlendirilmesini memnuniyetle tavsiye ediyorum.</p>
+      <p style="margin-bottom:4px"><em>Saygılarımla,</em></p>
+      <p class="letter-sign">
+        <b>Prof. Dr. Gülüşan Özgün Başıbüyük</b><br>
+        Yaşlılık Çalışmaları Uygulama ve Araştırma Merkez Müdürü<br>
+        Akdeniz Üniversitesi · Sağlık Bilimleri Fakültesi · Gerontoloji Bölümü, Antalya
+      </p>
+    </div>
+
+    <div class="letter-actions">
+      <a class="btn btn--secondary" href="/static/docs/vimove-degerlendirme-mektubu.pdf" target="_blank" rel="noopener"
+         data-en="Open the original PDF" data-tr="Orijinal PDF'i aç">Orijinal PDF'i aç</a>
+    </div>
+  </div>
+</div>
 {% endblock %}

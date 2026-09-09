@@ -131,3 +131,31 @@
     }, 4000);
   }
 })();
+
+/* ---- Academic evaluation letter modal (community page) ---- */
+(function () {
+  var openBtn = document.getElementById("letterOpen");
+  var modal = document.getElementById("letterModal");
+  if (!openBtn || !modal) return;
+  var closeBtn = document.getElementById("letterClose");
+  var lastFocus = null;
+
+  function open() {
+    lastFocus = document.activeElement;
+    modal.hidden = false;
+    document.body.style.overflow = "hidden";
+    if (closeBtn) closeBtn.focus();
+  }
+  function close() {
+    modal.hidden = true;
+    document.body.style.overflow = "";
+    if (lastFocus && lastFocus.focus) lastFocus.focus();
+  }
+
+  openBtn.addEventListener("click", open);
+  if (closeBtn) closeBtn.addEventListener("click", close);
+  modal.addEventListener("click", function (e) { if (e.target === modal) close(); });
+  document.addEventListener("keydown", function (e) {
+    if (e.key === "Escape" && !modal.hidden) close();
+  });
+})();

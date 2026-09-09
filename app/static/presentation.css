@@ -1,0 +1,220 @@
+/* =====================================================================
+   ViMove AI — presentation stage (/sunum)
+   Full-screen, dark, projector-friendly slides shown while the talk is
+   being read. Deliberately separate from the product UI: no nav, no
+   footer, no chrome — just the message.
+   ===================================================================== */
+
+.stage-mode { background: #060d14; }
+.stage-mode .site-header,
+.stage-mode .site-footer,
+.stage-mode .chat-fab { display: none !important; }
+.stage-mode main { padding: 0 !important; }
+
+.stage {
+  position: relative;
+  min-height: 100vh; min-height: 100dvh;
+  overflow: hidden;
+  color: #e6f2f1;
+  background:
+    radial-gradient(1100px 700px at 12% -10%, rgba(13, 148, 136, .30), transparent 60%),
+    radial-gradient(900px 620px at 92% 108%, rgba(20, 184, 166, .22), transparent 62%),
+    linear-gradient(160deg, #071219 0%, #060d14 55%, #04090e 100%);
+}
+/* faint technical grid, like a motion-capture stage */
+.stage::before {
+  content: ""; position: absolute; inset: 0; pointer-events: none;
+  background-image:
+    linear-gradient(rgba(148, 233, 224, .055) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(148, 233, 224, .055) 1px, transparent 1px);
+  background-size: 68px 68px;
+  mask-image: radial-gradient(1000px 700px at 50% 40%, #000 30%, transparent 82%);
+  -webkit-mask-image: radial-gradient(1000px 700px at 50% 40%, #000 30%, transparent 82%);
+}
+
+/* ---------- slides ---------- */
+.slide {
+  position: absolute; inset: 0;
+  display: grid; place-items: center;
+  padding: clamp(22px, 4vh, 64px) clamp(28px, 5vw, 72px);
+  opacity: 0; visibility: hidden;
+  transform: translateY(18px);
+  transition: opacity .5s ease, transform .5s cubic-bezier(.2, .8, .2, 1), visibility .5s;
+}
+.slide.is-active {
+  opacity: 1; visibility: visible; transform: none;
+  transition-delay: .12s;                 /* let the old slide clear first */
+}
+/* the outgoing slide leaves quickly so the two never sit on top of each other */
+.slide:not(.is-active) { transition: opacity .16s ease, visibility .16s; transform: none; }
+.slide-inner { width: min(1180px, 100%); padding-bottom: clamp(52px, 8vh, 78px); }
+
+.stage-eyebrow {
+  display: inline-block; margin-bottom: clamp(10px, 2vw, 20px);
+  font-size: clamp(.72rem, 1.1vw, .86rem); font-weight: 800;
+  letter-spacing: .22em; text-transform: uppercase;
+  color: #5eead4;
+}
+.stage-eyebrow::after {
+  content: ""; display: block; height: 2px; width: 46px; margin-top: 10px;
+  background: linear-gradient(90deg, #14b8a6, transparent);
+}
+
+/* ---------- slide 1 : the problem ---------- */
+.stage-hero {
+  margin: 0; line-height: .95; font-family: var(--font-head), sans-serif;
+  display: flex; align-items: baseline; flex-wrap: wrap; gap: clamp(10px, 2vw, 26px);
+}
+.stage-number {
+  /* Solid, not a gradient: projected on a beamer a gradient washes out at
+     the top of the glyphs and the number is the whole point of the slide. */
+  font-size: clamp(3.4rem, min(14vw, 17vh), 12rem); font-weight: 700; letter-spacing: -.04em;
+  color: #ffffff;
+  text-shadow: 0 0 90px rgba(20, 184, 166, .45);
+}
+.stage-unit {
+  font-size: clamp(1.25rem, min(3.4vw, 4.4vh), 2.8rem); font-weight: 600; color: #cbeae6;
+}
+.stage-lead {
+  margin: clamp(10px, 1.8vh, 24px) 0 0; max-width: 26ch;
+  font-size: clamp(1rem, min(2.1vw, 2.7vh), 1.7rem); line-height: 1.45; color: #a9c9c6;
+}
+.stage-lead b { color: #ffffff; font-weight: 600; }
+
+.stage-stats {
+  display: grid; grid-template-columns: repeat(3, 1fr);
+  gap: clamp(12px, 1.6vw, 22px);
+  margin: clamp(18px, 3.2vh, 46px) 0 clamp(14px, 2.4vh, 32px);
+}
+.stat {
+  padding: clamp(16px, 2vw, 26px);
+  border: 1px solid rgba(148, 233, 224, .16);
+  border-radius: 16px;
+  background: linear-gradient(180deg, rgba(148, 233, 224, .07), rgba(148, 233, 224, .02));
+}
+.stat-val {
+  display: block; font-family: var(--font-head), sans-serif;
+  font-size: clamp(1.7rem, min(4.6vw, 6vh), 3.2rem); font-weight: 700; color: #5eead4; line-height: 1;
+}
+.stat-val--sm { font-size: clamp(1rem, 1.9vw, 1.45rem); line-height: 1.28; }
+.stat-lab {
+  display: block; margin-top: 12px;
+  font-size: clamp(.86rem, 1.15vw, 1.02rem); line-height: 1.5; color: #92b3b0;
+}
+.stat-lab b { color: #dff3f0; font-weight: 600; }
+
+.stage-question {
+  margin: 0; padding-top: clamp(12px, 1.8vh, 22px);
+  border-top: 1px solid rgba(148, 233, 224, .16);
+  font-family: var(--font-head), sans-serif;
+  font-size: clamp(1.02rem, min(2.5vw, 3.2vh), 2rem); line-height: 1.35; color: #d6ece9;
+}
+.stage-question b { color: #5eead4; }
+
+/* ---------- slide 2 : what ViMove AI is ---------- */
+.stage-brand {
+  margin: 0; font-family: var(--font-head), sans-serif; font-weight: 700;
+  font-size: clamp(2.6rem, min(10vw, 13vh), 8rem); letter-spacing: -.045em; line-height: 1;
+  color: #ffffff;
+}
+.stage-brand b { color: #5eead4; font-weight: 700; }
+.stage-ai {
+  display: inline-block; margin-left: .28em; padding: .1em .34em;
+  font-size: .34em; font-weight: 800; letter-spacing: .06em;
+  vertical-align: .55em; border-radius: 12px;
+  background: #14b8a6; color: #04231f;
+}
+.stage-tagline {
+  margin: clamp(10px, 1.8vh, 24px) 0 0; max-width: 40ch;
+  font-size: clamp(.95rem, min(1.95vw, 2.5vh), 1.6rem); line-height: 1.5; color: #a9c9c6;
+}
+.stage-tagline b { color: #ffffff; font-weight: 600; }
+
+.stage-tiles {
+  display: grid; grid-template-columns: repeat(4, 1fr);
+  gap: clamp(12px, 1.4vw, 20px);
+  margin: clamp(16px, 3vh, 42px) 0 clamp(12px, 2.2vh, 28px);
+}
+.tile-x {
+  padding: clamp(13px, 1.9vh, 24px) clamp(14px, 1.6vw, 22px);
+  border: 1px solid rgba(148, 233, 224, .16); border-radius: 16px;
+  background: linear-gradient(180deg, rgba(148, 233, 224, .06), rgba(148, 233, 224, .015));
+}
+.tile-x--hi {
+  border-color: rgba(20, 184, 166, .55);
+  background: linear-gradient(180deg, rgba(20, 184, 166, .17), rgba(20, 184, 166, .05));
+  box-shadow: 0 0 60px rgba(20, 184, 166, .12) inset;
+}
+.tile-ico {
+  display: grid; place-items: center; width: 38px; height: 38px; margin-bottom: 10px;
+  border-radius: 12px; background: rgba(94, 234, 212, .14); color: #5eead4;
+}
+.tile-ico svg { width: 21px; height: 21px; }
+.tile-x b {
+  display: block; margin-bottom: 7px; color: #ffffff; font-weight: 700;
+  font-size: clamp(.95rem, 1.3vw, 1.12rem);
+}
+.tile-x span:not(.tile-ico) {
+  display: block; color: #92b3b0; line-height: 1.5;
+  font-size: clamp(.84rem, 1.05vw, .98rem);
+}
+
+.stage-proof {
+  display: flex; align-items: center; gap: 12px; margin: 0;
+  padding-top: clamp(12px, 1.8vh, 20px);
+  border-top: 1px solid rgba(148, 233, 224, .16);
+  font-size: clamp(.84rem, min(1.3vw, 1.8vh), 1.05rem); color: #92b3b0;
+}
+.stage-proof b { color: #dff3f0; font-weight: 600; }
+.proof-dot {
+  width: 9px; height: 9px; border-radius: 50%; background: #34d399; flex: none;
+  box-shadow: 0 0 0 0 rgba(52, 211, 153, .55);
+  animation: proofPulse 2.4s ease-out infinite;
+}
+@keyframes proofPulse {
+  0% { box-shadow: 0 0 0 0 rgba(52, 211, 153, .5) }
+  70% { box-shadow: 0 0 0 14px rgba(52, 211, 153, 0) }
+  100% { box-shadow: 0 0 0 0 rgba(52, 211, 153, 0) }
+}
+
+/* ---------- navigation ---------- */
+.stage-bar {
+  position: absolute; left: 50%; bottom: clamp(18px, 3vw, 34px); transform: translateX(-50%);
+  display: flex; align-items: center; gap: 16px; z-index: 5;
+}
+.stage-arrow {
+  width: 44px; height: 44px; display: grid; place-items: center; cursor: pointer;
+  border-radius: 50%; border: 1px solid rgba(148, 233, 224, .24);
+  background: rgba(6, 13, 20, .6); color: #9fdcd3;
+  transition: background .16s ease, color .16s ease, transform .16s ease;
+}
+.stage-arrow:hover { background: rgba(20, 184, 166, .2); color: #fff; transform: scale(1.06); }
+.stage-arrow svg { width: 20px; height: 20px; }
+.stage-dots { display: flex; gap: 10px; }
+.stage-dots button {
+  width: 10px; height: 10px; padding: 0; border-radius: 50%; cursor: pointer;
+  border: 1px solid rgba(148, 233, 224, .4); background: transparent;
+  transition: background .18s ease, transform .18s ease;
+}
+.stage-dots button.is-on { background: #5eead4; border-color: #5eead4; transform: scale(1.25); }
+.stage-hint {
+  position: absolute; right: clamp(16px, 3vw, 30px); bottom: clamp(20px, 3vw, 36px);
+  font-size: .78rem; letter-spacing: .06em; color: rgba(146, 179, 176, .65);
+  transition: opacity .4s ease;
+}
+.stage-hint.is-gone { opacity: 0; }
+
+/* ---------- responsive ---------- */
+@media (max-width: 900px) {
+  .stage-stats { grid-template-columns: 1fr; }
+  .stage-tiles { grid-template-columns: repeat(2, 1fr); }
+  .slide { align-items: start; overflow-y: auto; }
+}
+@media (max-width: 560px) {
+  .stage-tiles { grid-template-columns: 1fr; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .slide { transition: none; }
+  .proof-dot { animation: none; }
+}

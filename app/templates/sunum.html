@@ -1,0 +1,111 @@
+{% extends "base.html" %}
+{% block title %}ViMove AI — Sunum{% endblock %}
+{% block description %}ViMove AI sunum ekranı: problem ve çözüm.{% endblock %}
+{% block head %}<link rel="stylesheet" href="/static/presentation.css?v=3" />{% endblock %}
+{% block body_attrs %} class="stage-mode"{% endblock %}
+
+{% block content %}
+<div class="stage" id="stage">
+
+  <!-- ============ 1 · PROBLEM ============ -->
+  <section class="slide is-active" id="sorun" data-slide="1" aria-label="Sorun">
+    <div class="slide-inner">
+      <span class="stage-eyebrow">Dünya Sağlık Örgütü</span>
+
+      <h1 class="stage-hero">
+        <span class="stage-number" data-count="2.4" data-decimals="1">0,0</span>
+        <span class="stage-unit">milyar insan</span>
+      </h1>
+
+      <p class="stage-lead">
+        hayatının bir döneminde <b>fizyoterapiden fayda görebilecek</b>
+        bir sağlık durumuyla yaşıyor.
+      </p>
+
+      <div class="stage-stats">
+        <div class="stat">
+          <span class="stat-val">&lt;10</span>
+          <span class="stat-lab">Bazı bölgelerde <b>1 milyon kişiye</b> düşen fizyoterapist sayısı</span>
+        </div>
+        <div class="stat">
+          <span class="stat-val">×2</span>
+          <span class="stat-lab"><b>60 yaş üstü</b> nüfus 2050'ye kadar ikiye katlanıyor</span>
+        </div>
+        <div class="stat">
+          <span class="stat-val stat-val--sm">Coğrafya<br>Maliyet<br>Ulaşım</span>
+          <span class="stat-lab">Erişimin önündeki <b>üç duvar</b></span>
+        </div>
+      </div>
+
+      <p class="stage-question">
+        Peki dünyanın üçte birinin hayatını <b>bir kamera</b> değiştirebilir mi?
+      </p>
+    </div>
+  </section>
+
+  <!-- ============ 2 · TANIM ============ -->
+  <section class="slide" id="cozum" data-slide="2" aria-label="ViMove AI nedir">
+    <div class="slide-inner">
+      <span class="stage-eyebrow">Cevabımız</span>
+
+      <h1 class="stage-brand">Vi<b>Move</b><span class="stage-ai">AI</span></h1>
+
+      <p class="stage-tagline">
+        Bir kamerayı — <b>144p bile olsa</b> — kişisel bir fizyoterapiste dönüştüren,
+        <b>tamamen ücretsiz</b> rehabilitasyon platformu.
+      </p>
+
+      <div class="stage-tiles">
+        <div class="tile-x">
+          <span class="tile-ico" aria-hidden="true">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M23 7l-7 5 7 5V7z"/><rect x="1" y="5" width="15" height="14" rx="2"/></svg>
+          </span>
+          <b>Sadece kamera</b>
+          <span>Ek cihaz, bileklik, sensör yok. Web ve Android.</span>
+        </div>
+        <div class="tile-x tile-x--hi">
+          <span class="tile-ico" aria-hidden="true">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.3-4.3M11 8v6M8 11h6"/></svg>
+          </span>
+          <b>LRD motoru</b>
+          <span>Kendi geliştirdiğimiz düşük çözünürlük katmanı: kötü kamerada da doğru sayar.</span>
+        </div>
+        <div class="tile-x">
+          <span class="tile-ico" aria-hidden="true">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>
+          </span>
+          <b>10 rahatsızlık · 16 hareket</b>
+          <span>Her egzersiz NICE, Cochrane, SOSORT gibi klinik kaynaklara dayalı.</span>
+        </div>
+        <div class="tile-x">
+          <span class="tile-ico" aria-hidden="true">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M18 20v-6M12 20V4M6 20v-10"/></svg>
+          </span>
+          <b>Panelim &amp; İlerlemem</b>
+          <span>Yaşlı birey kendi gelişimini görür; fizyoterapisti uzaktan takip eder.</span>
+        </div>
+      </div>
+
+      <p class="stage-proof">
+        <span class="proof-dot" aria-hidden="true"></span>
+        Akdeniz Üniversitesi Yaşlılık Çalışmaları Merkezi'nde
+        <b>50'den fazla yaşlı birey</b> tarafından kullanıldı · <b>vimoveai.com</b>
+      </p>
+    </div>
+  </section>
+
+  <!-- navigation -->
+  <div class="stage-bar">
+    <button type="button" class="stage-arrow" id="stagePrev" aria-label="Önceki">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg>
+    </button>
+    <div class="stage-dots" id="stageDots"></div>
+    <button type="button" class="stage-arrow" id="stageNext" aria-label="Sonraki">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18l6-6-6-6"/></svg>
+    </button>
+  </div>
+  <span class="stage-hint" id="stageHint">→ / boşluk ile ilerle</span>
+</div>
+{% endblock %}
+
+{% block scripts %}<script src="/static/presentation.js?v=2" defer></script>{% endblock %}

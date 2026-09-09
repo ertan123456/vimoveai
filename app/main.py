@@ -291,6 +291,13 @@ def service_worker():
     )
 
 
+@app.get("/sunum", response_class=HTMLResponse)
+def sunum(request: Request):
+    """Full-screen slides for the live pitch (problem + what ViMove AI is).
+    Deliberately outside the main nav — it is a presentation aid."""
+    return render("sunum.html", request, active="sunum")
+
+
 @app.get("/teknoloji", response_class=HTMLResponse)
 @app.get("/technology", response_class=HTMLResponse)
 def technology(request: Request):
