@@ -159,3 +159,41 @@
     if (e.key === "Escape" && !modal.hidden) close();
   });
 })();
+
+/* ---- Count-up numbers ([data-count]), animated when scrolled into view ---- */
+(function () {
+  // The /sunum stage runs its own per-slide counter (presentation.js), so
+  // skip anything inside a slide or the two would fight over the same text.
+  var nums = [].slice.call(document.querySelectorAll("[data-count]"))
+    .filter(function (el) { return !el.closest(".slide"); });
+  if (!nums.length) return;
+  var reduce = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+  function run(el) {
+    if (el.dataset.counted === "1") return;
+    el.dataset.counted = "1";
+    var target = parseFloat(el.dataset.count);
+    var dec = parseInt(el.dataset.decimals || "0", 10);
+    var fmt = function (v) { return v.toFixed(dec).replace(".", ","); };
+    if (reduce || isNaN(target)) { el.textContent = fmt(target || 0); return; }
+    var start = performance.now(), dur = 1300;
+    (function step(now) {
+      var p = Math.min(1, (now - start) / dur);
+      el.textContent = fmt(target * (1 - Math.pow(1 - p, 3)));
+      if (p < 1) requestAnimationFrame(step);
+    })(start);
+    // never leave a number stuck mid-count in a background tab
+    setTimeout(function () { el.textContent = fmt(target); }, dur + 400);
+  }
+
+  if ("IntersectionObserver" in window) {
+    var io2 = new IntersectionObserver(function (entries) {
+      entries.forEach(function (e) {
+        if (e.isIntersecting) { run(e.target); io2.unobserve(e.target); }
+      });
+    }, { threshold: 0.4 });
+    nums.forEach(function (el) { io2.observe(el); });
+  } else {
+    nums.forEach(run);
+  }
+})();
