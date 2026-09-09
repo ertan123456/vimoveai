@@ -99,22 +99,24 @@ const THRESH = {
   hand:      { engage: 3.0,  release: 1.5,  dir: +1, noiseGain: 6 },   // extended-finger count (0..4)
   mouth:     { engage: 0.45, release: 0.25, dir: +1, noiseGain: 8 },   // lip gap / mouth width
   blink:     { engage: 0.19, release: 0.28, dir: -1, noiseGain: 10 },  // eye aspect ratio (closed = low)
-  leg:       { engage: 0.85, release: 0.45, dir: +1, noiseGain: 4 },   // lateral ankle offset / hip width
+  // zero: true — the offset at rest depends on how wide the person stands,
+  // so we count the change from THEIR stance, not an absolute number.
+  leg:       { engage: 0.50, release: 0.16, dir: +1, noiseGain: 4, zero: true }, // lateral ankle offset / hip width
   arm:       { engage: 0.28, release: 0.05, dir: +1, noiseGain: 5 },   // (shoulderY - wristY) / torso
   fingertap: { engage: 0.45, release: 0.75, dir: -1, noiseGain: 8 },   // thumb-index gap / palm (tapped = small)
   neckturn:  { engage: 0.18, release: 0.08, dir: +1, noiseGain: 4 },   // |nose - shoulder mid| / shoulder width
   // Marching is FAST: the knee is only up for a handful of frames, so the
   // counter must believe a crossing immediately (maxPersist 1) or it misses reps.
-  march:     { engage: 158,  release: 168,  dir: -1, noiseGain: 300, maxPersist: 1 }, // min hip-flexion angle (degrees)
-  kneeext:   { engage: 150,  release: 115,  dir: +1, noiseGain: 300 }, // knee angle (straightened = large)
+  march:     { engage: 163,  release: 171,  dir: -1, noiseGain: 300, maxPersist: 1 }, // min hip-flexion angle (degrees)
+  kneeext:   { engage: 135,  release: 108,  dir: +1, noiseGain: 300 }, // knee angle (straightened = large)
   elbow:     { engage: 75,   release: 150,  dir: -1, noiseGain: 300 }, // elbow angle (curled up = small)
 
   // ---- new in v20 -----------------------------------------------------
   // zero: true => measured as a CHANGE from the user's own neutral posture.
   // Nobody sits perfectly straight and no camera is level; without this the
   // counter ticks over while the user is sitting still.
-  trunkbend: { engage: 0.19, release: 0.07, dir: +1, noiseGain: 4, zero: true },   // signed trunk lean / torso
-  necktilt:  { engage: 14,   release: 5,    dir: +1, noiseGain: 250, zero: true }, // ear-line vs shoulder-line, degrees
+  trunkbend: { engage: 0.12, release: 0.045, dir: +1, noiseGain: 4, zero: true },  // signed trunk lean / torso
+  necktilt:  { engage: 8,    release: 3,    dir: +1, noiseGain: 250, zero: true }, // head-line vs shoulder-line, degrees
   // A frontal camera sees a chin tuck and a shrug as a SMALL change, so these
   // bands are narrow on purpose; the LRD pipeline widens them by exactly the
   // measured camera noise instead of us guessing a safety margin.
@@ -409,6 +411,9 @@ function eyeEAR(f, side) {
   return v / h;
 }
 // LEG abduction: lateral ankle offset from hip, normalized by hip width.
+// Read as a CHANGE from the user's own stance (see THRESH.leg zero: true):
+// somebody standing with their feet apart already has a large offset, and a
+// fixed threshold counted a repetition before they had moved at all.
 function legRatio(p, side) {
   const hip = side === "right" ? p[24] : p[23];
   const ank = side === "right" ? p[28] : p[27];
@@ -416,6 +421,7 @@ function legRatio(p, side) {
   const hipW = dist(p[23], p[24]) || 1e-6;
   return Math.abs(ank.x - hip.x) / hipW;
 }
+
 // ARM raise: how far the wrist is above the shoulder, normalized by torso length.
 function armRatio(p, side) {
   const sh  = side === "right" ? p[12] : p[11];
@@ -474,18 +480,34 @@ function trunkBend(p, side) {
   const lateral = ((shMid.x - hipMid.x) * rx + (shMid.y - hipMid.y) * ry) / len / torso;
   return side === "left" ? -lateral : lateral;
 }
-// NECK SIDE TILT: angle between the ear line and the shoulder line, in degrees.
-// Using two lines (rather than the head alone) cancels out a crooked camera.
+// NECK SIDE TILT: how far the head line has rotated against the shoulder line,
+// in degrees. Comparing two lines (rather than the head alone) cancels out a
+// crooked camera or a crooked sitter.
+//
+// We read the head line from the EYES first and the ears second. The ear on
+// the far side disappears as soon as someone tilts, which used to drop the
+// reading entirely — the exercise then felt dead until you tilted enormously.
+// When both lines are available we average them, which also steadies the angle.
+function headLineAngle(p) {
+  const angles = [];
+  const ok = (a, b) => a && b && vis(a) >= 0.35 && vis(b) >= 0.35;
+  if (ok(p[2], p[5])) angles.push(Math.atan2(p[5].y - p[2].y, p[5].x - p[2].x)); // left/right eye
+  if (ok(p[7], p[8])) angles.push(Math.atan2(p[8].y - p[7].y, p[8].x - p[7].x)); // left/right ear
+  if (!angles.length) return null;
+  return angles.reduce((a, b) => a + b, 0) / angles.length;
+}
 function neckTilt(p, side) {
-  const eL = p[7], eR = p[8], sL = p[11], sR = p[12];
-  for (const lm of [eL, eR, sL, sR]) if (vis(lm) < MIN_VISIBILITY) return null;
-  const aEar = Math.atan2(eR.y - eL.y, eR.x - eL.x);
+  const sL = p[11], sR = p[12];
+  if (vis(sL) < MIN_VISIBILITY || vis(sR) < MIN_VISIBILITY) return null;
+  const aHead = headLineAngle(p);
+  if (aHead == null) return null;
   const aSh = Math.atan2(sR.y - sL.y, sR.x - sL.x);
-  let d = (aEar - aSh) * 180 / Math.PI;
+  let d = (aHead - aSh) * 180 / Math.PI;
   while (d > 180) d -= 360;
   while (d < -180) d += 360;
   return side === "left" ? -d : d;                    // + = tilted to that side
 }
+
 // NECK FLEXION (looking down / chin tuck): vertical nose-to-shoulder gap,
 // normalized by shoulder width. Relative mode: shrinks below the user's own
 // resting value when the head drops forward.
