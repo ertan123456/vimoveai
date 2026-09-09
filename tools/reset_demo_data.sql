@@ -29,10 +29,11 @@ order by p.role, u.email;
 -- ---------------------------------------------------------------------
 -- 2) TEMİZLİK — hasta verisi ve tüm seans/mesaj/reçete geçmişi
 -- ---------------------------------------------------------------------
-begin;
+-- NOT: seans videoları buradan SİLİNMEZ. Supabase, storage.objects
+-- tablosundan doğrudan silmeyi engelliyor ("Direct deletion from storage
+-- tables is not allowed"). Videolar için aşağıdaki 2b adımını uygula.
 
--- seans videoları (Storage kayıtları)
-delete from storage.objects where bucket_id = 'session-videos';
+begin;
 
 -- seans kayıtları, mesajlar, reçeteler: herkes için sıfırla
 delete from public.sessions;
@@ -48,6 +49,17 @@ where p.id = u.id and p.role = 'hasta';
 update public.profiles set specialist_id = null where specialist_id is not null;
 
 commit;
+
+
+-- ---------------------------------------------------------------------
+-- 2b) SEANS VİDEOLARI — panelden silinir (SQL ile silinemiyor)
+--
+--   Supabase Dashboard → Storage → session-videos
+--   → klasörleri seç → Delete
+--
+-- Kaç video kaldığını buradan kontrol edebilirsin (silme yok, sadece sayar):
+-- ---------------------------------------------------------------------
+select count(*) as kalan_video from storage.objects where bucket_id = 'session-videos';
 
 
 -- ---------------------------------------------------------------------
