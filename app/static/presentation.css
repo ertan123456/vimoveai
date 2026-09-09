@@ -21,17 +21,6 @@
     radial-gradient(900px 620px at 92% 108%, rgba(20, 184, 166, .22), transparent 62%),
     linear-gradient(160deg, #071219 0%, #060d14 55%, #04090e 100%);
 }
-/* faint technical grid, like a motion-capture stage */
-.stage::before {
-  content: ""; position: absolute; inset: 0; pointer-events: none;
-  background-image:
-    linear-gradient(rgba(148, 233, 224, .055) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(148, 233, 224, .055) 1px, transparent 1px);
-  background-size: 68px 68px;
-  mask-image: radial-gradient(1000px 700px at 50% 40%, #000 30%, transparent 82%);
-  -webkit-mask-image: radial-gradient(1000px 700px at 50% 40%, #000 30%, transparent 82%);
-}
-
 /* ---------- slides ---------- */
 .slide {
   position: absolute; inset: 0;
