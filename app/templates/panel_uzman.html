@@ -5,74 +5,143 @@
 
 {% block sidebar %}
 <a href="/uzman" class="is-active"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="9"/><rect x="14" y="3" width="7" height="5"/><rect x="14" y="12" width="7" height="9"/><rect x="3" y="16" width="7" height="5"/></svg><span data-en="Overview" data-tr="Genel bakış">Genel bakış</span></a>
-<a href="/uzman#aktivite"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg><span data-en="Activity" data-tr="Aktivite">Aktivite</span></a>
 <a href="/uzman#hastalar"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75"/></svg><span data-en="My patients" data-tr="Hastalarım">Hastalarım</span></a>
+<a href="/uzman#aktivite"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg><span data-en="Activity" data-tr="Aktivite">Aktivite</span></a>
 <a href="/uzman#mesajlar"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg><span data-en="Messages" data-tr="Mesajlar">Mesajlar</span></a>
 <a href="/uzman#davet"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 11h-6M19 8v6"/></svg><span data-en="Invite" data-tr="Hasta davet">Hasta davet</span></a>
 {% endblock %}
 
 {% block panel %}
-<div class="panel-cards">
-  <div class="panel-stat brand"><div class="n" id="statPatients">0</div><div class="l" data-en="Patients" data-tr="Hasta">Hasta</div></div>
-  <div class="panel-stat"><div class="n" id="statActive">0</div><div class="l" data-en="Active prescriptions" data-tr="Aktif reçete">Aktif reçete</div></div>
-  <div class="panel-stat"><div class="n" id="statSessions">0</div><div class="l" data-en="Sessions (7d)" data-tr="Seans (7g)">Seans (7g)</div></div>
-  <div class="panel-stat"><div class="n" id="statUnread">0</div><div class="l" data-en="Unread" data-tr="Okunmamış">Okunmamış</div></div>
-</div>
-
-<div class="panel-card" id="aktivite" style="margin-top:26px">
-  <div class="panel-card-head"><h3 data-en="Recent activity" data-tr="Son aktivite">Son aktivite</h3></div>
-  <div id="activityFeed">
-    <div class="panel-empty" id="activityEmpty">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg>
-      <p data-en="When your patients complete sessions, they'll appear here with their results and an AI note."
-         data-tr="Hastaların seans tamamladıkça, sonuçları ve yapay zeka notuyla burada görünecek.">Hastaların seans tamamladıkça, sonuçları ve yapay zeka notuyla burada görünecek.</p>
-    </div>
+<!-- greeting + the two actions a physiotherapist actually starts with -->
+<div class="panel-hello">
+  <div class="hello-text">
+    <h2 id="helloName" data-en="Welcome" data-tr="Hoş geldin">Hoş geldin</h2>
+    <p class="muted" id="helloSub"
+       data-en="Here is how your patients are doing." data-tr="Hastalarının durumu aşağıda.">Hastalarının durumu aşağıda.</p>
   </div>
-</div>
-
-<div class="panel-card" id="hastalar" style="margin-top:22px">
-  <div class="panel-card-head"><h3 data-en="My patients" data-tr="Hastalarım">Hastalarım</h3>
-    <button class="btn btn--primary" id="newPatientBtn" style="min-height:40px;padding:9px 16px">
+  <div class="hello-actions">
+    <button class="btn btn--secondary" id="newPatientBtn">
       <svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14M5 12h14"/></svg>
       <span data-en="Create patient" data-tr="Yeni hasta">Yeni hasta</span>
     </button>
+    <a class="btn btn--primary" href="#davet">
+      <svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12v7a1 1 0 0 0 1 1h14a1 1 0 0 0 1-1v-7"/><path d="M12 15V3M8 7l4-4 4 4"/></svg>
+      <span data-en="Invite a patient" data-tr="Hasta davet et">Hasta davet et</span>
+    </a>
   </div>
-  <table class="ptable">
-    <thead><tr>
-      <th data-en="Name" data-tr="İsim">İsim</th>
-      <th data-en="Active prescription" data-tr="Aktif reçete">Aktif reçete</th>
-      <th></th>
-    </tr></thead>
-    <tbody id="patientRows"><tr><td colspan="3" class="muted" style="padding:22px 12px" data-en="Loading…" data-tr="Yükleniyor…">Yükleniyor…</td></tr></tbody>
-  </table>
 </div>
 
-<div class="panel-card" id="mesajlar" style="margin-top:22px">
-  <div class="panel-card-head"><h3 data-en="Messages &amp; notifications" data-tr="Mesajlar &amp; bildirimler">Mesajlar &amp; bildirimler</h3></div>
-  <div id="inbox">
-    <div class="panel-empty" id="inboxEmpty">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
-      <p data-en="Messages from your patients and session notifications will appear here."
-         data-tr="Hastalarından gelen mesajlar ve seans bildirimleri burada görünecek.">Hastalarından gelen mesajlar ve seans bildirimleri burada görünecek.</p>
+<div class="panel-cards">
+  <div class="panel-stat brand">
+    <span class="ps-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/></svg></span>
+    <div class="n" id="statPatients">0</div><div class="l" data-en="Patients" data-tr="Hasta">Hasta</div>
+  </div>
+  <div class="panel-stat">
+    <span class="ps-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6M9 15h6M9 11h3"/></svg></span>
+    <div class="n" id="statActive">0</div><div class="l" data-en="Active prescriptions" data-tr="Aktif reçete">Aktif reçete</div>
+  </div>
+  <div class="panel-stat">
+    <span class="ps-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg></span>
+    <div class="n" id="statSessions">0</div><div class="l" data-en="Sessions (7d)" data-tr="Seans (7g)">Seans (7g)</div>
+  </div>
+  <div class="panel-stat">
+    <span class="ps-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg></span>
+    <div class="n" id="statUnread">0</div><div class="l" data-en="Unread" data-tr="Okunmamış">Okunmamış</div>
+  </div>
+</div>
+
+<div class="panel-grid2">
+  <div class="col-main">
+
+    <div class="panel-card" id="hastalar">
+      <div class="panel-card-head">
+        <h3 data-en="My patients" data-tr="Hastalarım">Hastalarım</h3>
+      </div>
+      <table class="ptable">
+        <thead><tr>
+          <th data-en="Name" data-tr="İsim">İsim</th>
+          <th data-en="Active prescription" data-tr="Aktif reçete">Aktif reçete</th>
+          <th></th>
+        </tr></thead>
+        <tbody id="patientRows"><tr><td colspan="3" class="muted" style="padding:22px 12px" data-en="Loading…" data-tr="Yükleniyor…">Yükleniyor…</td></tr></tbody>
+      </table>
     </div>
-  </div>
-</div>
 
-<div class="panel-card" id="davet" style="margin-top:22px">
-  <div class="panel-card-head"><h3 data-en="Invite a patient" data-tr="Hasta davet et">Hasta davet et</h3></div>
-  <p class="muted" style="margin:0 0 12px" data-en="Share this code. Your patient enters it under “Connect to specialist” on their panel to link to you."
-     data-tr="Bu kodu paylaş. Hastan kendi panelinde “Uzmanına bağlan” alanına girince sana bağlanır.">Bu kodu paylaş. Hastan kendi panelinde “Uzmanına bağlan” alanına girince sana bağlanır.</p>
-  <div class="invite-row">
-    <code id="inviteCode" class="invite-code">—</code>
-    <button class="btn btn--secondary" id="copyInvite" data-en="Copy" data-tr="Kopyala">Kopyala</button>
+    <div class="panel-card" id="aktivite">
+      <div class="panel-card-head"><h3 data-en="Recent activity" data-tr="Son aktivite">Son aktivite</h3></div>
+      <div id="activityFeed">
+        <div class="panel-empty" id="activityEmpty">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg>
+          <p data-en="When your patients complete sessions, they'll appear here with their results and an AI note."
+             data-tr="Hastaların seans tamamladıkça, sonuçları ve yapay zeka notuyla burada görünecek.">Hastaların seans tamamladıkça, sonuçları ve yapay zeka notuyla burada görünecek.</p>
+        </div>
+      </div>
+    </div>
+
   </div>
+
+  <aside class="col-side">
+
+    <div class="panel-card invite-card" id="davet">
+      <div class="panel-card-head">
+        <h3 data-en="Invite a patient" data-tr="Hasta davet et">Hasta davet et</h3>
+      </div>
+      <p class="muted invite-lead"
+         data-en="Send this link to your patient. One tap creates their account and opens the exercise — nothing for them to fill in."
+         data-tr="Bu bağlantıyı hastana gönder. Tek dokunuşta hesabı oluşur ve egzersizi açılır — doldurması gereken bir şey yok.">Bu bağlantıyı hastana gönder. Tek dokunuşta hesabı oluşur ve egzersizi açılır — doldurması gereken bir şey yok.</p>
+
+      <label class="pmodal-label" for="invName" data-en="Patient name (optional)" data-tr="Hastanın adı (isteğe bağlı)">Hastanın adı (isteğe bağlı)</label>
+      <input class="pmodal-input" id="invName" placeholder="Ayşe Yılmaz" autocomplete="off" />
+
+      <label class="pmodal-label" for="invProgram" data-en="Program (optional)" data-tr="Program (isteğe bağlı)">Program (isteğe bağlı)</label>
+      <select class="pmodal-input" id="invProgram">
+        <option value="" data-en="Let the patient choose" data-tr="Hasta kendisi seçsin">Hasta kendisi seçsin</option>
+        {% for slug, c in conditions.items() %}
+        <option value="{{ slug }}">{{ c.name_tr or c.name }}</option>
+        {% endfor %}
+      </select>
+
+      <label class="pmodal-label" data-en="Invite link" data-tr="Davet bağlantısı">Davet bağlantısı</label>
+      <div class="invite-row">
+        <input class="invite-link" id="inviteLink" readonly />
+        <button class="btn btn--secondary" id="copyInvite" data-en="Copy" data-tr="Kopyala">Kopyala</button>
+      </div>
+      <a class="btn btn--primary invite-wa" id="waShare" target="_blank" rel="noopener">
+        <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 2a10 10 0 0 0-8.6 15l-1.3 4.8 4.9-1.3A10 10 0 1 0 12 2zm5.5 14.1c-.2.6-1.2 1.2-1.7 1.2-.4 0-1 .1-3.3-.9-2.8-1.2-4.5-4-4.6-4.2-.1-.2-1.1-1.4-1.1-2.7s.7-1.9 1-2.2c.2-.2.5-.3.7-.3h.5c.2 0 .4 0 .6.5l.8 2c.1.2 0 .4-.1.5l-.3.4c-.1.1-.3.3-.1.6.1.3.6 1.1 1.4 1.8 1 .9 1.8 1.1 2.1 1.3.2.1.4.1.5-.1l.7-.8c.2-.2.3-.2.5-.1l2 .9c.2.1.4.2.4.3.1.2.1.7-.1 1.3z"/></svg>
+        <span data-en="Send on WhatsApp" data-tr="WhatsApp ile gönder">WhatsApp ile gönder</span>
+      </a>
+
+      <details class="invite-alt">
+        <summary data-en="Use a code instead" data-tr="Bağlantı yerine kod kullan">Bağlantı yerine kod kullan</summary>
+        <p class="muted" style="margin:10px 0"
+           data-en="If your patient already has an account, they can paste this code under “Connect to specialist”."
+           data-tr="Hastanın zaten hesabı varsa, kendi panelinde “Uzmanına bağlan” alanına bu kodu yapıştırabilir.">Hastanın zaten hesabı varsa, kendi panelinde “Uzmanına bağlan” alanına bu kodu yapıştırabilir.</p>
+        <div class="invite-row">
+          <code id="inviteCode" class="invite-code">—</code>
+          <button class="btn btn--secondary" id="copyCode" data-en="Copy" data-tr="Kopyala">Kopyala</button>
+        </div>
+      </details>
+    </div>
+
+    <div class="panel-card" id="mesajlar">
+      <div class="panel-card-head"><h3 data-en="Messages &amp; notifications" data-tr="Mesajlar &amp; bildirimler">Mesajlar &amp; bildirimler</h3></div>
+      <div id="inbox">
+        <div class="panel-empty" id="inboxEmpty">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+          <p data-en="Messages from your patients and session notifications will appear here."
+             data-tr="Hastalarından gelen mesajlar ve seans bildirimleri burada görünecek.">Hastalarından gelen mesajlar ve seans bildirimleri burada görünecek.</p>
+        </div>
+      </div>
+    </div>
+
+  </aside>
 </div>
 {% endblock %}
 
 {% block scripts %}
 <!-- Prescription modal -->
 <div class="pmodal" id="prescModal" hidden>
-  <div class="pmodal-box">
+  <div class="pmodal-box wide">
     <div class="pmodal-head">
       <h3 id="prescFor" data-en="New prescription" data-tr="Reçete oluştur">Reçete oluştur</h3>
       <button class="pmodal-x" data-close aria-label="Kapat">&times;</button>
@@ -168,5 +237,5 @@
   <div class="inbox-wrap" id="chatInbox"><div class="thread-empty" data-en="No messages yet." data-tr="Henüz mesaj yok.">Henüz mesaj yok.</div></div>
 </div>
 
-<script src="/static/panel-uzman.js?v=9"></script>
+<script src="/static/panel-uzman.js?v=10"></script>
 {% endblock %}

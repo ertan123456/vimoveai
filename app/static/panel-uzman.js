@@ -19,52 +19,147 @@ async function vimovePanel(sb, sess) {
   }
   const ini = (name) => ((name || "?").trim().slice(0, 2) || "?").toUpperCase();
 
-  /* ---- invite code ---- */
+  /* ---- invite: a link the patient only has to tap ----
+     The old flow was "copy this code, tell your patient to paste it into the
+     right box". Elderly patients did not get that far, so the link now does
+     everything: account, specialist link, program, straight into the session. */
   $("inviteCode").textContent = me;
-  $("copyInvite").addEventListener("click", function () {
-    try { navigator.clipboard.writeText(me); } catch (e) {}
-    const b = $("copyInvite"), o = b.textContent; b.textContent = t("Copied", "Kopyalandı");
-    setTimeout(() => (b.textContent = o), 1500);
-  });
 
-  /* ---- exercise catalog + prescription list ---- */
-  const CATALOG = [
-    // upper body
-    { kind: "arm", side: "right", ad: t("Right Forward Arm Raise", "Sağ Kolu Öne Kaldırma"), hedef: 8 },
-    { kind: "arm", side: "left", ad: t("Left Forward Arm Raise", "Sol Kolu Öne Kaldırma"), hedef: 8 },
-    { kind: "armabduct", side: "right", ad: t("Right Side Arm Raise", "Sağ Kolu Yana Kaldırma"), hedef: 8 },
-    { kind: "armabduct", side: "left", ad: t("Left Side Arm Raise", "Sol Kolu Yana Kaldırma"), hedef: 8 },
-    { kind: "elbow", side: "right", ad: t("Right Elbow Curl", "Sağ Dirsek Bükme"), hedef: 10 },
-    { kind: "elbow", side: "left", ad: t("Left Elbow Curl", "Sol Dirsek Bükme"), hedef: 10 },
-    { kind: "shrug", side: null, ad: t("Shoulder Shrug", "Omuz Silkme"), hedef: 10 },
-    // neck
-    { kind: "neckturn", side: null, ad: t("Head Turn", "Başı Yana Çevirme"), hedef: 10 },
-    { kind: "necktilt", side: "right", ad: t("Head Tilt Right", "Başı Sağ Omza Yaklaştırma"), hedef: 8 },
-    { kind: "necktilt", side: "left", ad: t("Head Tilt Left", "Başı Sol Omza Yaklaştırma"), hedef: 8 },
-    { kind: "neckflex", side: null, ad: t("Neck Flexion (chin to chest)", "Başı Öne Eğme"), hedef: 10 },
-    // trunk
-    { kind: "trunkbend", side: "right", ad: t("Side Bend Right", "Gövdeyi Sağa Eğme"), hedef: 8 },
-    { kind: "trunkbend", side: "left", ad: t("Side Bend Left", "Gövdeyi Sola Eğme"), hedef: 8 },
-    // lower body
-    { kind: "leg", side: "right", ad: t("Right Side Leg Raise", "Sağ Bacağı Yana Açma"), hedef: 10 },
-    { kind: "leg", side: "left", ad: t("Left Side Leg Raise", "Sol Bacağı Yana Açma"), hedef: 10 },
-    { kind: "kneeext", side: "right", ad: t("Right Seated Knee Extension", "Sağ Oturarak Diz Açma"), hedef: 10 },
-    { kind: "kneeext", side: "left", ad: t("Left Seated Knee Extension", "Sol Oturarak Diz Açma"), hedef: 10 },
-    { kind: "march", side: null, ad: t("Marching in Place", "Yerinde Yürüyüş"), hedef: 20 },
-    { kind: "sitstand", side: null, ad: t("Sit to Stand", "Otur–Kalk"), hedef: 10 },
-    // hands & face
-    { kind: "hand", side: "right", ad: t("Right Hand Open / Close", "Sağ El Açma–Kapama"), hedef: 12 },
-    { kind: "hand", side: "left", ad: t("Left Hand Open / Close", "Sol El Açma–Kapama"), hedef: 12 },
-    { kind: "fingertap", side: "right", ad: t("Right Thumb-to-Index Tap", "Sağ Parmak Ucu Dokunuşu"), hedef: 14 },
-    { kind: "fingertap", side: "left", ad: t("Left Thumb-to-Index Tap", "Sol Parmak Ucu Dokunuşu"), hedef: 14 },
-    { kind: "mouth", side: null, ad: t("Mouth Open / Close", "Ağız Açma–Kapama"), hedef: 10 },
-    { kind: "blink", side: "right", ad: t("Right Eye Blink", "Sağ Göz Kırpma"), hedef: 8 },
-    { kind: "blink", side: "left", ad: t("Left Eye Blink", "Sol Göz Kırpma"), hedef: 8 }
+  function copy(text) {
+    try { navigator.clipboard.writeText(text); } catch (e) {}
+  }
+  function flash(btn) {
+    const o = btn.textContent;
+    btn.textContent = t("Copied", "Kopyalandı");
+    setTimeout(() => (btn.textContent = o), 1500);
+  }
+
+  function buildInviteLink() {
+    const name = ($("invName").value || "").trim();
+    const prog = $("invProgram").value;
+    const q = [];
+    if (name) q.push("ad=" + encodeURIComponent(name));
+    if (prog) q.push("program=" + encodeURIComponent(prog));
+    const url = location.origin + "/katil/" + me + (q.length ? "?" + q.join("&") : "");
+    $("inviteLink").value = url;
+    const msg = TR
+      ? "Merhaba" + (name ? " " + name : "") + ", ViMove AI egzersiz bağlantın hazır. Bağlantıya dokun, hesabın kendiliğinden oluşsun: " + url
+      : "Hello" + (name ? " " + name : "") + ", here is your ViMove AI exercise link — one tap and your account is ready: " + url;
+    $("waShare").href = "https://wa.me/?text=" + encodeURIComponent(msg);
+    return url;
+  }
+  buildInviteLink();
+  $("invName").addEventListener("input", buildInviteLink);
+  $("invProgram").addEventListener("change", buildInviteLink);
+  $("copyInvite").addEventListener("click", function () { copy(buildInviteLink()); flash(this); });
+  $("copyCode").addEventListener("click", function () { copy(me); flash(this); });
+
+  /* ---- greet the specialist by name ---- */
+  (async function greet() {
+    try {
+      const { data } = await sb.from("profiles").select("full_name,title").eq("id", me).maybeSingle();
+      const name = (data && data.full_name || "").trim();
+      if (!name) return;
+      const el = $("helloName");
+      el.dataset.en = "Welcome, " + name;
+      el.dataset.tr = "Hoş geldin, " + name;
+      el.textContent = t("Welcome, ", "Hoş geldin, ") + name;
+    } catch (e) { /* greeting is cosmetic */ }
+  })();
+
+  /* ---- exercise catalog, grouped by body region ----
+     One flat list of 26 exercises made the specialist hunt line by line, so
+     the catalogue is now collapsible sections. The flat CATALOG is still what
+     the save code indexes into (data-i), it is just built from the groups. */
+  const ICO = {
+    neck: '<path d="M12 2a4 4 0 0 1 4 4v2a4 4 0 0 1-8 0V6a4 4 0 0 1 4-4z"/><path d="M8 12c0 3-3 3-3 6v4h14v-4c0-3-3-3-3-6"/>',
+    arm: '<path d="M6 3v7a4 4 0 0 0 4 4h3"/><circle cx="6" cy="3" r="1.6"/><path d="M13 14l5-3M18 11l3 5-4 3"/>',
+    trunk: '<circle cx="12" cy="4" r="2"/><path d="M12 6v8M8 9h8M9 21l3-7 3 7"/>',
+    leg: '<circle cx="12" cy="3.5" r="2"/><path d="M12 5.5V12M9 12l-1 9M15 12l1 9"/>',
+    hand: '<path d="M9 11V5a1.6 1.6 0 1 1 3.2 0v5m0-1V4a1.6 1.6 0 1 1 3.2 0v6m0-2a1.6 1.6 0 1 1 3.2 0v6a7 7 0 0 1-7 7h-1a7 7 0 0 1-7-7v-3a1.6 1.6 0 1 1 3.2 0"/>',
+    face: '<circle cx="12" cy="12" r="9"/><path d="M8.5 10h.01M15.5 10h.01M8.5 15c1 1.2 2.2 1.8 3.5 1.8s2.5-.6 3.5-1.8"/>',
+  };
+  const GROUPS = [
+    { key: "neck", icon: ICO.neck, label: t("Neck", "Boyun"), items: [
+      { kind: "neckturn", side: null, ad: t("Head Turn", "Başı Yana Çevirme"), hedef: 10 },
+      { kind: "necktilt", side: "right", ad: t("Head Tilt Right", "Başı Sağ Omza Yaklaştırma"), hedef: 8 },
+      { kind: "necktilt", side: "left", ad: t("Head Tilt Left", "Başı Sol Omza Yaklaştırma"), hedef: 8 },
+      { kind: "neckflex", side: null, ad: t("Neck Flexion (chin to chest)", "Başı Öne Eğme"), hedef: 10 },
+    ]},
+    { key: "arm", icon: ICO.arm, label: t("Shoulder & arm", "Omuz & Kol"), items: [
+      { kind: "arm", side: "right", ad: t("Right Forward Arm Raise", "Sağ Kolu Öne Kaldırma"), hedef: 8 },
+      { kind: "arm", side: "left", ad: t("Left Forward Arm Raise", "Sol Kolu Öne Kaldırma"), hedef: 8 },
+      { kind: "armabduct", side: "right", ad: t("Right Side Arm Raise", "Sağ Kolu Yana Kaldırma"), hedef: 8 },
+      { kind: "armabduct", side: "left", ad: t("Left Side Arm Raise", "Sol Kolu Yana Kaldırma"), hedef: 8 },
+      { kind: "elbow", side: "right", ad: t("Right Elbow Curl", "Sağ Dirsek Bükme"), hedef: 10 },
+      { kind: "elbow", side: "left", ad: t("Left Elbow Curl", "Sol Dirsek Bükme"), hedef: 10 },
+      { kind: "shrug", side: null, ad: t("Shoulder Shrug", "Omuz Silkme"), hedef: 10 },
+    ]},
+    { key: "trunk", icon: ICO.trunk, label: t("Trunk & lower back", "Gövde & Bel"), items: [
+      { kind: "trunkbend", side: "right", ad: t("Side Bend Right", "Gövdeyi Sağa Eğme"), hedef: 8 },
+      { kind: "trunkbend", side: "left", ad: t("Side Bend Left", "Gövdeyi Sola Eğme"), hedef: 8 },
+    ]},
+    { key: "leg", icon: ICO.leg, label: t("Legs & balance", "Bacak & Denge"), items: [
+      { kind: "leg", side: "right", ad: t("Right Side Leg Raise", "Sağ Bacağı Yana Açma"), hedef: 10 },
+      { kind: "leg", side: "left", ad: t("Left Side Leg Raise", "Sol Bacağı Yana Açma"), hedef: 10 },
+      { kind: "kneeext", side: "right", ad: t("Right Seated Knee Extension", "Oturarak Sağ Dizi Açma"), hedef: 10 },
+      { kind: "kneeext", side: "left", ad: t("Left Seated Knee Extension", "Oturarak Sol Dizi Açma"), hedef: 10 },
+      { kind: "march", side: null, ad: t("Marching in Place", "Yerinde Yürüyüş"), hedef: 20 },
+      { kind: "sitstand", side: null, ad: t("Sit to Stand", "Otur–Kalk"), hedef: 10 },
+    ]},
+    { key: "hand", icon: ICO.hand, label: t("Hand & fingers", "El & Parmak"), items: [
+      { kind: "hand", side: "right", ad: t("Right Hand Open / Close", "Sağ El Açma–Kapama"), hedef: 12 },
+      { kind: "hand", side: "left", ad: t("Left Hand Open / Close", "Sol El Açma–Kapama"), hedef: 12 },
+      { kind: "fingertap", side: "right", ad: t("Right Thumb-to-Index Tap", "Sağ Parmak Ucu Dokunuşu"), hedef: 14 },
+      { kind: "fingertap", side: "left", ad: t("Left Thumb-to-Index Tap", "Sol Parmak Ucu Dokunuşu"), hedef: 14 },
+    ]},
+    { key: "face", icon: ICO.face, label: t("Face & eyes", "Yüz & Göz"), items: [
+      { kind: "mouth", side: null, ad: t("Mouth Open / Close", "Ağız Açma–Kapama"), hedef: 10 },
+      { kind: "blink", side: "right", ad: t("Right Eye Blink", "Sağ Göz Kırpma"), hedef: 8 },
+      { kind: "blink", side: "left", ad: t("Left Eye Blink", "Sol Göz Kırpma"), hedef: 8 },
+    ]},
   ];
 
-  $("prescList").innerHTML = CATALOG.map((c, i) =>
-    '<label class="presc-item"><input type="checkbox" data-i="' + i + '"><span class="presc-name">' + esc(c.ad) +
-    '</span><input type="number" class="presc-target" data-i="' + i + '" value="' + c.hedef + '" min="1" max="60"></label>').join("");
+  const CATALOG = [];
+  GROUPS.forEach(g => g.items.forEach(it => { it._i = CATALOG.length; CATALOG.push(it); }));
+
+  $("prescList").innerHTML = GROUPS.map(g =>
+    '<details class="presc-group" data-g="' + g.key + '">' +
+      '<summary>' +
+        '<span class="pg-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">' + g.icon + '</svg></span>' +
+        '<span class="pg-label">' + esc(g.label) + '</span>' +
+        '<span class="pg-sel" data-sel="' + g.key + '" hidden>0</span>' +
+        '<span class="pg-n">' + g.items.length + '</span>' +
+        '<svg class="pg-caret" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg>' +
+      '</summary>' +
+      '<div class="presc-items">' + g.items.map(c =>
+        '<label class="presc-item"><input type="checkbox" data-i="' + c._i + '"><span class="presc-name">' + esc(c.ad) +
+        '</span><input type="number" class="presc-target" data-i="' + c._i + '" value="' + c.hedef + '" min="1" max="60"></label>'
+      ).join("") + "</div>" +
+    "</details>"
+  ).join("") + '<div class="presc-foot"><span id="prescCount">' +
+    t("0 exercises selected", "0 egzersiz seçildi") + '</span>' +
+    '<button type="button" class="linkish" id="prescClear">' + t("Clear", "Temizle") + "</button></div>";
+
+  function refreshPrescCounts() {
+    let total = 0;
+    GROUPS.forEach(function (g) {
+      const n = g.items.filter(it => {
+        const cb = document.querySelector('#prescList input[type="checkbox"][data-i="' + it._i + '"]');
+        return cb && cb.checked;
+      }).length;
+      total += n;
+      const badge = document.querySelector('[data-sel="' + g.key + '"]');
+      if (badge) { badge.textContent = n; badge.hidden = n === 0; }
+    });
+    const c = $("prescCount");
+    if (c) c.textContent = TR ? (total + " egzersiz seçildi") : (total + " exercise" + (total === 1 ? "" : "s") + " selected");
+  }
+  $("prescList").addEventListener("change", refreshPrescCounts);
+  $("prescClear").addEventListener("click", function () {
+    document.querySelectorAll('#prescList input[type="checkbox"]').forEach(c => (c.checked = false));
+    refreshPrescCounts();
+  });
 
   /* ---- loaders ---- */
   async function loadPatients() {
@@ -223,6 +318,7 @@ async function vimovePanel(sb, sess) {
     $("prescModal").hidden = true;
     $("prescTitle").value = ""; $("prescNote").value = "";
     document.querySelectorAll('#prescList input[type="checkbox"]').forEach(c => (c.checked = false));
+    refreshPrescCounts();
     loadPatients();
     alert(t("Prescription saved ✅", "Reçete verildi ✅"));
   });

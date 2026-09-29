@@ -1039,6 +1039,55 @@ p  { margin: 0 0 1rem; }
 .plan-list li .ex-target { margin-left: auto; font-size: .85rem; color: var(--ink-400); font-weight: 500; }
 
 .hands-state { display: flex; flex-wrap: wrap; gap: 10px; }
+/* ---- Invite landing (/katil) — built for an 80-year-old on a phone ---- */
+.join-card {
+  background: #fff; border: 1px solid var(--ink-100); border-radius: 20px;
+  padding: clamp(26px, 5vw, 44px); box-shadow: var(--shadow-lg);
+  text-align: center;
+}
+.join-badge {
+  display: inline-flex; align-items: center; gap: 8px;
+  padding: 8px 14px; border-radius: 999px; margin-bottom: 18px;
+  background: var(--brand-50); color: var(--brand-700);
+  font-size: .92rem; font-weight: 700;
+}
+.join-badge svg { width: 18px; height: 18px; }
+.join-badge--ok { background: var(--success-bg); color: #166534; }
+.join-title { margin: 0 0 10px; font-size: clamp(1.7rem, 5vw, 2.5rem); }
+.join-sub { margin: 0 auto 24px; max-width: 42ch; color: var(--ink-600); font-size: clamp(1rem, 2.2vw, 1.15rem); line-height: 1.6; }
+.join-label { display: block; text-align: left; font-weight: 700; color: var(--ink-800); margin-bottom: 8px; }
+.join-input {
+  width: 100%; padding: 16px 18px; font: inherit; font-size: 1.15rem;
+  border: 2px solid var(--ink-200); border-radius: 14px; background: #fff;
+}
+.join-input:focus { outline: none; border-color: var(--brand-500); box-shadow: 0 0 0 4px var(--brand-50); }
+.join-hint { margin: 8px 0 22px; text-align: left; color: var(--ink-500); font-size: .92rem; }
+.join-go {
+  width: 100%; justify-content: center; gap: 10px;
+  min-height: 62px; font-size: 1.2rem; border-radius: 16px;
+}
+.join-go svg { width: 22px; height: 22px; }
+.join-go.is-busy { opacity: .75; }
+.join-err {
+  margin: 14px 0 0; padding: 12px 14px; border-radius: 12px;
+  background: var(--warning-bg); color: #92400e; font-weight: 600;
+}
+.join-err[hidden] { display: none !important; }
+#joinStep1[hidden], #joinStep2[hidden] { display: none !important; }
+.join-creds {
+  display: grid; gap: 12px; margin: 0 0 24px; text-align: left;
+}
+.join-creds > div {
+  display: flex; align-items: center; justify-content: space-between; gap: 12px;
+  padding: 16px 18px; border-radius: 14px;
+  background: var(--ink-50); border: 1px solid var(--ink-100);
+}
+.join-creds span { color: var(--ink-500); font-size: .95rem; }
+.join-creds b {
+  font-family: var(--font-head); font-size: 1.4rem; color: var(--ink-900);
+  letter-spacing: .04em;
+}
+
 /* ---- The problem, on the About page (sits above the mission) ---- */
 .problem-band {
   position: relative;

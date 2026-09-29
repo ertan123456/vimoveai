@@ -4,6 +4,8 @@ from __future__ import annotations
 import json
 import os
 import re
+import secrets
+import time
 import urllib.error
 import urllib.request
 from datetime import datetime
@@ -216,7 +218,10 @@ def panel_hasta(request: Request):
 
 @app.get("/uzman", response_class=HTMLResponse)
 def panel_uzman(request: Request):
-    return render("panel_uzman.html", request, role="uzman")
+    # conditions feed the invite-link builder: the specialist can pick the
+    # program, so the patient lands straight in the right exercise session
+    return render("panel_uzman.html", request, role="uzman",
+                  conditions=program_engine.all_conditions())
 
 
 @app.get("/admin", response_class=HTMLResponse)
@@ -235,6 +240,80 @@ class CreatePatientBody(BaseModel):
     password: str
     full_name: str = ""
     access_token: str
+
+
+@app.get("/katil/{token}", response_class=HTMLResponse)
+def katil(request: Request, token: str, ad: str = "", program: str = "", yas: str = ""):
+    """Landing page for a specialist's invite link. The patient presses one
+    button, an account is created for them and the exercise starts."""
+    cond = program_engine.get_condition((program or "").lower().strip())
+    return render("join.html", request, active="", token=token, ad=ad,
+                  program=(program if cond else ""), yas=yas,
+                  program_name=(cond.get("name_tr") or cond.get("name")) if cond else "")
+
+
+class JoinBody(BaseModel):
+    token: str
+    full_name: str = ""
+
+
+# token -> [timestamps]; a shared link should not become an account factory
+_JOIN_HITS: dict[str, list[float]] = {}
+_JOIN_LIMIT = 20          # accounts per link per hour
+
+
+def _join_allowed(token: str) -> bool:
+    now = time.time()
+    hits = [t for t in _JOIN_HITS.get(token, []) if now - t < 3600]
+    _JOIN_HITS[token] = hits
+    if len(hits) >= _JOIN_LIMIT:
+        return False
+    hits.append(now)
+    return True
+
+
+@app.post("/api/join")
+def api_join(body: JoinBody):
+    """Create a patient account from an invite link and return its credentials.
+    No specialist login here — the link itself is the authorisation, so the
+    token must belong to a real specialist and the rate limit must hold."""
+    key = _supabase_key()
+    if not key:
+        return JSONResponse({"error": "not_configured"}, status_code=503)
+
+    token = (body.token or "").strip()
+    if not re.fullmatch(r"[0-9a-fA-F-]{36}", token):
+        return JSONResponse({"error": "bad_token"}, status_code=400)
+    if _profile_role(token, key) not in ("uzman", "super_admin"):
+        return JSONResponse({"error": "bad_token"}, status_code=404)
+    if not _join_allowed(token):
+        return JSONResponse({"error": "rate_limited"}, status_code=429)
+
+    full_name = (body.full_name or "").strip()[:60]
+    hdr = {"Authorization": f"Bearer {key}", "apikey": key, "Content-Type": "application/json"}
+
+    # a short username and a 6-digit password: these people will type them on a
+    # phone keyboard, so readability beats entropy here (the username is random
+    # too, so both halves have to be guessed)
+    for _ in range(6):
+        username = "hasta" + str(secrets.randbelow(9000) + 1000)
+        password = str(secrets.randbelow(900000) + 100000)
+        st, data = _http(
+            "POST", f"{SUPABASE_URL}/auth/v1/admin/users", hdr,
+            {"email": f"{username}@{PATIENT_EMAIL_DOMAIN}", "password": password,
+             "email_confirm": True,
+             "user_metadata": {"full_name": full_name or username, "username": username}},
+        )
+        if st in (200, 201) and isinstance(data, dict) and data.get("id"):
+            break
+    else:
+        return JSONResponse({"error": "create_failed"}, status_code=502)
+
+    phdr = dict(hdr); phdr["Prefer"] = "return=minimal"
+    _http("PATCH", f"{SUPABASE_URL}/rest/v1/profiles?id=eq.{data['id']}", phdr,
+          {"specialist_id": token, "full_name": full_name or username, "username": username})
+    return {"ok": True, "username": username, "password": password,
+            "email": f"{username}@{PATIENT_EMAIL_DOMAIN}"}
 
 
 @app.post("/api/create-patient")

@@ -1,0 +1,69 @@
+{% extends "base.html" %}
+{% block title %}Davet — ViMove AI{% endblock %}
+{% block description %}Fizyoterapistinin ViMove AI daveti: tek dokunuşla başla.{% endblock %}
+
+{% block content %}
+<section class="section">
+  <div class="container" style="max-width:640px">
+
+    <div class="join-card" id="joinCard"
+         data-token="{{ token }}" data-program="{{ program }}" data-yas="{{ yas }}">
+
+      <!-- step 1: press start -->
+      <div id="joinStep1">
+        <span class="join-badge">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+          Fizyoterapistin seni davet etti
+        </span>
+
+        <h1 class="join-title">Hoş geldin{% if ad %}, {{ ad }}{% endif %}</h1>
+        <p class="join-sub">
+          {% if program_name %}
+            <b>{{ program_name }}</b> programın hazır. Aşağıdaki düğmeye bas, hesabın kendiliğinden
+            oluşsun ve egzersizine başla.
+          {% else %}
+            Aşağıdaki düğmeye bas; hesabın kendiliğinden oluşsun ve egzersizine başla.
+          {% endif %}
+        </p>
+
+        <label class="join-label" for="joinName">Adın</label>
+        <input class="join-input" id="joinName" value="{{ ad }}" placeholder="Adını yaz"
+               autocomplete="name" maxlength="60" />
+        <p class="join-hint">Fizyoterapistin seni bu isimle görecek.</p>
+
+        <button class="btn btn--primary join-go" id="joinStart">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+          Başla
+        </button>
+        <p class="join-err" id="joinErr" hidden></p>
+      </div>
+
+      <!-- step 2: account is ready -->
+      <div id="joinStep2" hidden>
+        <span class="join-badge join-badge--ok">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg>
+          Hesabın hazır
+        </span>
+        <h1 class="join-title">Hazırsın!</h1>
+        <p class="join-sub">
+          Bu bilgileri bir yere not et — başka bir cihazdan girmek istersen gerekecek.
+          Bu cihazda açık kalacaksın.
+        </p>
+
+        <div class="join-creds">
+          <div><span>Kullanıcı adın</span><b id="joinUser">—</b></div>
+          <div><span>Şifren</span><b id="joinPass">—</b></div>
+        </div>
+
+        <button class="btn btn--primary join-go" id="joinContinue">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+          Egzersize başla
+        </button>
+      </div>
+
+    </div>
+  </div>
+</section>
+{% endblock %}
+
+{% block scripts %}<script src="/static/join.js?v=1" defer></script>{% endblock %}
