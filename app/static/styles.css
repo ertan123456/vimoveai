@@ -1071,7 +1071,7 @@ p  { margin: 0 0 1rem; }
 }
 .pstat {
   padding: 22px 24px; border-radius: 16px; background: #fff;
-  border: 1px solid var(--ink-100); border-left: 4px solid var(--brand-500);
+  border: 1px solid var(--ink-100);
   box-shadow: var(--shadow-sm);
 }
 .pstat-val {
@@ -1164,7 +1164,7 @@ p  { margin: 0 0 1rem; }
 .letter-date { font-size: .82rem; font-weight: 700; letter-spacing: .06em; color: var(--ink-400); }
 .letter-text p { margin: 0 0 15px; color: var(--ink-700); line-height: 1.72; font-size: 1rem; }
 .letter-text .letter-highlight {
-  padding: 16px 18px; border-radius: 14px; border-left: 4px solid var(--brand-500);
+  padding: 16px 18px; border-radius: 14px;
   background: var(--brand-50); color: var(--ink-800);
 }
 .letter-text .letter-highlight b { color: var(--brand-700); }

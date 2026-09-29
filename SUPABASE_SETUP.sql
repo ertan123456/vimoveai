@@ -1,6 +1,14 @@
 -- ============================================================
--- ViMove — roles & platform schema (run once in Supabase SQL Editor)
+-- ViMove AI — complete backend schema (Supabase SQL Editor)
 -- Roles: super_admin | uzman (specialist) | hasta (patient)
+--
+-- This file rebuilds EVERYTHING from an empty project: tables, row-level
+-- security, triggers, the session-video bucket and its policies. Safe to
+-- re-run on an existing project (everything is if-not-exists / drop-first).
+--
+-- After running it, in the dashboard:
+--   Authentication -> Providers -> enable Google (client id + secret)
+--   Authentication -> URL Configuration -> add https://vimoveai.com
 -- ============================================================
 
 -- ---------- profiles: one row per auth user, carries the role ----------
@@ -10,8 +18,11 @@ create table if not exists public.profiles (
   full_name     text,
   title         text,                        -- uzman ünvanı (ör. "Fizyoterapist") veya hasta notu
   specialist_id uuid references public.profiles(id) on delete set null,  -- hasta -> bağlı uzman
+  username      text,                        -- hasta girişi (e-postası olmayan yaşlı kullanıcılar)
   created_at    timestamptz not null default now()
 );
+-- for projects created before the column existed
+alter table public.profiles add column if not exists username text;
 alter table public.profiles enable row level security;
 
 -- helper: current user's role without recursive RLS
@@ -100,6 +111,24 @@ create policy msg_participant_select on public.messages for select
 create policy msg_send      on public.messages for insert with check (sender_id = auth.uid());
 create policy msg_mark_read on public.messages for update using (recipient_id = auth.uid());
 
+-- ---------- sessions: one row per finished exercise session ----------
+create table if not exists public.sessions (
+  id         uuid primary key default gen_random_uuid(),
+  user_id    uuid not null references auth.users(id) on delete cascade,
+  data       jsonb not null,                 -- skorlar, egzersiz kırılımı, AI notu, video yolu
+  created_at timestamptz not null default now()
+);
+create index if not exists sessions_user_created_idx
+  on public.sessions (user_id, created_at desc);
+alter table public.sessions enable row level security;
+
+drop policy if exists sessions_select_own on public.sessions;
+drop policy if exists sessions_insert_own on public.sessions;
+drop policy if exists sessions_delete_own on public.sessions;
+create policy sessions_select_own on public.sessions for select using (user_id = auth.uid());
+create policy sessions_insert_own on public.sessions for insert with check (user_id = auth.uid());
+create policy sessions_delete_own on public.sessions for delete using (user_id = auth.uid());
+
 -- ---------- let a specialist read their patients' exercise sessions ----------
 drop policy if exists sessions_specialist_select on public.sessions;
 create policy sessions_specialist_select on public.sessions for select
@@ -112,3 +141,25 @@ create policy sessions_specialist_select on public.sessions for select
 -- update public.profiles set role = 'super_admin'
 --   where id in (select id from auth.users
 --                where email in ('erdemertan08@gmail.com','oguzcetinkaya1903@gmail.com'));
+
+
+-- ============================================================
+-- Session videos (Storage)
+-- Private bucket; a patient reads/writes only their own folder, and their
+-- own specialist may read it. Nobody else, not even another specialist.
+-- ============================================================
+insert into storage.buckets (id, name, public)
+values ('session-videos', 'session-videos', false)
+on conflict (id) do nothing;
+
+drop policy if exists "vimove patient rw own videos" on storage.objects;
+create policy "vimove patient rw own videos" on storage.objects for all
+  using      (bucket_id = 'session-videos' and (storage.foldername(name))[1] = auth.uid()::text)
+  with check (bucket_id = 'session-videos' and (storage.foldername(name))[1] = auth.uid()::text);
+
+drop policy if exists "vimove specialist reads patient videos" on storage.objects;
+create policy "vimove specialist reads patient videos" on storage.objects for select
+  using (bucket_id = 'session-videos' and exists (
+    select 1 from public.profiles p
+    where p.id::text = (storage.foldername(name))[1]
+      and p.specialist_id = auth.uid()));
