@@ -89,7 +89,14 @@
     startBtn.classList.add("is-busy");
     startBtn.textContent = "Hesabın oluşturuluyor…";
 
-    var name = (document.getElementById("joinName").value || "").trim();
+    var nameEl = document.getElementById("joinName");
+    var name = (nameEl.value || "").trim();
+    if (!name) {
+      // the name is what reconnects a returning patient to their account
+      fail("Lütfen adını yaz — hesabını bu isimle buluyoruz.");
+      nameEl.focus();
+      return;
+    }
     var res, out;
     try {
       res = await fetch("/api/join", {
@@ -109,15 +116,19 @@
       return fail("Hesap oluşturulamadı. Lütfen tekrar dene.");
     }
 
-    // Remember this account on this device so the same link never opens a
-    // second one, then sign in and hand over to the patient's own page.
+    // Remember this account on this device too, then hand over to the
+    // patient's own page. `existing` means the server matched this link to an
+    // account it had already created — there is no password to sign in with,
+    // and none is needed: the personal page mints its own one-shot token.
     try { localStorage.setItem(SAVED, out.path); } catch (e) {}
 
-    var sb = await client();
-    if (sb) {
-      try {
-        await sb.auth.signInWithPassword({ email: out.email, password: out.password });
-      } catch (e) { /* the personal link signs them in on its own anyway */ }
+    if (!out.existing && out.password) {
+      var sb = await client();
+      if (sb) {
+        try {
+          await sb.auth.signInWithPassword({ email: out.email, password: out.password });
+        } catch (e) { /* the personal link signs them in on its own anyway */ }
+      }
     }
     goTo(out.path || "/hasta");
   });

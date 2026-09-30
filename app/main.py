@@ -13,7 +13,7 @@ import urllib.error
 import urllib.request
 from datetime import datetime
 from pathlib import Path
-from urllib.parse import urlencode
+from urllib.parse import quote, urlencode
 
 from fastapi import FastAPI, Request, Form, status
 from fastapi.responses import (
@@ -398,6 +398,24 @@ def api_join(body: JoinBody):
 
     full_name = (body.full_name or "").strip()[:60]
     hdr = {"Authorization": f"Bearer {key}", "apikey": key, "Content-Type": "application/json"}
+
+    # A link that has already produced an account must keep opening THAT
+    # account, from any device, after signing out, forever. Device memory in
+    # the browser cannot promise that (create it on a phone, tap the link on a
+    # laptop and you get a second account), so the pairing lives here: for one
+    # specialist, one patient name is one account.
+    if full_name:
+        safe = full_name.replace("\\", "\\\\").replace("%", "\%").replace("_", "\_")
+        st, rows = _http(
+            "GET",
+            f"{SUPABASE_URL}/rest/v1/profiles?specialist_id=eq.{token}"
+            f"&full_name=ilike.{quote(safe, safe='')}&select=id&limit=1",
+            {"Authorization": f"Bearer {key}", "apikey": key},
+        )
+        if st == 200 and isinstance(rows, list) and rows and rows[0].get("id"):
+            pid = rows[0]["id"]
+            return {"ok": True, "existing": True,
+                    "path": f"/p/{pid}/{_patient_sig(pid)}"}
 
     # a short username and a 6-digit password: these people will type them on a
     # phone keyboard, so readability beats entropy here (the username is random

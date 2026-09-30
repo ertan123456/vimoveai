@@ -29,7 +29,8 @@
         <label class="join-label" for="joinName">Adın</label>
         <input class="join-input" id="joinName" value="{{ ad }}" placeholder="Adını yaz"
                autocomplete="name" maxlength="60" />
-        <p class="join-hint">Fizyoterapistin seni bu isimle görecek.</p>
+        <p class="join-hint">Fizyoterapistin seni bu isimle görecek. Daha önce
+          girdiysen aynı adı yaz — hesabına geri dönersin.</p>
 
         <button class="btn btn--primary join-go" id="joinStart">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polygon points="5 3 19 12 5 21 5 3"/></svg>
@@ -47,4 +48,4 @@
 </section>
 {% endblock %}
 
-{% block scripts %}<script src="/static/join.js?v=3" defer></script>{% endblock %}
+{% block scripts %}<script src="/static/join.js?v=5" defer></script>{% endblock %}
