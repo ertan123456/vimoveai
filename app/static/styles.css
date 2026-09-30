@@ -1088,6 +1088,58 @@ p  { margin: 0 0 1rem; }
   letter-spacing: .04em;
 }
 
+/* ---- the patient's own page (/p/<id>/<sig>) ---- */
+.join-badge--warn { background: var(--warning-bg); color: #92400e; }
+.prog-spin {
+  display: block; width: 32px; height: 32px; margin: 0 auto 16px;
+  border: 3px solid var(--ink-200); border-top-color: var(--brand-600);
+  border-radius: 50%; animation: progSpin .8s linear infinite;
+}
+@keyframes progSpin { to { transform: rotate(360deg); } }
+#progLoading[hidden], #progReady[hidden], #progFail[hidden] { display: none !important; }
+
+.prog-head { text-align: center; margin-bottom: 20px; }
+.prog-hello { margin: 0 0 6px; font-size: clamp(1.6rem, 5vw, 2.3rem); }
+.prog-sub { margin: 0; color: var(--ink-600); font-size: clamp(1rem, 2.2vw, 1.1rem); }
+
+.prog-card {
+  background: #fff; border: 1px solid var(--ink-100); border-radius: 20px;
+  box-shadow: var(--shadow-lg); overflow: hidden; margin-bottom: 20px;
+}
+.prog-card-top { padding: 22px 24px 18px; border-bottom: 1px solid var(--ink-100); }
+.prog-tag {
+  display: inline-block; margin-bottom: 8px; padding: 5px 11px; border-radius: 999px;
+  background: var(--brand-50); color: var(--brand-700);
+  font-size: .8rem; font-weight: 800; letter-spacing: .04em;
+}
+.prog-title { margin: 0; font-size: clamp(1.2rem, 3vw, 1.5rem); }
+.prog-note {
+  margin: 12px 0 0; padding: 12px 14px; border-radius: 12px;
+  background: var(--ink-50); color: var(--ink-700); font-size: .96rem; line-height: 1.55;
+}
+.prog-note[hidden] { display: none !important; }
+
+.prog-list { list-style: none; margin: 0; padding: 8px 0; counter-reset: pl; }
+.prog-list li {
+  display: flex; align-items: center; gap: 12px;
+  padding: 13px 24px; counter-increment: pl;
+}
+.prog-list li + li { border-top: 1px solid var(--ink-100); }
+.prog-list li::before {
+  content: counter(pl); flex: none;
+  display: grid; place-items: center; width: 28px; height: 28px;
+  border-radius: 50%; background: var(--brand-50); color: var(--brand-700);
+  font-size: .85rem; font-weight: 800;
+}
+.pl-name { flex: 1; color: var(--ink-800); font-size: 1.02rem; }
+.pl-target { color: var(--ink-500); font-size: .92rem; white-space: nowrap; }
+
+.prog-links {
+  display: flex; align-items: center; justify-content: center; gap: 10px;
+  margin-top: 18px; color: var(--ink-400); font-size: .95rem;
+}
+.prog-links a { color: var(--ink-600); font-weight: 600; }
+
 /* ---- The problem, on the About page (sits above the mission) ---- */
 .problem-band {
   position: relative;

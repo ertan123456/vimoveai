@@ -1,0 +1,73 @@
+{% extends "base.html" %}
+{% block title %}Programım — ViMove AI{% endblock %}
+{% block description %}Fizyoterapistinin senin için hazırladığı egzersiz programı.{% endblock %}
+
+{% block content %}
+<section class="section">
+  <div class="container" style="max-width:640px">
+
+    {% if not ok %}
+    <div class="join-card">
+      <span class="join-badge join-badge--warn">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><path d="M12 9v4M12 17h.01"/></svg>
+        Bağlantı geçersiz
+      </span>
+      <h1 class="join-title">Bu bağlantı çalışmıyor</h1>
+      <p class="join-sub">Fizyoterapistinden yeni bir bağlantı iste — eskisi artık geçerli değil.</p>
+      <a class="btn btn--secondary join-go" href="/">Ana sayfaya dön</a>
+    </div>
+
+    {% else %}
+    <div class="prog-wrap" id="progWrap"
+         data-token="{{ token_hash }}" data-pid="{{ pid }}"
+         data-program="{{ program }}" data-yas="{{ yas }}">
+
+      <!-- while we sign them in and read the prescription -->
+      <div class="join-card" id="progLoading">
+        <span class="prog-spin" aria-hidden="true"></span>
+        <p class="join-sub" style="margin:0">Programın hazırlanıyor…</p>
+      </div>
+
+      <!-- the simple panel -->
+      <div id="progReady" hidden>
+        <div class="prog-head">
+          <h1 class="prog-hello" id="progName">Merhaba</h1>
+          <p class="prog-sub" id="progSub">Programın hazır.</p>
+        </div>
+
+        <div class="prog-card">
+          <div class="prog-card-top">
+            <span class="prog-tag" id="progTag">Fizyoterapistinin programı</span>
+            <h2 class="prog-title" id="progTitle">—</h2>
+            <p class="prog-note" id="progNote" hidden></p>
+          </div>
+          <ol class="prog-list" id="progList"></ol>
+        </div>
+
+        <button class="btn btn--primary join-go" id="progStart">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+          Başla
+        </button>
+
+        <div class="prog-links">
+          <a href="/progress">İlerlemem</a>
+          <span aria-hidden="true">·</span>
+          <a href="/hasta">Tüm panelim</a>
+        </div>
+      </div>
+
+      <!-- link expired / could not sign in -->
+      <div class="join-card" id="progFail" hidden>
+        <h1 class="join-title">Giriş yapılamadı</h1>
+        <p class="join-sub">Bağlantının süresi dolmuş olabilir. Fizyoterapistinden yeni bir bağlantı iste.</p>
+        <a class="btn btn--secondary join-go" href="/giris">Kullanıcı adıyla gir</a>
+      </div>
+
+    </div>
+    {% endif %}
+
+  </div>
+</section>
+{% endblock %}
+
+{% block scripts %}<script src="/static/program.js?v=1" defer></script>{% endblock %}

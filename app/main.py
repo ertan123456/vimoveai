@@ -1,6 +1,9 @@
 # app/main.py — ViMove FastAPI server (Render-ready, no build step)
 from __future__ import annotations
 
+import base64
+import hashlib
+import hmac
 import json
 import os
 import re
@@ -79,6 +82,41 @@ def _profile_role(uid: str, key: str):
     if st == 200 and isinstance(data, list) and data:
         return data[0].get("role")
     return None
+
+
+def _patient_sig(pid: str) -> str:
+    """Signature for a patient's personal link.
+
+    The link is a bearer token by design — an 80-year-old is not going to type
+    a password — so it must not be guessable from the patient id alone. We sign
+    the id with the service key instead of storing a token column, which keeps
+    the schema untouched and revokes every link at once if the key is rotated.
+    """
+    key = _supabase_key()
+    if not key:
+        return ""
+    mac = hmac.new(key.encode(), f"vimove-patient-link:{pid}".encode(), hashlib.sha256).digest()
+    return base64.urlsafe_b64encode(mac).decode().rstrip("=")[:22]
+
+
+def _magic_token(pid: str) -> str:
+    """A one-shot Supabase magic-link token so the patient lands signed in.
+    Generated (not e-mailed) through the admin API: these accounts have
+    synthetic addresses that no mailbox ever receives."""
+    key = _supabase_key()
+    if not key:
+        return ""
+    hdr = {"Authorization": f"Bearer {key}", "apikey": key, "Content-Type": "application/json"}
+    st, user = _http("GET", f"{SUPABASE_URL}/auth/v1/admin/users/{pid}", hdr)
+    email = (user or {}).get("email") if st == 200 else None
+    if not email:
+        return ""
+    st, data = _http("POST", f"{SUPABASE_URL}/auth/v1/admin/generate_link", hdr,
+                     {"type": "magiclink", "email": email})
+    if st not in (200, 201) or not isinstance(data, dict):
+        return ""
+    props = data.get("properties") or data
+    return props.get("hashed_token") or ""
 
 
 def _slug_username(name: str) -> str:
@@ -242,6 +280,52 @@ class CreatePatientBody(BaseModel):
     access_token: str
 
 
+@app.get("/p/{pid}/{sig}", response_class=HTMLResponse)
+def patient_program(request: Request, pid: str, sig: str, program: str = "", yas: str = ""):
+    """A patient's personal page: signs them in from the link and shows the
+    prescription their specialist wrote, with one button to start."""
+    expected = _patient_sig(pid)
+    ok = bool(expected) and hmac.compare_digest(sig, expected)
+    cond = program_engine.get_condition((program or "").lower().strip()) if ok else None
+    return render(
+        "program.html", request, active="",
+        ok=ok, pid=pid,
+        token_hash=(_magic_token(pid) if ok else ""),
+        program=(program if cond else ""), yas=yas,
+        program_name=(cond.get("name_tr") or cond.get("name")) if cond else "",
+    )
+
+
+class PatientLinkBody(BaseModel):
+    access_token: str
+    patient_id: str
+
+
+@app.post("/api/patient-link")
+def api_patient_link(body: PatientLinkBody):
+    """The specialist asks for one of their patients' personal links."""
+    key = _supabase_key()
+    if not key:
+        return JSONResponse({"error": "not_configured"}, status_code=503)
+    caller = _caller_id(body.access_token)
+    if not caller:
+        return JSONResponse({"error": "unauthorized"}, status_code=401)
+    if _profile_role(caller, key) not in ("uzman", "super_admin"):
+        return JSONResponse({"error": "forbidden"}, status_code=403)
+
+    pid = (body.patient_id or "").strip()
+    if not re.fullmatch(r"[0-9a-fA-F-]{36}", pid):
+        return JSONResponse({"error": "bad_patient"}, status_code=400)
+    st, rows = _http(
+        "GET", f"{SUPABASE_URL}/rest/v1/profiles?id=eq.{pid}&select=specialist_id",
+        {"Authorization": f"Bearer {key}", "apikey": key},
+    )
+    owner = rows[0].get("specialist_id") if st == 200 and isinstance(rows, list) and rows else None
+    if owner != caller:
+        return JSONResponse({"error": "forbidden"}, status_code=403)
+    return {"ok": True, "path": f"/p/{pid}/{_patient_sig(pid)}"}
+
+
 @app.get("/katil/{token}", response_class=HTMLResponse)
 def katil(request: Request, token: str, ad: str = "", program: str = "", yas: str = ""):
     """Landing page for a specialist's invite link. The patient presses one
@@ -313,7 +397,8 @@ def api_join(body: JoinBody):
     _http("PATCH", f"{SUPABASE_URL}/rest/v1/profiles?id=eq.{data['id']}", phdr,
           {"specialist_id": token, "full_name": full_name or username, "username": username})
     return {"ok": True, "username": username, "password": password,
-            "email": f"{username}@{PATIENT_EMAIL_DOMAIN}"}
+            "email": f"{username}@{PATIENT_EMAIL_DOMAIN}",
+            "path": f"/p/{data['id']}/{_patient_sig(data['id'])}"}
 
 
 @app.post("/api/create-patient")

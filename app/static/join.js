@@ -66,22 +66,18 @@
       return fail("Hesap oluşturulamadı. Lütfen tekrar dene.");
     }
 
-    // sign in with the credentials we just received
+    // Sign in with the credentials we just received, then hand over to the
+    // patient's own page — they never see a password screen.
     var sb = await client();
     if (sb) {
       try {
         await sb.auth.signInWithPassword({ email: out.email, password: out.password });
-      } catch (e) { /* the credentials still work at /giris */ }
+      } catch (e) { /* the personal link signs them in on its own anyway */ }
     }
 
-    document.getElementById("joinUser").textContent = out.username;
-    document.getElementById("joinPass").textContent = out.password;
-    document.getElementById("joinStep1").hidden = true;
-    document.getElementById("joinStep2").hidden = false;
-    document.getElementById("joinContinue").focus();
-  });
-
-  document.getElementById("joinContinue").addEventListener("click", function () {
-    window.location.href = target();
+    var q = [];
+    if (program) q.push("program=" + encodeURIComponent(program));
+    if (yas) q.push("yas=" + encodeURIComponent(yas));
+    window.location.href = (out.path || "/hasta") + (q.length ? "?" + q.join("&") : "");
   });
 })();

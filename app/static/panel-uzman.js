@@ -179,7 +179,9 @@ async function vimovePanel(sb, sess) {
       const name = patientsMap[p.id];
       const has = activeSet[p.id] ? '<span class="pill ok">' + t("Yes", "Var") + "</span>" : '<span class="pill mut">' + t("None", "Yok") + "</span>";
       return '<tr><td><span class="pt-name"><span class="pt-ini">' + ini(name) + "</span>" + esc(name) + "</span></td><td>" + has + "</td>" +
-        '<td style="text-align:right"><button class="btn btn--secondary detail-btn" data-pid="' + p.id + '" data-name="' + esc(name) +
+        '<td style="text-align:right"><button class="btn btn--secondary plink-btn" data-pid="' + p.id +
+        '" style="min-height:38px;padding:8px 12px;margin-right:6px">' + t("Link", "Bağlantı") + "</button>" +
+        '<button class="btn btn--secondary detail-btn" data-pid="' + p.id + '" data-name="' + esc(name) +
         '" style="min-height:38px;padding:8px 14px">' + t("Details", "Detay") + "</button></td></tr>";
     }).join("");
   }
@@ -370,6 +372,31 @@ async function vimovePanel(sb, sess) {
       $("prescModal").hidden = true; $("detailModal").hidden = true; $("newPatientModal").hidden = true; closeVideo(); return;
     }
     const d = e.target.closest(".detail-btn"); if (d) { openDetail(d.getAttribute("data-pid"), d.getAttribute("data-name")); return; }
+    const pl = e.target.closest(".plink-btn");
+    if (pl) {
+      // the patient's own link: one tap signs them in and shows their prescription
+      (async function () {
+        const o = pl.textContent;
+        pl.textContent = "…";
+        try {
+          const token = (await sb.auth.getSession()).data.session.access_token;
+          const r = await fetch("/api/patient-link", {
+            method: "POST", headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ access_token: token, patient_id: pl.getAttribute("data-pid") }),
+          });
+          const out = await r.json();
+          if (!out || !out.ok) { pl.textContent = o; alert(t("Could not create the link.", "Bağlantı alınamadı.")); return; }
+          copy(location.origin + out.path);
+          pl.textContent = t("Copied", "Kopyalandı");
+        } catch (err) {
+          pl.textContent = o;
+          alert(t("Could not create the link.", "Bağlantı alınamadı."));
+          return;
+        }
+        setTimeout(function () { pl.textContent = o; }, 1600);
+      })();
+      return;
+    }
     const inb = e.target.closest(".inbox-item"); if (inb) { if (pop) pop.hidden = true; openDetail(inb.getAttribute("data-pid"), inb.getAttribute("data-name")); return; }
     if (e.target.closest("#detailPrescribe")) { openPresc(currentPatient, currentName); }
   });
