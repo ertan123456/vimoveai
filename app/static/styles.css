@@ -1088,6 +1088,9 @@ p  { margin: 0 0 1rem; }
   letter-spacing: .04em;
 }
 
+.join-foot { margin: 16px 0 0; color: var(--ink-500); font-size: .92rem; }
+.join-foot a { color: var(--ink-600); font-weight: 600; text-decoration: underline; }
+
 /* ---- the patient's own page (/p/<id>/<sig>) ---- */
 .join-badge--warn { background: var(--warning-bg); color: #92400e; }
 .prog-spin {

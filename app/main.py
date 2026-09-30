@@ -296,6 +296,29 @@ def patient_program(request: Request, pid: str, sig: str, program: str = "", yas
     )
 
 
+class MyLinkBody(BaseModel):
+    access_token: str
+
+
+@app.post("/api/my-link")
+def api_my_link(body: MyLinkBody):
+    """A signed-in patient asks for their own personal page.
+
+    This is what stops a shared invite link from opening a second account for
+    someone who already has one: the caller proves who they are with their own
+    access token, so there is nothing to guess here.
+    """
+    key = _supabase_key()
+    if not key:
+        return JSONResponse({"error": "not_configured"}, status_code=503)
+    uid = _caller_id(body.access_token)
+    if not uid:
+        return JSONResponse({"error": "unauthorized"}, status_code=401)
+    if _profile_role(uid, key) != "hasta":
+        return JSONResponse({"error": "not_patient"}, status_code=403)
+    return {"ok": True, "path": f"/p/{uid}/{_patient_sig(uid)}"}
+
+
 class PatientLinkBody(BaseModel):
     access_token: str
     patient_id: str

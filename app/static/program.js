@@ -58,6 +58,9 @@
     if (!session) return show(failed);
 
     var uid = session.user.id;
+    // remember this account on this device: tapping the specialist's general
+    // invite link later must reopen THIS account, not create another one
+    try { localStorage.setItem("vimove:patientPath", location.pathname); } catch (e) {}
 
     // name + active prescription
     var name = "", presc = null;
