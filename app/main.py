@@ -8,6 +8,7 @@ import json
 import os
 import re
 import secrets
+import threading
 import time
 import urllib.error
 import urllib.request
@@ -494,6 +495,33 @@ def service_worker():
         media_type="application/javascript",
         headers={"Service-Worker-Allowed": "/", "Cache-Control": "no-cache"},
     )
+
+
+# ---------------------------------------------------------------------
+# Keep the Supabase project awake
+# ---------------------------------------------------------------------
+# Free Supabase projects are paused after about a week without traffic, and
+# a paused project takes sign-in, the panels and the prescriptions down with
+# it. A cheap read every few hours counts as activity. It is a mitigation,
+# not a guarantee — the real fix is a paid plan or steady real usage.
+_KEEPALIVE_HOURS = 6
+
+
+def _keepalive_loop() -> None:
+    url = f"{SUPABASE_URL}/rest/v1/profiles?select=id&limit=1"
+    headers = {"apikey": SUPABASE_ANON, "Authorization": f"Bearer {SUPABASE_ANON}"}
+    time.sleep(60)                       # let the app finish booting first
+    while True:
+        try:
+            _http("GET", url, headers)
+        except Exception:
+            pass                         # never let this thread take the app down
+        time.sleep(_KEEPALIVE_HOURS * 3600)
+
+
+@app.on_event("startup")
+def _start_keepalive() -> None:
+    threading.Thread(target=_keepalive_loop, name="supabase-keepalive", daemon=True).start()
 
 
 @app.get("/sunum", response_class=HTMLResponse)

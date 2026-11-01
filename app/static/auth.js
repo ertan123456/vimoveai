@@ -127,6 +127,11 @@ function render(session) {
 }
 
 /* --- wire up --- */
+// Draw the signed-out button FIRST, before a single network call. If Supabase
+// is unreachable (a paused project resolves to nothing), getSession never
+// settles and the nav used to be left with no sign-in icon at all.
+render(null);
+
 function apply(session) {
   const user = (session && session.user) || null;
   window.vimoveUser = user;
@@ -148,7 +153,11 @@ function apply(session) {
   }, 0);
 }
 supabase.auth.onAuthStateChange(function (_event, session) { apply(session); });
-supabase.auth.getSession().then(function (res) { apply(res.data.session); });
+supabase.auth.getSession()
+  .then(function (res) { apply(res.data.session); })
+  .catch(function () { /* backend down: the signed-out button already stands */ });
 window.addEventListener("vimove:lang", function () {
-  supabase.auth.getSession().then(function (res) { render(res.data.session); });
+  supabase.auth.getSession()
+    .then(function (res) { render(res.data.session); })
+    .catch(function () { render(null); });
 });

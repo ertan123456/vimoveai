@@ -197,3 +197,28 @@
     nums.forEach(run);
   }
 })();
+
+/* ---- Last-resort sign-in button ----
+   auth.js owns the nav account slot, but it is an ES module that imports the
+   Supabase client from a CDN. If that import is blocked or the module throws,
+   the slot stays empty and there is no way into the app at all. This fills it
+   with a plain link so the door is never missing. */
+(function () {
+  var slot = document.getElementById("authSlot");
+  if (!slot) return;
+  setTimeout(function () {
+    if (slot.children.length) return;        // auth.js did its job
+    var tr = (localStorage.getItem("vimove:lang") ||
+              ((navigator.language || "en").toLowerCase().slice(0, 2))) === "tr";
+    var label = tr ? "Giriş yap" : "Sign in";
+    var a = document.createElement("a");
+    a.className = "auth-signin";
+    a.href = "/giris";
+    a.title = label;
+    a.setAttribute("aria-label", label);
+    a.innerHTML = '<svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" ' +
+      'stroke-width="2" stroke-linecap="round" stroke-linejoin="round">' +
+      '<path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>';
+    slot.appendChild(a);
+  }, 2500);
+})();
