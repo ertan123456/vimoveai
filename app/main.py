@@ -34,11 +34,12 @@ from app import program_engine
 # Supabase (server side). Service key comes ONLY from the environment —
 # never committed. URL + anon key are public.
 # ---------------------------------------------------------------------
-SUPABASE_URL = "https://sgnbrzqelnekzoasknzi.supabase.co"
-SUPABASE_ANON = (
-    "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InNnbmJyenFlbG5la3pvYXNrbnpp"
-    "Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODUwMTEzMTcsImV4cCI6MjEwMDU4NzMxN30.oskSk-7NnxXO3Vkv44XQT3LzN8tzx4gmcZwKsLmaks8"
-)
+# Both are overridable from the environment: when the project moves (it has,
+# twice) the server only needs new env values and a restart, no code change.
+# The browser reads them from <meta> tags, so there is one source of truth.
+SUPABASE_URL = os.environ.get(
+    "SUPABASE_URL", "https://wqncyluzmrkkqbizmuoo.supabase.co").rstrip("/")
+SUPABASE_ANON = os.environ.get("SUPABASE_ANON", "")
 PATIENT_EMAIL_DOMAIN = "hasta.vimoveai.com"
 
 
@@ -160,7 +161,8 @@ DONATE_ENABLED = False
 # ---------------------------------------------------------------------
 def render(template: str, request: Request, active: str = "", status_code: int = 200, **extra):
     ctx = {"request": request, "year": datetime.now().year, "active": active,
-           "donate_enabled": DONATE_ENABLED}
+           "donate_enabled": DONATE_ENABLED,
+           "supabase_url": SUPABASE_URL, "supabase_anon": SUPABASE_ANON}
     ctx.update(extra)
     return templates.TemplateResponse(template, ctx, status_code=status_code)
 
@@ -180,11 +182,11 @@ async def add_security_headers(request, call_next):
         "connect-src 'self' https://cdn.jsdelivr.net https://storage.googleapis.com "
         "https://www.google-analytics.com https://*.google-analytics.com "
         "https://www.googletagmanager.com "
-        "https://sgnbrzqelnekzoasknzi.supabase.co wss://sgnbrzqelnekzoasknzi.supabase.co; "
+        f"{SUPABASE_URL} {SUPABASE_URL.replace('https://', 'wss://')}; "
         "img-src 'self' data: blob: https://www.googletagmanager.com https://*.google-analytics.com; "
         "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; "
         "font-src 'self' https://fonts.gstatic.com data:; "
-        "media-src 'self' blob: https://sgnbrzqelnekzoasknzi.supabase.co; "
+        f"media-src 'self' blob: {SUPABASE_URL}; "
         "worker-src 'self' blob:; "
         "frame-ancestors 'self'; "
         "object-src 'none';"

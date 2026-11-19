@@ -23,6 +23,10 @@
   <title>{% block title %}ViMove AI — movement therapy with your camera{% endblock %}</title>
   <meta name="description" content="{% block description %}ViMove AI turns any webcam into a guided physiotherapy companion. AI motion tracking builds and follows personalized exercise programs for people living with Parkinson's and other conditions.{% endblock %}" />
   <meta name="theme-color" content="#0d9488" />
+  <!-- Supabase config for the browser (public values). Kept here so the
+       server stays the single source of truth; the CSP blocks inline JS. -->
+  <meta name="sb-url" content="{{ supabase_url }}" />
+  <meta name="sb-anon" content="{{ supabase_anon }}" />
 
   <link rel="icon" href="/static/favicon.svg?v=2" type="image/svg+xml" />
   <link rel="manifest" href="/manifest.webmanifest" />
@@ -129,7 +133,7 @@
   </footer>
 
   <script src="/static/app.js?v=12" defer></script>
-  <script type="module" src="/static/auth.js?v=7"></script>
+  <script type="module" src="/static/auth.js?v=8"></script>
   {% block scripts %}{% endblock %}
 </body>
 </html>

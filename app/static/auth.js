@@ -3,11 +3,20 @@
    protected server-side by Supabase Row Level Security. No passwords touch us. */
 import { createClient } from "https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm";
 
-const SUPABASE_URL = "https://sgnbrzqelnekzoasknzi.supabase.co";
-const SUPABASE_ANON_KEY =
-  "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InNnbmJyenFlbG5la3pvYXNrbnppIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODUwMTEzMTcsImV4cCI6MjEwMDU4NzMxN30.oskSk-7NnxXO3Vkv44XQT3LzN8tzx4gmcZwKsLmaks8";
+function meta(name) {
+  const el = document.querySelector('meta[name="' + name + '"]');
+  return (el && el.getAttribute("content")) || "";
+}
+// The server hands these down in <meta> tags, so moving the Supabase project
+// is an environment change on the server and nothing else.
+const SUPABASE_URL = meta("sb-url");
+const SUPABASE_ANON_KEY = meta("sb-anon");
 
-const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+// Misconfigured server (no key yet)? Do not throw — the rest of the site,
+// including the whole exercise flow, works without an account.
+const supabase = (SUPABASE_URL && SUPABASE_ANON_KEY)
+  ? createClient(SUPABASE_URL, SUPABASE_ANON_KEY)
+  : null;
 window.vimoveSupabase = supabase; // other scripts (progress sync) reuse this client
 window.vimoveUser = null;
 window.dispatchEvent(new Event("vimove:supabase-ready"));
@@ -132,6 +141,10 @@ function render(session) {
 // settles and the nav used to be left with no sign-in icon at all.
 render(null);
 
+if (!supabase) {
+  console.warn("ViMove: Supabase is not configured (sb-url / sb-anon meta tags).");
+} else {
+
 function apply(session) {
   const user = (session && session.user) || null;
   window.vimoveUser = user;
@@ -161,3 +174,4 @@ window.addEventListener("vimove:lang", function () {
     .then(function (res) { render(res.data.session); })
     .catch(function () { render(null); });
 });
+}
