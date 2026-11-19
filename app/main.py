@@ -38,8 +38,12 @@ from app import program_engine
 # twice) the server only needs new env values and a restart, no code change.
 # The browser reads them from <meta> tags, so there is one source of truth.
 SUPABASE_URL = os.environ.get(
-    "SUPABASE_URL", "https://wqncyluzmrkkqbizmuoo.supabase.co").rstrip("/")
-SUPABASE_ANON = os.environ.get("SUPABASE_ANON", "")
+    "SUPABASE_URL", "https://sgnbrzqelnekzoasknzi.supabase.co").rstrip("/")
+SUPABASE_ANON = os.environ.get(
+    "SUPABASE_ANON",
+    "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InNnbmJyenFlbG5la3pvYXNrbnpp"
+    "Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODUwMTEzMTcsImV4cCI6MjEwMDU4NzMxN30"
+    ".oskSk-7NnxXO3Vkv44XQT3LzN8tzx4gmcZwKsLmaks8")
 PATIENT_EMAIL_DOMAIN = "hasta.vimoveai.com"
 
 
