@@ -1623,7 +1623,6 @@ p  { margin: 0 0 1rem; }
 .src-card {
   background: var(--surface);
   border: 1px solid var(--ink-200);
-  border-left: 4px solid var(--brand-400);
   border-radius: var(--radius);
   padding: 20px 22px;
   margin-bottom: 14px;
@@ -1893,7 +1892,6 @@ p  { margin: 0 0 1rem; }
   align-items: center;
   justify-content: flex-end;
   padding-right: 9px;
-  transition: width .8s var(--ease-out);
 }
 .jr-bar span { font-size: .76rem; font-weight: 700; color: #fff; white-space: nowrap; }
 .jr-bar--old { background: var(--ink-400); }
