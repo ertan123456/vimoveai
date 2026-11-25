@@ -222,3 +222,51 @@
     slot.appendChild(a);
   }, 2500);
 })();
+
+/* Nav dropdown ("Proje"). The <details> element gives us click-to-open and
+   keyboard support for free; these three behaviours are what it does not do:
+   close when you click away, close on Escape, and stay open inside the
+   stacked mobile menu, where there is nothing to drop down over. */
+(function () {
+  var MOBILE = 1240;
+  var groups = document.querySelectorAll(".nav-group");
+  if (!groups.length) return;
+
+  function stacked() { return window.innerWidth <= MOBILE; }
+
+  function sync() {
+    var on = stacked();
+    for (var i = 0; i < groups.length; i++) {
+      // In the stacked menu the group is a plain section, always visible.
+      // On a wide screen it stays shut until asked for, even on its own
+      // pages: an open panel there would just cover the page you came to
+      // read. The summary already carries the highlight.
+      groups[i].open = on;
+    }
+  }
+  sync();
+
+  var t;
+  window.addEventListener("resize", function () {
+    clearTimeout(t);
+    t = setTimeout(sync, 120);
+  });
+
+  document.addEventListener("click", function (e) {
+    if (stacked()) return;
+    for (var i = 0; i < groups.length; i++) {
+      if (groups[i].open && !groups[i].contains(e.target)) groups[i].open = false;
+    }
+  });
+
+  document.addEventListener("keydown", function (e) {
+    if (e.key !== "Escape" || stacked()) return;
+    for (var i = 0; i < groups.length; i++) {
+      if (groups[i].open) {
+        groups[i].open = false;
+        var s = groups[i].querySelector("summary");
+        if (s) s.focus();
+      }
+    }
+  });
+})();

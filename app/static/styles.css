@@ -403,10 +403,10 @@ p  { margin: 0 0 1rem; }
 }
 .nav-toggle svg { width: 24px; height: 24px; }
 
-/* The desktop nav (brand + 6 links + account chip + language + CTA) needs about
-   1150 px of content, and more once a signed-in user's name is in the chip.
-   Below 1240 px we switch to the hamburger instead of letting the header push
-   the whole page sideways. */
+/* The desktop nav (brand + 4 links + the Project menu + account chip +
+   language + CTA) measures 1032 px in Turkish, 1116 px with a long signed-in
+   name in the chip. Below 1240 px we switch to the hamburger instead of
+   letting the header push the whole page sideways. */
 @media (max-width: 1240px) {
   .nav-toggle { display: inline-flex; }
   .nav-links {
@@ -1923,4 +1923,91 @@ p  { margin: 0 0 1rem; }
   .jr-fb-row { grid-template-columns: 1fr; gap: 6px; }
   .jr-fb-arrow { transform: rotate(90deg); height: 26px; }
   .src-card { padding: 17px 16px; }
+}
+
+/* ---- nav dropdown ("Proje": About / Journey / References / Community) ----
+   Seven top-level links plus a signed-in account chip stopped fitting the
+   header, so the four project pages live behind one summary. Built on
+   <details> so it opens with a click and from the keyboard without any
+   script: the CSP forbids inline JS, and a menu that needs JS to open is a
+   menu that breaks when a file fails to load. */
+.nav-has-menu { position: relative; }
+.nav-group > summary {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 10px 14px;
+  border-radius: var(--radius-pill);
+  color: var(--ink-700);
+  font-weight: 500;
+  white-space: nowrap;
+  cursor: pointer;
+  list-style: none;
+  transition: background .15s ease, color .15s ease;
+}
+.nav-group > summary::-webkit-details-marker { display: none; }
+.nav-group > summary::after {
+  content: "";
+  width: 6px; height: 6px;
+  border-right: 2px solid currentColor;
+  border-bottom: 2px solid currentColor;
+  transform: translateY(-2px) rotate(45deg);
+  opacity: .5;
+  transition: transform .18s var(--ease-out);
+}
+.nav-group[open] > summary::after { transform: translateY(1px) rotate(-135deg); }
+.nav-group > summary:hover { background: var(--ink-100); color: var(--ink-900); }
+.nav-group.is-current > summary { color: var(--brand-700); background: var(--brand-50); }
+
+.nav-menu {
+  position: absolute;
+  top: calc(100% + 8px);
+  left: 0;
+  min-width: 230px;
+  list-style: none;
+  margin: 0;
+  padding: 6px;
+  background: var(--surface);
+  border: 1px solid var(--ink-200);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow-lg);
+  z-index: 60;
+}
+.nav-menu a {
+  display: block;
+  padding: 10px 12px;
+  border-radius: var(--radius-sm);
+  font-size: .95rem;
+  white-space: nowrap;
+}
+
+@media (max-width: 1400px) {
+  .nav-group > summary { padding: 8px 10px; font-size: .95rem; }
+}
+
+/* In the stacked mobile menu there is nowhere to float a dropdown, so the
+   group flattens into a labelled section that is always open. */
+@media (max-width: 1240px) {
+  .nav-group > summary {
+    padding: 14px 16px 8px;
+    font-size: .78rem;
+    font-weight: 700;
+    letter-spacing: .06em;
+    text-transform: uppercase;
+    color: var(--ink-400);
+    cursor: default;
+    pointer-events: none;
+  }
+  .nav-group > summary::after { display: none; }
+  .nav-group.is-current > summary { background: none; color: var(--ink-400); }
+  .nav-menu {
+    position: static;
+    min-width: 0;
+    padding: 0;
+    border: 0;
+    border-radius: 0;
+    box-shadow: none;
+    background: none;
+  }
+  .nav-menu a { padding: 14px 16px; font-size: 1.08rem; border-radius: var(--radius-pill); }
 }
