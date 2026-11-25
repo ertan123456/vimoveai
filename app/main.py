@@ -552,6 +552,84 @@ def technology(request: Request):
     return render("tech.html", request, active="tech", bench=bench)
 
 
+def _load_data(name):
+    """Read a JSON file from app/data, or None if it is missing or broken.
+    A malformed data file must never take the whole page down."""
+    f = APP_DIR / "data" / name
+    if not f.exists():
+        return None
+    try:
+        with f.open(encoding="utf-8") as fh:
+            return json.load(fh)
+    except Exception:
+        return None
+
+
+@app.get("/kaynakca", response_class=HTMLResponse)
+@app.get("/sources", response_class=HTMLResponse)
+def sources(request: Request):
+    """Every statistic we state in public, with the source it came from.
+    The clinical half is generated from programs.json, so the references a
+    visitor reads are literally the ones the programmes were built from."""
+    data = _load_data("sources.json") or {}
+    groups = data.get("groups", [])
+
+    programs = []
+    progs = _load_data("programs.json") or {}
+    for key, cond in (progs.get("conditions") or {}).items():
+        srcs = [s for s in (cond.get("sources") or []) if isinstance(s, dict)]
+        if srcs:
+            programs.append({
+                "id": key,
+                "name_tr": cond.get("name_tr") or cond.get("name") or key,
+                "name_en": cond.get("name") or key,
+                "sources": srcs,
+            })
+
+    n_claims = sum(len(g.get("claims", [])) for g in groups)
+    n_sources = sum(len(c.get("sources", []))
+                    for g in groups for c in g.get("claims", []))
+    n_clinical = sum(len(p["sources"]) for p in programs)
+
+    return render(
+        "sources.html", request, active="sources",
+        groups=groups, programs=programs,
+        n_claims=n_claims, n_sources=n_sources, n_clinical=n_clinical,
+        updated=data.get("updated", ""),
+        clinical_intro_tr=data.get("clinical_intro_tr", ""),
+        clinical_intro_en=data.get("clinical_intro_en", ""),
+        disclaimer_tr=data.get("disclaimer_tr", ""),
+        disclaimer_en=data.get("disclaimer_en", ""),
+    )
+
+
+@app.get("/yolculuk", response_class=HTMLResponse)
+@app.get("/journey", response_class=HTMLResponse)
+def journey(request: Request):
+    """ViMove v1 to ViMove AI v3: what changed, why it changed, and what the
+    change measured. The benchmark chart reads the same file /teknoloji does."""
+    data = _load_data("journey.json") or {}
+    return render(
+        "journey.html", request, active="journey",
+        stats=data.get("stats", []),
+        versions=data.get("versions", []),
+        feedback=data.get("feedback", []),
+        next_tr=data.get("next_tr", []),
+        next_en=data.get("next_en", []),
+        bench=_load_data("lowres_bench.json"),
+    )
+
+
+@app.get("/api/lowres-bench", include_in_schema=False)
+def api_lowres_bench():
+    """The raw benchmark result behind our low-resolution claims, served so
+    anyone can check the numbers on the references page against the data."""
+    data = _load_data("lowres_bench.json")
+    if data is None:
+        return JSONResponse({"error": "not_found"}, status_code=404)
+    return JSONResponse(data)
+
+
 @app.get("/veri-silme", response_class=HTMLResponse)
 @app.get("/data-deletion", response_class=HTMLResponse)
 def data_deletion(request: Request):

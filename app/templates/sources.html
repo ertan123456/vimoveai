@@ -1,0 +1,120 @@
+{% extends "base.html" %}
+{% block title %}Bilimsel kaynakça — ViMove AI{% endblock %}
+{% block description %}ViMove AI'ın kullandığı her istatistiğin kaynağı: DSÖ, Dünya Bankası, World Physiotherapy raporları, klinik kılavuzlar ve kendi ölçümlerimiz.{% endblock %}
+
+{% block content %}
+<section class="section">
+  <div class="container" style="max-width:940px">
+
+    <div class="section-head reveal" style="text-align:left;margin-bottom:8px">
+      <span class="eyebrow" data-en="Evidence" data-tr="Kanıt">Kanıt</span>
+      <h1 data-en="Every number we state, and where it comes from"
+          data-tr="Söylediğimiz her sayı ve nereden geldiği">Söylediğimiz her sayı ve nereden geldiği</h1>
+      <p data-en="We make claims about a problem that affects billions of people and about software we wrote ourselves. Both kinds of claim are checkable, and this page is where you check them. Every external figure links to the published report it comes from, with the sentence it was taken from. Every figure of our own links to the code that produces it."
+         data-tr="Milyarlarca insanı ilgilendiren bir problem hakkında da, kendi yazdığımız yazılım hakkında da iddialarda bulunuyoruz. İkisi de kontrol edilebilir olmalı; bu sayfa tam olarak onun için var. Dışarıdan aldığımız her sayı, alındığı cümleyle birlikte yayımlandığı rapora bağlanıyor. Kendi ürettiğimiz her sayı ise onu üreten koda.">Milyarlarca insanı ilgilendiren bir problem hakkında da, kendi yazdığımız yazılım hakkında da iddialarda bulunuyoruz. İkisi de kontrol edilebilir olmalı; bu sayfa tam olarak onun için var.</p>
+    </div>
+
+    <div class="src-top reveal">
+      <div class="src-top-item">
+        <b>{{ n_claims }}</b>
+        <span data-en="statistics on this site" data-tr="sitede geçen istatistik">sitede geçen istatistik</span>
+      </div>
+      <div class="src-top-item">
+        <b>{{ n_sources }}</b>
+        <span data-en="published sources" data-tr="yayımlanmış kaynak">yayımlanmış kaynak</span>
+      </div>
+      <div class="src-top-item">
+        <b>{{ n_clinical }}</b>
+        <span data-en="clinical guidelines &amp; studies" data-tr="klinik kılavuz ve çalışma">klinik kılavuz ve çalışma</span>
+      </div>
+      <div class="src-top-item">
+        <b data-en="Open" data-tr="Açık">Açık</b>
+        <span data-en="our own measurements are reproducible" data-tr="kendi ölçümlerimiz yeniden üretilebilir">kendi ölçümlerimiz yeniden üretilebilir</span>
+      </div>
+    </div>
+
+    {% for g in groups %}
+    <div class="src-group reveal" id="{{ g.id }}">
+      <div class="src-group-head">
+        <span class="eyebrow" data-en="{{ g.eyebrow_en }}" data-tr="{{ g.eyebrow_tr }}">{{ g.eyebrow_tr }}</span>
+        <h2 data-en="{{ g.title_en }}" data-tr="{{ g.title_tr }}">{{ g.title_tr }}</h2>
+        <p class="src-group-intro" data-en="{{ g.intro_en }}" data-tr="{{ g.intro_tr }}">{{ g.intro_tr }}</p>
+      </div>
+
+      {% for c in g.claims %}
+      <article class="src-card">
+        <div class="src-card-head">
+          <span class="src-stat">{% if c.stat_en %}<span data-en="{{ c.stat_en }}" data-tr="{{ c.stat }}">{{ c.stat }}</span>{% else %}{{ c.stat }}{% endif %}</span>
+          <span class="src-badge src-badge--{{ c.status }}"
+                data-en="{{ 'Our measurement' if c.status == 'own' else 'Published research' }}"
+                data-tr="{{ 'Kendi ölçümümüz' if c.status == 'own' else 'Yayımlanmış araştırma' }}">{{ 'Kendi ölçümümüz' if c.status == 'own' else 'Yayımlanmış araştırma' }}</span>
+        </div>
+
+        <p class="src-claim" data-en="{{ c.claim_en }}" data-tr="{{ c.claim_tr }}">{{ c.claim_tr }}</p>
+
+        {% if c.note_tr %}
+        <p class="src-note" data-en="{{ c.note_en }}" data-tr="{{ c.note_tr }}">{{ c.note_tr }}</p>
+        {% endif %}
+
+        <ul class="src-list">
+          {% for s in c.sources %}
+          <li>
+            <a href="{{ s.url }}" {% if s.url.startswith('http') %}target="_blank" rel="noopener noreferrer"{% endif %}>
+              {{ s.label }}
+              {% if s.url.startswith('http') %}
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><path d="M15 3h6v6"/><path d="M10 14L21 3"/></svg>
+              {% endif %}
+            </a>
+            {% if s.quote %}<blockquote class="src-quote">{{ s.quote }}</blockquote>{% endif %}
+          </li>
+          {% endfor %}
+        </ul>
+      </article>
+      {% endfor %}
+    </div>
+    {% endfor %}
+
+    <!-- clinical protocols, generated from the programme database -->
+    <div class="src-group reveal" id="klinik">
+      <div class="src-group-head">
+        <span class="eyebrow" data-en="Part 5" data-tr="Bölüm 5">Bölüm 5</span>
+        <h2 data-en="Clinical basis of each programme" data-tr="Her programın klinik dayanağı">Her programın klinik dayanağı</h2>
+        <p class="src-group-intro" data-en="{{ clinical_intro_en }}" data-tr="{{ clinical_intro_tr }}">{{ clinical_intro_tr }}</p>
+      </div>
+
+      <p class="src-disclaimer" data-en="{{ disclaimer_en }}" data-tr="{{ disclaimer_tr }}">{{ disclaimer_tr }}</p>
+
+      {% for p in programs %}
+      <details class="src-prog">
+        <summary>
+          <span class="src-prog-name">{{ p.name_tr }}</span>
+          <span class="src-prog-count">{{ p.sources|length }}
+            <span data-en="sources" data-tr="kaynak">kaynak</span></span>
+        </summary>
+        <ul class="src-list">
+          {% for s in p.sources %}
+          <li>
+            <a href="{{ s.url }}" target="_blank" rel="noopener noreferrer">{{ s.label }}
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><path d="M15 3h6v6"/><path d="M10 14L21 3"/></svg>
+            </a>
+          </li>
+          {% endfor %}
+        </ul>
+      </details>
+      {% endfor %}
+    </div>
+
+    <div class="src-foot reveal">
+      <h3 data-en="Found something wrong?" data-tr="Bir hata mı buldunuz?">Bir hata mı buldunuz?</h3>
+      <p data-en="If a figure on this site does not match its source, we want to know — tell us and we will correct it or remove it."
+         data-tr="Bu sitedeki bir sayı kaynağıyla uyuşmuyorsa bilmek isteriz — bize yazın, düzeltelim ya da kaldıralım.">Bu sitedeki bir sayı kaynağıyla uyuşmuyorsa bilmek isteriz — bize yazın, düzeltelim ya da kaldıralım.</p>
+      <p class="src-foot-meta">
+        <a href="mailto:erdemertan08@gmail.com">erdemertan08@gmail.com</a>
+        <span aria-hidden="true">·</span>
+        <span data-en="Last updated" data-tr="Son güncelleme">Son güncelleme</span>: {{ updated }}
+      </p>
+    </div>
+
+  </div>
+</section>
+{% endblock %}

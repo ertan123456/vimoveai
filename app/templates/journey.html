@@ -1,0 +1,146 @@
+{% extends "base.html" %}
+{% block title %}Yolculuğumuz — ViMove AI{% endblock %}
+{% block description %}ViMove v1'den ViMove AI v3'e: saha testleri, yaşlı bireylerden gelen geri bildirimler ve her sürümde ölçülen ilerleme.{% endblock %}
+
+{% block content %}
+<section class="section">
+  <div class="container" style="max-width:940px">
+
+    <div class="section-head reveal" style="text-align:left;margin-bottom:10px">
+      <span class="eyebrow" data-en="Our journey" data-tr="Yolculuğumuz">Yolculuğumuz</span>
+      <h1 data-en="From a counter that worked in good light to one that works in a dim living room"
+          data-tr="İyi ışıkta çalışan bir sayaçtan, loş bir salonda çalışan bir sisteme">İyi ışıkta çalışan bir sayaçtan, loş bir salonda çalışan bir sisteme</h1>
+      <p data-en="ViMove AI was not designed in one go. Three versions, ten months of work alongside Akdeniz University's Department of Gerontology, and more than fifty older adults who used it and told us what was wrong. Almost everything on this page exists because someone said it did not work."
+         data-tr="ViMove AI tek seferde tasarlanmadı. Üç sürüm, Akdeniz Üniversitesi Gerontoloji Bölümü ile on aylık bir çalışma ve uygulamayı kullanıp neyin bozuk olduğunu söyleyen ellinin üzerinde yaşlı birey. Bu sayfadaki neredeyse her şey, birisi &quot;bu çalışmıyor&quot; dediği için var.">ViMove AI tek seferde tasarlanmadı. Üç sürüm, on aylık bir çalışma ve uygulamayı kullanıp neyin bozuk olduğunu söyleyen ellinin üzerinde yaşlı birey. Bu sayfadaki neredeyse her şey, birisi "bu çalışmıyor" dediği için var.</p>
+    </div>
+
+    <div class="jr-stats reveal">
+      {% for s in stats %}
+      <div class="jr-stat">
+        <b>{% if s.value_en %}<span data-en="{{ s.value_en }}" data-tr="{{ s.value }}">{{ s.value }}</span>{% else %}{{ s.value }}{% endif %}</b>
+        <span data-en="{{ s.label_en }}" data-tr="{{ s.label_tr }}">{{ s.label_tr }}</span>
+      </div>
+      {% endfor %}
+    </div>
+
+    <!-- the three versions -->
+    <ol class="jr-line">
+      {% for v in versions %}
+      <li class="jr-step reveal" id="{{ v.id }}">
+        <div class="jr-dot"><span>{{ v.tag }}</span></div>
+        <div class="jr-body">
+          <span class="jr-period" data-en="{{ v.period_en }}" data-tr="{{ v.period_tr }}">{{ v.period_tr }}</span>
+          <h2 data-en="{{ v.title_en }}" data-tr="{{ v.title_tr }}">{{ v.title_tr }}</h2>
+          <p class="jr-lede" data-en="{{ v.lede_en }}" data-tr="{{ v.lede_tr }}">{{ v.lede_tr }}</p>
+
+          <div class="jr-had">
+            <h3 data-en="What this version brought" data-tr="Bu sürümde ne vardı">Bu sürümde ne vardı</h3>
+            <ul>
+              {% for i in range(v.had_tr|length) %}
+              <li>
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg>
+                <span data-en="{{ v.had_en[i] }}" data-tr="{{ v.had_tr[i] }}">{{ v.had_tr[i] }}</span>
+              </li>
+              {% endfor %}
+            </ul>
+          </div>
+
+          {% if v.quote %}
+          <figure class="jr-quote">
+            <blockquote data-en="{{ v.quote.text_en }}" data-tr="{{ v.quote.text_tr }}">{{ v.quote.text_tr }}</blockquote>
+            <figcaption>
+              <a href="{{ v.quote.href }}" data-en="{{ v.quote.who_en }}" data-tr="{{ v.quote.who_tr }}">{{ v.quote.who_tr }}</a>
+            </figcaption>
+          </figure>
+          {% endif %}
+
+          <div class="jr-learn">
+            <span class="jr-learn-tag" data-en="What we learned" data-tr="Ne öğrendik">Ne öğrendik</span>
+            <p data-en="{{ v.learned_en }}" data-tr="{{ v.learned_tr }}">{{ v.learned_tr }}</p>
+          </div>
+        </div>
+      </li>
+      {% endfor %}
+    </ol>
+
+    <!-- feedback -> change -->
+    <div class="jr-fb reveal" id="geri-bildirim">
+      <div class="section-head" style="text-align:left;margin-bottom:6px">
+        <span class="eyebrow" data-en="Feedback, line by line" data-tr="Geri bildirim, tek tek">Geri bildirim, tek tek</span>
+        <h2 data-en="What they said, and what we changed" data-tr="Ne dediler, ne değiştirdik">Ne dediler, ne değiştirdik</h2>
+        <p data-en="These are not paraphrases. Each line on the left is something a user actually told us, and the line on the right is the change it produced — each one is a commit in our repository."
+           data-tr="Bunlar yorum değil, birebir aktarım. Soldaki her satır bir kullanıcının bize gerçekten söylediği şey; sağdaki ise onun yol açtığı değişiklik. Her biri depomuzda bir commit olarak duruyor.">Bunlar yorum değil, birebir aktarım. Soldaki her satır bir kullanıcının bize gerçekten söylediği şey; sağdaki ise onun yol açtığı değişiklik.</p>
+      </div>
+
+      {% for f in feedback %}
+      <div class="jr-fb-row">
+        <div class="jr-fb-said">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+          <p data-en="{{ f.said_en }}" data-tr="{{ f.said_tr }}">{{ f.said_tr }}</p>
+        </div>
+        <div class="jr-fb-arrow" aria-hidden="true">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+        </div>
+        <div class="jr-fb-did">
+          <p data-en="{{ f.did_en }}" data-tr="{{ f.did_tr }}">{{ f.did_tr }}</p>
+        </div>
+      </div>
+      {% endfor %}
+    </div>
+
+    <!-- measured progress -->
+    {% if bench %}
+    <div class="jr-measure reveal" id="olcum">
+      <div class="section-head" style="text-align:left;margin-bottom:6px">
+        <span class="eyebrow" data-en="Measured, not claimed" data-tr="İddia değil, ölçüm">İddia değil, ölçüm</span>
+        <h2 data-en="What v3 actually gained" data-tr="v3 gerçekte ne kazandırdı">v3 gerçekte ne kazandırdı</h2>
+        <p data-en="Range-of-motion measurement error, before and after the LRD pipeline, over {{ bench.seeds }} random seeds. Lower is better. The worse the camera, the larger the gain — which is the whole point."
+           data-tr="Hareket açıklığı ölçüm hatası, LRD hattından önce ve sonra, {{ bench.seeds }} farklı rastgele tohum üzerinden. Düşük olan iyidir. Kamera kötüleştikçe kazanç büyüyor — zaten bütün mesele bu.">Hareket açıklığı ölçüm hatası, LRD hattından önce ve sonra, {{ bench.seeds }} farklı rastgele tohum üzerinden. Düşük olan iyidir.</p>
+      </div>
+
+      <div class="jr-bars">
+        {% for r in bench.rows %}
+        <div class="jr-bar-row">
+          <span class="jr-bar-label">{{ r.case }}</span>
+          <div class="jr-bar-track">
+            <div class="jr-bar jr-bar--old" style="width:{{ (r.baselineAmpErrorPct / 30 * 100)|round(1) }}%">
+              <span>{{ r.baselineAmpErrorPct }}%</span>
+            </div>
+            <div class="jr-bar jr-bar--new" style="width:{{ (r.lrvAmpErrorPct / 30 * 100)|round(1) }}%">
+              <span>{{ r.lrvAmpErrorPct }}%</span>
+            </div>
+          </div>
+        </div>
+        {% endfor %}
+        <div class="jr-bar-key">
+          <span><i class="jr-key jr-key--old"></i><span data-en="without LRD" data-tr="LRD olmadan">LRD olmadan</span></span>
+          <span><i class="jr-key jr-key--new"></i><span data-en="with LRD" data-tr="LRD ile">LRD ile</span></span>
+        </div>
+      </div>
+
+      <p class="jr-measure-foot">
+        <span data-en="Every figure on this chart, and every statistic on this site, is sourced on the"
+              data-tr="Bu grafikteki her sayı ve sitedeki her istatistik,">Bu grafikteki her sayı ve sitedeki her istatistik,</span>
+        <a href="/kaynakca" data-en="references page" data-tr="bilimsel kaynakça sayfasında">bilimsel kaynakça sayfasında</a>
+        <span data-en="." data-tr="kaynaklarıyla birlikte yayımlanıyor.">kaynaklarıyla birlikte yayımlanıyor.</span>
+      </p>
+    </div>
+    {% endif %}
+
+    <!-- what's next -->
+    <div class="jr-next reveal">
+      <h2 data-en="What comes next" data-tr="Sırada ne var">Sırada ne var</h2>
+      <ul>
+        {% for i in range(next_tr|length) %}
+        <li data-en="{{ next_en[i] }}" data-tr="{{ next_tr[i] }}">{{ next_tr[i] }}</li>
+        {% endfor %}
+      </ul>
+      <div class="jr-next-cta">
+        <a class="btn btn--primary" href="/start" data-en="Start a free session" data-tr="Ücretsiz seans başlat">Ücretsiz seans başlat</a>
+        <a class="btn btn--secondary" href="/teknoloji" data-en="How LRD works" data-tr="LRD nasıl çalışıyor">LRD nasıl çalışıyor</a>
+      </div>
+    </div>
+
+  </div>
+</section>
+{% endblock %}

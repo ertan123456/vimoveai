@@ -37,7 +37,7 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Lexend:wght@500;600;700&display=swap" rel="stylesheet" />
 
-  <link rel="stylesheet" href="/static/styles.css?v=25" />
+  <link rel="stylesheet" href="/static/styles.css?v=26" />
 
   <script src="/static/i18n.js?v=6" defer></script>
 
@@ -63,6 +63,7 @@
           <li><a href="/teknoloji"  {% if active=='tech' %}aria-current="page"{% endif %} data-en="Technology" data-tr="Teknoloji">Technology</a></li>
           <li><a href="/progress"   {% if active=='progress' %}aria-current="page"{% endif %} data-i18n="nav.progress">Progress</a></li>
           <li><a href="/about"      {% if active=='about' %}aria-current="page"{% endif %} data-i18n="nav.about">About</a></li>
+          <li><a href="/yolculuk"   {% if active=='journey' %}aria-current="page"{% endif %} data-en="Our journey" data-tr="Yolculuğumuz">Our journey</a></li>
           <li><a href="/community"  {% if active=='community' %}aria-current="page"{% endif %} data-i18n="nav.community">Community</a></li>
           {% if donate_enabled %}
           <li><a href="/donate" class="nav-donate" {% if active=='donate' %}aria-current="page"{% endif %}>
@@ -112,6 +113,8 @@
           <ul>
             <li><a href="/about" data-i18n="footer.aboutLink">About ViMove AI</a></li>
             <li><a href="/community" data-i18n="nav.community">Community</a></li>
+            <li><a href="/yolculuk" data-en="Our journey" data-tr="Yolculuğumuz">Our journey</a></li>
+            <li><a href="/kaynakca" data-en="Scientific references" data-tr="Bilimsel kaynakça">Scientific references</a></li>
             <li><a href="/privacy" data-en="Privacy" data-tr="Gizlilik">Privacy</a></li>
             <li><a href="/veri-silme" data-en="Delete my data" data-tr="Verimi sil">Delete my data</a></li>
             {% if donate_enabled %}<li><a href="/donate" data-i18n="nav.donate">Donate</a></li>{% endif %}

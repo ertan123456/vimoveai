@@ -1,0 +1,353 @@
+{
+  "_comment": "ViMove AI — every statistic we state in public, with the source it comes from. Rendered by /kaynakca. 'status' is how the number was obtained: 'external' = published third-party research, 'own' = our own measurement, which anyone can reproduce from this repository.",
+  "updated": "2026-11-26",
+  "groups": [
+    {
+      "id": "problem",
+      "eyebrow_tr": "Bölüm 1",
+      "eyebrow_en": "Part 1",
+      "title_tr": "Problemin büyüklüğü",
+      "title_en": "The scale of the problem",
+      "intro_tr": "Rehabilitasyon ihtiyacının ne kadar büyük, erişimin ne kadar dar olduğuna dair kullandığımız her sayı. Hepsi Dünya Sağlık Örgütü, Dünya Bankası ve World Physiotherapy'nin yayımlanmış raporlarından.",
+      "intro_en": "Every figure we use about how large the need for rehabilitation is and how narrow access to it remains. All of them come from published reports by the World Health Organization, the World Bank and World Physiotherapy.",
+      "claims": [
+        {
+          "id": "need-24b",
+          "stat": "2,4 milyar",
+          "stat_en": "2.4 billion",
+          "claim_tr": "Dünyada 2,4 milyar kişi, rehabilitasyondan fayda görebilecek bir sağlık durumuyla yaşıyor — küresel nüfusun yaklaşık üçte biri.",
+          "claim_en": "An estimated 2.4 billion people worldwide live with a health condition that may benefit from rehabilitation — roughly a third of the global population.",
+          "status": "external",
+          "sources": [
+            {
+              "label": "WHO — Rehabilitation fact sheet (güncelleme: 22 Nisan 2024)",
+              "url": "https://www.who.int/news-room/fact-sheets/detail/rehabilitation",
+              "quote": "Globally, an estimated 2.4 billion people are currently living with a health condition that may benefit from rehabilitation."
+            },
+            {
+              "label": "WHO — Global estimates of the need for rehabilitation",
+              "url": "https://www.who.int/teams/noncommunicable-diseases/disability-and-rehabilitation/global-estimates-of-the-need-for-rehabilitation",
+              "quote": "1 in 3 people today are estimated to be living with a health condition that benefits from rehabilitation."
+            }
+          ],
+          "note_tr": "Sayı 2019 Küresel Hastalık Yükü analizine dayanıyor ve 1990'dan bu yana %63 arttı (1,48 milyar → 2,41 milyar). DSÖ'nün Şubat 2025 tarihli politika notu bu rakamı 2,6 milyara güncelledi; biz yayımlanmış bilgi notundaki 2,4 milyarı kullanıyoruz.",
+          "note_en": "The figure comes from the 2019 Global Burden of Disease analysis and has risen 63% since 1990 (1.48 billion to 2.41 billion). A WHO policy brief from February 2025 updates it to 2.6 billion; we use the 2.4 billion published on the fact sheet."
+        },
+        {
+          "id": "unmet-50",
+          "stat": "> %50",
+          "stat_en": "> 50%",
+          "claim_tr": "Düşük ve orta gelirli bazı ülkelerde, rehabilitasyona ihtiyaç duyanların yarısından fazlası bu hizmeti alamıyor.",
+          "claim_en": "In some low- and middle-income countries, more than half of the people who need rehabilitation do not receive it.",
+          "status": "external",
+          "sources": [
+            {
+              "label": "WHO — Rehabilitation fact sheet (2024)",
+              "url": "https://www.who.int/news-room/fact-sheets/detail/rehabilitation",
+              "quote": "In some low- and middle-income countries, more than 50% of people do not receive the rehabilitation services they require."
+            }
+          ]
+        },
+        {
+          "id": "pt-density-world",
+          "stat": "2.632 kişi",
+          "stat_en": "2,632 people",
+          "claim_tr": "Dünya genelinde bir fizyoterapiste 2.632 kişi düşüyor.",
+          "claim_en": "Worldwide there is one physiotherapist for every 2,632 people.",
+          "status": "external",
+          "sources": [
+            {
+              "label": "World Physiotherapy — Annual Membership Census 2024, Global Report",
+              "url": "https://world.physio/sites/default/files/2025-03/AMC2024-Global-report-v2.pdf",
+              "quote": "3.8 physiotherapists, on average, for every 10,000 people across the world."
+            }
+          ],
+          "note_tr": "10.000 ÷ 3,8 = 2.632 kişi. Aynı rapor küresel fizyoterapist sayısını 2.136.877 olarak veriyor; sayım 125 üye kuruluşa gönderilen ankete dayanıyor.",
+          "note_en": "10,000 ÷ 3.8 = 2,632 people. The same report gives the global physiotherapist headcount as 2,136,877; the census is based on a survey sent to 125 member organisations."
+        },
+        {
+          "id": "pt-density-gap",
+          "stat": "47 kat",
+          "stat_en": "47×",
+          "claim_tr": "Fizyoterapiste erişim bölgeden bölgeye 47 kat değişiyor: Avrupa'da 10.000 kişiye 13,74 fizyoterapist düşerken Afrika'da bu sayı 0,29 — yani bir fizyoterapiste Avrupa'da 728, Afrika'da 34.483 kişi.",
+          "claim_en": "Access to a physiotherapist varies 47-fold between regions: Europe has 13.74 physiotherapists per 10,000 people, Africa has 0.29 — one physiotherapist per 728 people in Europe, one per 34,483 in Africa.",
+          "status": "external",
+          "sources": [
+            {
+              "label": "World Physiotherapy — AMC 2024, Africa regional report",
+              "url": "https://world.physio/sites/default/files/2025-01/AMC2024-Africa.pdf",
+              "quote": "0.29 is the average number of practising physiotherapists per 10,000 population in the Africa region in 2024. This is the lowest ratio across all five regions."
+            },
+            {
+              "label": "World Physiotherapy — AMC 2024, Europe regional report",
+              "url": "https://world.physio/sites/default/files/2025-01/AMC2024-Europe.pdf",
+              "quote": "13.74 is the average number of practising physiotherapists per 10,000 population in the Europe region in 2024. This is the highest ratio across all five regions."
+            },
+            {
+              "label": "World Physiotherapy — AMC 2024, Asia Western Pacific regional report",
+              "url": "https://world.physio/sites/default/files/2025-01/AMC2024-AWP.pdf",
+              "quote": "1.56 is the average number of practising physiotherapists per 10,000 population in the Asia Western Pacific region in 2024."
+            }
+          ],
+          "note_tr": "Asya-Batı Pasifik bölgesinde bir fizyoterapiste 6.410 kişi düşüyor. ViMove AI'ın hedefi tam olarak bu dengesizlik: yazılımın bir bölgeye ulaşma maliyeti sıfır.",
+          "note_en": "In the Asia Western Pacific region there is one physiotherapist per 6,410 people. This imbalance is exactly what ViMove AI targets: software costs nothing to reach a region."
+        },
+        {
+          "id": "rehab-workforce-lmic",
+          "stat": "1 / 100.000",
+          "stat_en": "1 per 100,000",
+          "claim_tr": "Birçok düşük ve orta gelirli ülkede 1 milyon kişiye 10'dan az nitelikli rehabilitasyon uzmanı düşüyor — yani 100.000 kişiye birden az.",
+          "claim_en": "In many low- and middle-income countries there are fewer than 10 skilled rehabilitation practitioners per 1 million people — fewer than one per 100,000.",
+          "status": "external",
+          "sources": [
+            {
+              "label": "WHO — Rehabilitation fact sheet",
+              "url": "https://www.who.int/news-room/fact-sheets/detail/rehabilitation",
+              "quote": "There is a shortage of trained rehabilitation professionals, with less than 10 skilled practitioners per 1 million population in many low- and middle-income settings."
+            }
+          ]
+        },
+        {
+          "id": "cost-barrier",
+          "stat": "%51–53",
+          "stat_en": "51–53%",
+          "claim_tr": "Engelli bireylerin %51–53'ü ihtiyaç duyduğu sağlık hizmetinin bedelini karşılayamıyor; engelli olmayanlarda bu oran %32–33.",
+          "claim_en": "51–53% of people with disabilities cannot afford the health care they need, compared with 32–33% of people without disabilities.",
+          "status": "external",
+          "sources": [
+            {
+              "label": "WHO & Dünya Bankası — World Report on Disability (2011)",
+              "url": "https://www.who.int/publications/i/item/9789241564182",
+              "quote": "32–33% of nondisabled men and women are unable to afford health care, compared with 51–53% of people with disabilities."
+            }
+          ],
+          "note_tr": "Rakamlar 51 ülkeyi kapsayan 2002–2004 Dünya Sağlık Anketi verisine dayanıyor. Aynı raporda engelli bireylerin sağlık hizmeti reddedilme olasılığının yaklaşık üç kat yüksek olduğu da belirtiliyor.",
+          "note_en": "The figures come from the 2002–2004 World Health Survey covering 51 countries. The same report finds people with disabilities are nearly three times more likely to be denied needed health care."
+        },
+        {
+          "id": "transport-barrier",
+          "stat": "15 kat",
+          "stat_en": "15×",
+          "claim_tr": "Engelli bireyler ulaşımı, engelli olmayanlara kıyasla 15 kat daha erişilmez ve karşılanamaz buluyor.",
+          "claim_en": "People with disabilities find transportation 15 times more inaccessible and unaffordable than people without disabilities.",
+          "status": "external",
+          "sources": [
+            {
+              "label": "WHO — Disability fact sheet (2023)",
+              "url": "https://www.who.int/news-room/fact-sheets/detail/disability-and-health",
+              "quote": "Persons with disabilities find transportation 15 times more difficult (inaccessible and unaffordable) than for those without disabilities."
+            }
+          ],
+          "note_tr": "Aynı bilgi notu, dünyada 1,3 milyar kişinin (nüfusun %16'sı) belirgin bir engelle yaşadığını belirtiyor. Evden yapılan bir seans bu engeli tamamen ortadan kaldırıyor.",
+          "note_en": "The same fact sheet puts the number of people living with significant disability at 1.3 billion, or 16% of the global population. A session done at home removes this barrier entirely."
+        },
+        {
+          "id": "geographic-barrier",
+          "stat": "%1,3",
+          "stat_en": "1.3%",
+          "claim_tr": "Dünyadaki 4.200'den fazla fizyoterapi lisans programının yalnızca 58'i (%1,3) düşük gelirli ülkelerde. Uzman yetişmediği yerde klinik de açılmıyor; hizmet coğrafi olarak yoğunlaştığı yerin dışına çıkmıyor.",
+          "claim_en": "Of the more than 4,200 entry-level physiotherapy education programmes worldwide, only 58 (1.3%) are based in low-income countries. Where practitioners are not trained, clinics do not open either — the service never reaches beyond where it is concentrated.",
+          "status": "external",
+          "sources": [
+            {
+              "label": "World Physiotherapy — AMC 2024, Global Report",
+              "url": "https://world.physio/sites/default/files/2025-03/AMC2024-Global-report-v2.pdf",
+              "quote": "More than 4,200 physiotherapist entry level education programmes globally. However, only 58 (1.3%) are based in low income countries/territories."
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "measurement",
+      "eyebrow_tr": "Bölüm 2",
+      "eyebrow_en": "Part 2",
+      "title_tr": "Kendi ölçümlerimiz",
+      "title_en": "Our own measurements",
+      "intro_tr": "LRD hattı hakkında söylediğimiz her sayı, bu depodaki tek bir komutla yeniden üretilebilir. Kimseden inanmasını istemiyoruz — kodu da, ham sonucu da yayımlıyoruz.",
+      "intro_en": "Every number we state about the LRD pipeline can be reproduced with a single command from this repository. We are not asking anyone to take our word for it — both the code and the raw result are published.",
+      "claims": [
+        {
+          "id": "lrd-accuracy",
+          "stat": "%96",
+          "stat_en": "96%",
+          "claim_tr": "160×120 (120p) çözünürlükte ve uzak mesafede, LRD hattı 20 gerçek tekrarın %96'sını doğru sayıyor.",
+          "claim_en": "At 160×120 (120p) and at distance, the LRD pipeline counts 96% of 20 real repetitions correctly.",
+          "status": "own",
+          "sources": [
+            {
+              "label": "ViMove AI — LRD kıyas betiği (bench/lowres_bench.mjs)",
+              "url": "https://github.com/ertan123456/vimoveai/blob/main/bench/lowres_bench.mjs",
+              "quote": "node bench/lowres_bench.mjs — 60 tohum, senaryo başına 20 sentetik tekrar"
+            },
+            {
+              "label": "ViMove AI — ham kıyas sonucu (app/data/lowres_bench.json)",
+              "url": "/api/lowres-bench",
+              "quote": "160x120 · uzak → lrvAccuracy: 96, baselineAccuracy: 95.8"
+            }
+          ],
+          "note_tr": "Ölçüm sentetik: 20 kusursuz tekrar üretiliyor, ardından nokta koordinatları gerçek bir kameranın o çözünürlük ve mesafede bozduğu gibi bozuluyor (piksel yuvarlama, ~1,5 piksel konum hatası, büyük sapma hataları, art arda kaybolan kare blokları). Aynı bozuk akışı iki sayaç okuyor. 60 farklı rastgele tohumla tekrarlanıp ortalaması alınıyor.",
+          "note_en": "The measurement is synthetic: 20 perfect repetitions are generated, then the landmark coordinates are degraded the way a real camera degrades them at that resolution and distance (pixel quantisation, ~1.5 px positional error, large outlier errors, blocks of consecutive dropped frames). Two counters read the same degraded stream. It is repeated over 60 random seeds and averaged."
+        },
+        {
+          "id": "lrd-rom",
+          "stat": "%28,1 → %14,9",
+          "stat_en": "28.1% → 14.9%",
+          "claim_tr": "En zor senaryoda (120p, uzak) hareket açıklığı ölçüm hatası LRD ile yarıya iniyor: %28,1'den %14,9'a. 240p uzakta %8,8 → %6,9; 480p uzakta %3,3 → %3,2.",
+          "claim_en": "In the hardest scenario (120p, far) the range-of-motion error halves with LRD: from 28.1% to 14.9%. At 240p far it goes 8.8% → 6.9%; at 480p far, 3.3% → 3.2%.",
+          "status": "own",
+          "sources": [
+            {
+              "label": "ViMove AI — ham kıyas sonucu (app/data/lowres_bench.json)",
+              "url": "/api/lowres-bench",
+              "quote": "160x120 · uzak → baselineAmpErrorPct: 28.1, lrvAmpErrorPct: 14.9"
+            }
+          ],
+          "note_tr": "Kamera iyileştikçe fark kapanıyor ve bu beklenen davranış: 720p yakında hata zaten %1 civarında, orada LRD hiçbir şey kazandırmıyor (%0,9 → %1,1). Hat, iyi kamerada kendini geri çekecek şekilde tasarlandı — kazanç tam da kötü kamerada ortaya çıkıyor.",
+          "note_en": "The gap closes as the camera improves, which is the intended behaviour: at 720p close the error is already around 1%, and LRD adds nothing there (0.9% → 1.1%). The pipeline is designed to step back on a good camera — the gain appears exactly where the camera is bad."
+        },
+        {
+          "id": "catalogue",
+          "stat": "10 · 76 · 16",
+          "claim_tr": "10 rehabilitasyon programı, bu programlara dağılmış 76 egzersiz adımı ve gerçek zamanlı algılanan 16 farklı hareket tipi.",
+          "claim_en": "10 rehabilitation programmes, 76 exercise steps distributed across them, and 16 distinct movement types detected in real time.",
+          "status": "own",
+          "sources": [
+            {
+              "label": "ViMove AI — program veritabanı (app/data/programs.json)",
+              "url": "/api/program?disease=general&age=65",
+              "quote": "10 koşul · 76 egzersiz adımı · 16 benzersiz hareket algılayıcısı"
+            }
+          ],
+          "note_tr": "Üç sayı farklı şeyleri ölçüyor ve karıştırılmamalı. 16, sistemin kamerada ayırt edebildiği hareket tipi sayısı. 76, bu hareketlerin programlara yerleştirilmiş hâli — aynı hareket farklı programda farklı hedef, tempo ve tarafla geçtiği için ayrı bir adım sayılıyor. 10 ise programın kendisi.",
+          "note_en": "The three numbers measure different things and should not be conflated. 16 is how many movement types the system can distinguish on camera. 76 is how many times those movements appear across programmes — the same movement counts as a separate step in a different programme because its target, tempo and side differ. 10 is the number of programmes."
+        },
+        {
+          "id": "privacy",
+          "stat": "0 kare",
+          "stat_en": "0 frames",
+          "claim_tr": "Bağımsız kullanımda tek bir görüntü karesi sunucuya gitmiyor. Tüm görüntü işleme kullanıcının kendi cihazında, tarayıcı içinde çalışıyor.",
+          "claim_en": "In independent use not a single video frame leaves the device. All vision processing runs in the user's own browser.",
+          "status": "own",
+          "sources": [
+            {
+              "label": "ViMove AI — görüntü hattı kaynak kodu (app/static/game/lowres.js)",
+              "url": "https://github.com/ertan123456/vimoveai/blob/main/app/static/game/lowres.js",
+              "quote": "MediaPipe Tasks Vision WASM üzerinde çalışır; kare verisi hiçbir ağ çağrısına girmez."
+            },
+            {
+              "label": "ViMove AI — gizlilik politikası",
+              "url": "/privacy",
+              "quote": "Bağımsız kullanımda video kaydedilmez."
+            }
+          ],
+          "note_tr": "Bu bir vaat değil, mimarinin sonucu: tarayıcının ağ sekmesi açıkken bir seans yapıldığında kare taşıyan tek bir istek görünmez. Yalnızca bir fizyoterapiste bağlıysanız ve açıkça onay verirseniz seans özeti ve videosu şifreli depolamaya gider.",
+          "note_en": "This is not a promise but a consequence of the architecture: run a session with the browser's network tab open and no request carrying a frame appears. Only if you are linked to a physiotherapist and explicitly consent does a session summary and video go to encrypted storage."
+        }
+      ]
+    },
+    {
+      "id": "methods",
+      "eyebrow_tr": "Bölüm 3",
+      "eyebrow_en": "Part 3",
+      "title_tr": "Kullandığımız yöntemler",
+      "title_en": "The methods we build on",
+      "intro_tr": "LRD'yi sıfırdan icat etmedik. Literatürdeki yerleşik yöntemleri, düşük çözünürlüklü kamera problemine özel olarak birleştirdik. Hangi yöntemi kimden aldığımız aşağıda.",
+      "intro_en": "We did not invent LRD from nothing. We combined established methods from the literature specifically for the low-resolution camera problem. Which method came from whom is below.",
+      "claims": [
+        {
+          "id": "one-euro",
+          "stat": "One Euro",
+          "claim_tr": "Nokta koordinatlarındaki titremeyi, hızlı harekette gecikme yaratmadan bastırmak için One Euro filtresini kullanıyoruz: duruşta sıkı yumuşatır, hareket hızlandıkça kendiliğinden gevşer.",
+          "claim_en": "We use the One Euro filter to suppress landmark jitter without adding lag during fast movement: it smooths tightly when still and loosens as speed increases.",
+          "status": "external",
+          "sources": [
+            {
+              "label": "Casiez, Roussel & Vogel — 1€ Filter: A Simple Speed-based Low-pass Filter for Noisy Input in Interactive Systems, ACM CHI 2012, s. 2527–2530",
+              "url": "https://doi.org/10.1145/2207676.2208639",
+              "quote": "The 1€ filter uses a first order low-pass filter with an adaptive cutoff frequency: at low speeds, a low cutoff stabilizes the signal by reducing jitter, but as speed increases, the cutoff is increased to reduce lag."
+            }
+          ]
+        },
+        {
+          "id": "mediapipe",
+          "stat": "MediaPipe",
+          "claim_tr": "İskelet, el ve yüz noktalarını Google'ın açık kaynaklı MediaPipe Tasks Vision modelleriyle çıkarıyoruz. Modeller tarayıcıda WASM üzerinde çalışıyor.",
+          "claim_en": "We extract pose, hand and face landmarks with Google's open-source MediaPipe Tasks Vision models, running on WASM inside the browser.",
+          "status": "external",
+          "sources": [
+            {
+              "label": "Google — MediaPipe Solutions, Tasks Vision",
+              "url": "https://ai.google.dev/edge/mediapipe/solutions/vision/pose_landmarker",
+              "quote": "The MediaPipe Pose Landmarker task lets you detect landmarks of human bodies in an image or video."
+            }
+          ],
+          "note_tr": "LRD, MediaPipe'ın yerine geçmiyor; öncesine ve sonrasına ekleniyor. Modeller geliştikçe ViMove AI de kendiliğinden gelişiyor — LRD'nin kazandırdığı fark ise modelin üzerine ekleniyor.",
+          "note_en": "LRD does not replace MediaPipe; it wraps around it. As the models improve, ViMove AI improves with them — and LRD's gain stacks on top of the model."
+        },
+        {
+          "id": "who-pa",
+          "stat": "DSÖ kılavuzu",
+          "stat_en": "WHO guideline",
+          "claim_tr": "Yaşa göre tekrar hedeflerimizin ve genel kondisyon programımızın temeli, DSÖ'nün fiziksel aktivite kılavuzu.",
+          "claim_en": "Our age-scaled repetition targets and our general conditioning programme are based on the WHO physical activity guideline.",
+          "status": "external",
+          "sources": [
+            {
+              "label": "WHO — Guidelines on Physical Activity and Sedentary Behaviour (2020)",
+              "url": "https://www.who.int/europe/publications/i/item/9789240014886",
+              "quote": "Older adults (aged 65 years and above) should do varied multicomponent physical activity that emphasizes functional balance and strength training at moderate or greater intensity, on 3 or more days a week."
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "field",
+      "eyebrow_tr": "Bölüm 4",
+      "eyebrow_en": "Part 4",
+      "title_tr": "Saha testleri ve akademik değerlendirme",
+      "title_en": "Field testing and academic evaluation",
+      "intro_tr": "ViMove AI'ı laboratuvarda değil, kullanacak insanların yanında geliştirdik. Aşağıdaki sayıların tek kaynağı, Akdeniz Üniversitesi Yaşlılık Çalışmaları Uygulama ve Araştırma Merkezi Müdürü'nün imzalı değerlendirme mektubu.",
+      "intro_en": "We built ViMove AI alongside the people who would use it, not in a lab. The single source for the figures below is the signed evaluation letter from the Director of Akdeniz University's Centre for Ageing Studies.",
+      "claims": [
+        {
+          "id": "field-50",
+          "stat": "50+ kişi",
+          "stat_en": "50+ people",
+          "claim_tr": "ViMove, 50'den fazla yaşlı birey tarafından aktif olarak kullanıldı ve değerlendirildi. Katılımcılar arasında Merkez'in \"60+ Tazelenme Üniversitesi Sosyal Sorumluluk Projesi\" öğrencileri de vardı.",
+          "claim_en": "ViMove was actively used and evaluated by more than 50 older adults, including students of the Centre's \"60+ Refreshment University Social Responsibility Project\".",
+          "status": "external",
+          "sources": [
+            {
+              "label": "Prof. Dr. Gülüşan Özgün Başıbüyük — değerlendirme mektubu, 13.06.2026, Akdeniz Üniversitesi Sağlık Bilimleri Fakültesi, Gerontoloji Bölümü",
+              "url": "/community",
+              "quote": "ViMove, Yaşlılık Çalışmaları Uygulama ve Araştırma Merkezimiz bünyesinde yürütmüş olduğumuz \"60+ Tazelenme Üniversitesi Sosyal Sorumluluk Projemiz\" öğrencileri dahil olmak üzere 50'den fazla yaşlı birey tarafından aktif olarak kullanılmış ve değerlendirilmiştir."
+            }
+          ]
+        },
+        {
+          "id": "field-feedback",
+          "stat": "3 bulgu",
+          "stat_en": "3 findings",
+          "claim_tr": "Katılımcıların önemli bir bölümü sistemin egzersiz motivasyonlarını artırdığını, hareketlerini daha bilinçli yapmalarına yardımcı olduğunu ve evde fiziksel olarak daha aktif kalmalarını teşvik ettiğini belirtti.",
+          "claim_en": "A significant share of participants reported that the system increased their motivation to exercise, helped them perform movements more consciously, and encouraged them to stay more physically active at home.",
+          "status": "external",
+          "sources": [
+            {
+              "label": "Prof. Dr. Gülüşan Özgün Başıbüyük — değerlendirme mektubu, 13.06.2026",
+              "url": "/community",
+              "quote": "Katılımcıların önemli bir bölümü, \"sistemin egzersiz yapma motivasyonlarını artırdığını, hareketlerini daha bilinçli gerçekleştirmelerine yardımcı olduğunu ve ev ortamında fiziksel olarak daha aktif kalmalarını teşvik ettiğini\" ifade etmiştir."
+            }
+          ],
+          "note_tr": "Mektubun tamamı ve orijinal PDF'i Topluluk sayfasında yayımlanıyor. Bu bir klinik çalışma değil, hedef kullanıcı grubuyla yapılmış bir kullanılabilirlik değerlendirmesidir; kontrol grubu ve randomizasyon içermez.",
+          "note_en": "The full letter and the original PDF are published on the Community page. This is a usability evaluation with the target user group, not a clinical trial: it has no control group and no randomisation."
+        }
+      ]
+    }
+  ],
+  "clinical_intro_tr": "Her rehabilitasyon programının hangi klinik kılavuza ve hangi çalışmaya dayandığı. Bu kaynaklar programların kendi veri dosyasında tutuluyor; aşağıdaki liste doğrudan oradan üretiliyor, yani sayfada gördüğünüz kaynak, sistemin o programı kurarken kullandığı kaynağın ta kendisi.",
+  "clinical_intro_en": "Which clinical guideline and which study each rehabilitation programme is based on. These references live in the programmes' own data file, and the list below is generated directly from it — so the source you see on this page is the very source the system used to build that programme.",
+  "disclaimer_tr": "ViMove AI teşhis koymaz ve tıbbi cihaz değildir. Aşağıdaki kaynaklar, egzersiz seçimlerimizin hangi klinik literatüre dayandığını göstermek içindir; bireysel tedavi önerisi yerine geçmez.",
+  "disclaimer_en": "ViMove AI does not diagnose and is not a medical device. The references below show which clinical literature our exercise choices rest on; they are not a substitute for individual treatment advice."
+}

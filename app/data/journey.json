@@ -1,0 +1,165 @@
+{
+  "_comment": "ViMove AI — the v1 to v3 story, rendered by /yolculuk. Every entry marked verify:true is drawn from a record we can show (git history, the benchmark file, the evaluation letter). Entries marked verify:false are narrative and should be checked by the team before a jury sees them.",
+  "updated": "2026-11-26",
+
+  "stats": [
+    { "value": "10 ay", "value_en": "10 months", "label_tr": "Akdeniz Üniversitesi Gerontoloji Bölümü ile birlikte çalışma", "label_en": "working alongside Akdeniz University's Department of Gerontology" },
+    { "value": "50+", "label_tr": "yaşlı birey uygulamayı kullandı ve değerlendirdi", "label_en": "older adults used and evaluated the application" },
+    { "value": "3", "label_tr": "büyük sürüm: v1 → v2 → v3", "label_en": "major versions: v1 → v2 → v3" },
+    { "value": "2 → 10", "label_tr": "rehabilitasyon programı", "label_en": "rehabilitation programmes" },
+    { "value": "%28,1 → %14,9", "value_en": "28.1% → 14.9%", "label_tr": "120p kamerada ölçüm hatası", "label_en": "measurement error on a 120p camera" },
+    { "value": "1233", "label_tr": "takım arasından Samsung Solve for Tomorrow Türkiye finalisti", "label_en": "teams — Samsung Solve for Tomorrow Türkiye finalist" }
+  ],
+
+  "versions": [
+    {
+      "id": "v1",
+      "tag": "v1",
+      "period_tr": "Başlangıç",
+      "period_en": "The beginning",
+      "title_tr": "Kamera tekrar sayabiliyor mu?",
+      "title_en": "Can a camera count a repetition?",
+      "lede_tr": "İlk soru teknik değildi: bir web kamerası, bir insanın egzersiz yaptığını gerçekten anlayabilir mi? v1, bu soruya evet cevabı veren en küçük sistemdi. Tek bir tarayıcı sayfası, iskelet takibi ve bir tekrar sayacı.",
+      "lede_en": "The first question was not technical: can a webcam actually understand that a person is exercising? v1 was the smallest system that answered yes. A single browser page, skeleton tracking and a repetition counter.",
+      "had_tr": [
+        "Tarayıcıda çalışan iskelet takibi — kurulum, uygulama ya da sensör yok",
+        "Birkaç temel hareket ve basit bir tekrar sayacı",
+        "Ekranda anlık form geri bildirimi"
+      ],
+      "had_en": [
+        "Skeleton tracking in the browser — no install, no app, no sensors",
+        "A handful of basic movements and a simple repetition counter",
+        "Live form feedback on screen"
+      ],
+      "learned_tr": "v1 bir prototipti ve prototip gibi davranıyordu: iyi ışıkta, iyi kamerada, kameraya yakın durulduğunda çalışıyordu. Üç koşuldan biri bozulduğunda sayaç güvenilmez hâle geliyordu. Bu sınır, sonraki iki sürümün gündemini belirledi.",
+      "learned_en": "v1 was a prototype and behaved like one: it worked in good light, on a good camera, standing close to it. Break any one of those three conditions and the counter became unreliable. That limit set the agenda for the next two versions.",
+      "verify": false
+    },
+    {
+      "id": "v2",
+      "tag": "v2",
+      "period_tr": "Saha testleri · Akdeniz Üniversitesi",
+      "period_en": "Field testing · Akdeniz University",
+      "title_tr": "Sistemi kullanacak insanların yanına götürdük",
+      "title_en": "We took the system to the people who would use it",
+      "lede_tr": "Bu, projenin dönüm noktasıydı. ViMove'u Akdeniz Üniversitesi Yaşlılık Çalışmaları Uygulama ve Araştırma Merkezi'ne götürdük ve 50'den fazla yaşlı birey tarafından kullanıldı. Laboratuvarda fark edilmeyen her şey burada ortaya çıktı.",
+      "lede_en": "This was the turning point. We took ViMove to Akdeniz University's Centre for Ageing Studies, where more than 50 older adults used it. Everything a lab would never have surfaced came out here.",
+      "had_tr": [
+        "Hedef kullanıcı grubuyla yüz yüze kullanılabilirlik testleri",
+        "\"60+ Tazelenme Üniversitesi Sosyal Sorumluluk Projesi\" öğrencilerinin katılımı",
+        "Yaşa göre uyarlanan tekrar hedefleri ve okunaklı, büyük puntolu arayüz"
+      ],
+      "had_en": [
+        "Face-to-face usability testing with the target user group",
+        "Participation by students of the \"60+ Refreshment University Social Responsibility Project\"",
+        "Age-scaled repetition targets and a large-type, readable interface"
+      ],
+      "learned_tr": "Sahadan dönen en önemli bulgu, bizim en az beklediğimizdi: sorun kullanıcıda değil, kameradaydı. Hedef kullanıcımızın evinde 1080p kamera yoktu. Loş bir salonda, iki metre uzakta, beş yıllık bir dizüstü vardı — yani v1'in çalışmak için ihtiyaç duyduğu üç koşulun üçü birden yoktu.",
+      "learned_en": "The most important finding from the field was the one we least expected: the problem was not the user, it was the camera. Our target user did not have a 1080p camera at home. They had a five-year-old laptop, in a dim living room, two metres away — that is, none of the three conditions v1 needed to work.",
+      "quote": {
+        "text_tr": "Katılımcıların önemli bir bölümü, sistemin egzersiz yapma motivasyonlarını artırdığını, hareketlerini daha bilinçli gerçekleştirmelerine yardımcı olduğunu ve ev ortamında fiziksel olarak daha aktif kalmalarını teşvik ettiğini ifade etmiştir.",
+        "text_en": "A significant share of participants reported that the system increased their motivation to exercise, helped them perform movements more consciously, and encouraged them to stay more physically active at home.",
+        "who_tr": "Prof. Dr. Gülüşan Özgün Başıbüyük · Yaşlılık Çalışmaları Uygulama ve Araştırma Merkez Müdürü, Akdeniz Üniversitesi · değerlendirme mektubu, 13.06.2026",
+        "who_en": "Prof. Dr. Gülüşan Özgün Başıbüyük · Director, Centre for Ageing Studies, Akdeniz University · evaluation letter, 13 June 2026",
+        "href": "/community"
+      },
+      "verify": false
+    },
+    {
+      "id": "v3",
+      "tag": "v3",
+      "period_tr": "Ağustos – Kasım 2026",
+      "period_en": "August – November 2026",
+      "title_tr": "ViMove AI: kötü kamerayı sorun olmaktan çıkardık",
+      "title_en": "ViMove AI: we stopped the bad camera from being a problem",
+      "lede_tr": "v3, sahadan gelen o tek bulgunun üzerine kuruldu. Hazır bir poz modelini daha iyi bir kamerayla beslemek yerine, modelin etrafına düşük çözünürlüğü tolere eden kendi görüntü katmanımızı yazdık: LRD. Sonra program sayısını ikiye katladık, fizyoterapist panelini ekledik ve hastanın hiçbir şey öğrenmeden başlayabileceği tek dokunuşluk bir akış kurduk.",
+      "lede_en": "v3 was built on that single field finding. Instead of feeding a stock pose model a better camera, we wrote our own vision layer around it to tolerate low resolution: LRD. Then we doubled the number of programmes, added the physiotherapist panel, and built a one-tap flow a patient can start without learning anything.",
+      "had_tr": [
+        "LRD hattı — uyarlanır ROI, medyan + One Euro filtresi, gürültüye uyarlanan sayaç, kare kalitesi ölçümü",
+        "5 yeni rehabilitasyon programı: bel ağrısı, boyun ağrısı, bel fıtığı, skolyoz, kas yaralanması — toplam 10",
+        "5 yeni hareket algılayıcısı — toplam 16 hareket tipi, 76 egzersiz adımı",
+        "Fizyoterapist paneli: reçete yazma, hasta takibi, davet bağlantısı",
+        "Hasta için tek dokunuş: bağlantıya bas, şifresiz gir, reçeteni gör, başla",
+        "Türkçe ve İngilizce sesli rehber",
+        "Android paketi (TWA) ve Google Play yayın süreci"
+      ],
+      "had_en": [
+        "The LRD pipeline — adaptive ROI, median + One Euro filtering, noise-adaptive counting, frame-quality measurement",
+        "5 new rehabilitation programmes: low back pain, neck pain, disc herniation, scoliosis, muscle injury — 10 in total",
+        "5 new movement detectors — 16 movement types in total, across 76 exercise steps",
+        "Physiotherapist panel: write prescriptions, follow patients, share an invite link",
+        "One tap for the patient: open the link, no password, see the prescription, start",
+        "Turkish and English voice guidance",
+        "An Android package (TWA) and the Google Play release process"
+      ],
+      "learned_tr": "Ölçtük: en zor senaryoda — 120p çözünürlük, uzak mesafe — hareket açıklığı ölçüm hatası %28,1'den %14,9'a indi, tekrar sayımı %96 doğrulukta kaldı. İyi kamerada ise LRD kendini geri çekiyor; kazanç tam da kötü kamerada ortaya çıkıyor.",
+      "learned_en": "We measured it: in the hardest scenario — 120p, at distance — the range-of-motion error fell from 28.1% to 14.9%, and repetition counting held at 96% accuracy. On a good camera LRD steps back; the gain appears exactly where the camera is bad.",
+      "verify": true
+    }
+  ],
+
+  "feedback": [
+    {
+      "said_tr": "\"Yerinde yürüyüşü tam saymıyor, noktalar birbirine giriyor.\"",
+      "said_en": "\"Marching in place isn't counted properly, the points run into each other.\"",
+      "did_tr": "Yerinde yürüyüş algılayıcısının diz açısı eşiklerini gevşettik ve bir tekrarın onaylanması için gereken kare sayısını düşürdük; düşük çözünürlükte bacak noktaları birbirine yakınken sayaç artık tekrarı kaçırmıyor.",
+      "did_en": "We relaxed the knee-angle thresholds of the march detector and lowered how many frames a repetition must persist; with the leg landmarks sitting close together at low resolution, the counter no longer misses the rep.",
+      "verify": true
+    },
+    {
+      "said_tr": "\"Gövdeyi sağa sola eğmede hiçbir şey yapmazken otomatik sayıyor.\"",
+      "said_en": "\"The side-bend counts by itself while I'm standing still.\"",
+      "did_tr": "Gövde eğme algılayıcısını mutlak açı yerine, kullanıcının kendi dinlenme duruşundan sapmayı ölçecek şekilde yeniden yazdık ve hassasiyeti düşürdük. Duruşu asimetrik olan bir kullanıcı artık hareketsizken tekrar kazanmıyor.",
+      "did_en": "We rewrote the trunk-bend detector to measure deviation from the user's own resting posture instead of an absolute angle, and lowered its sensitivity. A user with an asymmetric stance no longer earns repetitions while standing still.",
+      "verify": true
+    },
+    {
+      "said_tr": "\"Çene hareketinin ne yapacağımı anlamadım.\"",
+      "said_en": "\"I didn't understand what the chin exercise wanted me to do.\"",
+      "did_tr": "Hareketin adını ve ekrandaki açıklamasını, ne yapılacağını tarif eden bir cümleye çevirdik. Bu, tüm hareket adlarını gözden geçirmemize yol açtı — teknik terimler gündelik Türkçeye taşındı.",
+      "did_en": "We rewrote the movement's name and its on-screen description into a sentence that describes what to do. That led us to review every movement name — technical terms moved into everyday language.",
+      "verify": true
+    },
+    {
+      "said_tr": "\"Sitenin tamamı sayfaya sığmıyor, yana kaydırmak gerekiyor.\"",
+      "said_en": "\"The site doesn't fit the screen, I have to scroll sideways.\"",
+      "did_tr": "Yatay taşmaya yol açan düzen hatalarını giderdik. Küçük ekranda ve büyük punto ayarında sayfa artık yalnızca yukarı aşağı kayıyor — yaşlı kullanıcı için yatay kaydırma, kaybolmak demek.",
+      "did_en": "We fixed the layout faults that caused horizontal overflow. On a small screen and at large type the page now scrolls only up and down — for an older user, sideways scrolling means getting lost.",
+      "verify": true
+    },
+    {
+      "said_tr": "\"Fizyoterapist paneli klostrofobik, her şey üst üste.\"",
+      "said_en": "\"The physiotherapist panel feels claustrophobic, everything is piled up.\"",
+      "did_tr": "Paneli iki sütuna açtık, reçete kataloğunu vücut bölgesine göre altı açılır gruba ayırdık ve hasta listesini ikonlu kartlara dönüştürdük.",
+      "did_en": "We opened the panel into two columns, split the prescription catalogue into six collapsible groups by body region, and turned the patient list into icon cards.",
+      "verify": true
+    },
+    {
+      "said_tr": "\"Hasta linke bastığında şifre girmek zorunda kalmasın, direkt reçetesini görsün.\"",
+      "said_en": "\"When the patient opens the link they shouldn't have to type a password — just show their prescription.\"",
+      "did_tr": "Davet bağlantısını hesabı sunucu tarafında açan, tek kullanımlık bir giriş jetonu üreten ve hastayı doğrudan kendi reçetesine indiren bir akışa çevirdik. Hasta tek bir düğme görüyor: Başla.",
+      "did_en": "We turned the invite link into a flow that creates the account server-side, mints a one-shot sign-in token, and drops the patient straight onto their own prescription. The patient sees one button: Start.",
+      "verify": true
+    },
+    {
+      "said_tr": "\"Aynı linke tekrar bastığımda yeni hesap açıyor, eskisine dönmüyor.\"",
+      "said_en": "\"Tapping the same link again opens a new account instead of returning to the old one.\"",
+      "did_tr": "Bağlantıyı cihaza değil hesaba bağladık: sunucu, gelen ismi o fizyoterapistin mevcut hastalarıyla eşleştiriyor ve varsa aynı hesabı açıyor. Hasta telefonunu değiştirse de aynı geçmişe dönüyor.",
+      "did_en": "We bound the link to the account rather than the device: the server matches the incoming name against that physiotherapist's existing patients and reopens the same account when it finds one. The patient returns to the same history even on a new phone.",
+      "verify": true
+    }
+  ],
+
+  "next_tr": [
+    "Google Play yayını ve kapalı test sürecinin tamamlanması",
+    "Fizyoterapist panelinde seans videosu üzerinden yorum bırakma",
+    "Daha fazla rehabilitasyon programı ve hareket tipi",
+    "Açık kaynak poz modelleri geliştikçe LRD'nin üzerine binen kazancın yeniden ölçülmesi"
+  ],
+  "next_en": [
+    "Completing the Google Play release and closed testing",
+    "Letting physiotherapists comment on a session video in the panel",
+    "More rehabilitation programmes and movement types",
+    "Re-measuring LRD's stacked gain as open-source pose models improve"
+  ]
+}
